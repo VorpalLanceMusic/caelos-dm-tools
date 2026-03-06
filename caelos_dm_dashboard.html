@@ -807,18 +807,18 @@
         ],
         note: 'CLOUD RUNE — redirect attack to another target' },
 
-      { name: 'The',    cls: 'Human · Monk',
+      { name: 'The',    cls: 'Aasimar · Rogue · Assassin',
         maxHp: 68, tempHp: 0, curHp: 68, deathSaves: { s: 0, f: 0 },
         stats: [
-          { l: 'AC',    v: '17', hi: true },
-          { l: 'Init',  v: '+4' },
-          { l: 'PP',    v: '16' },
-          { l: 'Ki DC', v: '15', hi: true },
-          { l: 'Prof',  v: '+3' },
+          { l: 'AC',      v: '17', hi: true },
+          { l: 'Init',    v: '+4' },
+          { l: 'PP',      v: '16' },
+          { l: 'Snk Atk', v: '?d6', hi: true },
+          { l: 'Prof',    v: '+3' },
         ],
-        note: 'Face never visible. Unarmored Defense.' },
+        note: 'Assassinate: auto-crit on surprised target. Face never visible.' },
 
-      { name: 'Evelyn', cls: 'Vampire · Cleric/Barbarian',
+      { name: 'Evelyn', cls: 'Dhampir · Cleric/Barbarian',
         maxHp: 52, tempHp: 0, curHp: 52, deathSaves: { s: 0, f: 0 },
         stats: [
           { l: 'AC',       v: '14', hi: true },
@@ -829,7 +829,7 @@
         ],
         note: 'Rage: resist B/P/S dmg, adv STR checks · ⚠ Track Concentration' },
 
-      { name: 'Lyle',   cls: 'Halfling · Class?',
+      { name: 'Lyle',   cls: 'Halfling · Ranger',
         maxHp: 58, tempHp: 0, curHp: 58, deathSaves: { s: 0, f: 0 },
         stats: [
           { l: 'AC',   v: '15', hi: true },
@@ -851,15 +851,16 @@
         note: 'Sneak Attack needs advantage or adjacent ally' },
     ],
     B: [
-      { name: 'Lorelei', cls: 'Fire Genasi · Class?',
+      { name: 'Lorelei', cls: 'Fire Genasi · Druid',
         maxHp: 32, tempHp: 0, curHp: 32, deathSaves: { s: 0, f: 0 },
         stats: [
-          { l: 'AC',   v: '14', hi: true },
-          { l: 'Init', v: '+2' },
-          { l: 'PP',   v: '12' },
-          { l: 'Prof', v: '+2' },
+          { l: 'AC',       v: '14', hi: true },
+          { l: 'Init',     v: '+2' },
+          { l: 'PP',       v: '12' },
+          { l: 'Spell DC', v: '?',  hi: true },
+          { l: 'Prof',     v: '+2' },
         ],
-        note: 'Fire resistance. Darkvision 60ft.' },
+        note: 'Wild Shape available. Fire resistance. Darkvision 60ft.' },
 
       { name: 'Val',     cls: 'Tiefling · Artificer',
         maxHp: 38, tempHp: 0, curHp: 38, deathSaves: { s: 0, f: 0 },
@@ -872,16 +873,16 @@
         ],
         note: 'Infusions active — check for magic items on party' },
 
-      { name: 'Luella',  cls: 'Changeling · Rogue',
+      { name: 'Luella',  cls: 'Changeling · Bard/Rogue',
         maxHp: 28, tempHp: 0, curHp: 28, deathSaves: { s: 0, f: 0 },
         stats: [
           { l: 'AC',      v: '14', hi: true },
           { l: 'Init',    v: '+3' },
           { l: 'PP',      v: '14' },
           { l: 'Snk Atk', v: '2d6', hi: true },
-          { l: 'Prof',    v: '+2' },
+          { l: 'Spell DC', v: '?', hi: true },
         ],
-        note: 'Changeling: can alter appearance at will' },
+        note: 'Bardic Inspiration available. Changeling: alter appearance at will.' },
     ]
   };
 
