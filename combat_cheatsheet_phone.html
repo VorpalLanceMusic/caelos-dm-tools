@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>⚔ Combat Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --blood:   #9b1a1a;
+    --ember:   #c8722a;
+    --gold:    #e8c87a;
+    --bg:      #0a0a0f;
+    --surface: #12121a;
+    --raised:  #1a1a26;
+    --border:  #2a2a3a;
+    --text:    #ddd8cc;
+    --sub:     #6a6860;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Crimson Text', Georgia, serif;
+    min-height: 100vh;
+    padding-bottom: 24px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(160deg, #1c0808 0%, #0e0e1a 55%, #0a0a0f 100%);
+    border-bottom: 2px solid var(--blood);
+    padding: 16px 18px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 15% 50%, rgba(155,26,26,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-shadow: 0 0 24px rgba(232,200,122,0.45);
+    line-height: 1;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: var(--sub);
+    font-style: italic;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+  .header-sigil {
+    font-size: 38px;
+    opacity: 0.65;
+    filter: drop-shadow(0 0 10px rgba(155,26,26,0.9));
+  }
+
+  /* ── ROUND COUNTER ── */
+  .round-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .round-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    flex: 1;
+  }
+  .round-btn {
+    width: 42px; height: 42px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--sub);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .round-btn:active { background: var(--blood); color: var(--gold); border-color: var(--blood); }
+  .round-num {
+    font-family: 'Cinzel', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 52px;
+    text-align: center;
+    line-height: 1;
+    text-shadow: 0 0 16px rgba(232,200,122,0.35);
+  }
+  .round-note {
+    font-size: 13px;
+    color: var(--sub);
+    font-style: italic;
+    text-align: right;
+    flex: 1;
+  }
+
+  /* ── SECTIONS ── */
+  .section { border-bottom: 1px solid var(--border); }
+
+  .sec-head {
+    padding: 15px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    min-height: 56px;
+    position: relative;
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .sec-head:active { background: var(--raised); }
+  .sec-head::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+  }
+  .s-red::before    { background: #9b1a1a; }
+  .s-orange::before { background: #c8722a; }
+  .s-teal::before   { background: #2a9a72; }
+  .s-blue::before   { background: #2a6aaa; }
+  .s-purple::before { background: #7a2aaa; }
+  .s-yellow::before { background: #aaaa2a; }
+  .s-gray::before   { background: #484848; }
+
+  .sec-left { display: flex; align-items: center; gap: 12px; }
+  .sec-icon { font-size: 20px; }
+  .sec-title {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .s-red .sec-title    { color: #e06868; }
+  .s-orange .sec-title { color: #e0a868; }
+  .s-teal .sec-title   { color: #68d8a8; }
+  .s-blue .sec-title   { color: #68a8d8; }
+  .s-purple .sec-title { color: #c068e0; }
+  .s-yellow .sec-title { color: #d8d868; }
+  .s-gray .sec-title   { color: #888; }
+
+  .chevron { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .chevron.open { transform: rotate(90deg); }
+
+  .sec-body {
+    display: none;
+    background: var(--surface);
+    padding: 4px 0 8px;
+  }
+  .sec-body.open { display: block; }
+
+  /* ── ITEMS ── */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 16px 13px 20px;
+    cursor: pointer;
+    min-height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.1s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:active { background: var(--raised); }
+
+  .cb {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    transition: all 0.15s;
+  }
+  .cb.checked { background: var(--blood); border-color: #cc2200; }
+  .cb.checked::after { content: '✓'; font-size: 14px; color: #fff; font-weight: 700; line-height: 1; }
+
+  .item-body { flex: 1; }
+  .item-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+    transition: color 0.15s;
+  }
+  .item-text.checked { color: var(--sub); text-decoration: line-through; }
+  .item-note {
+    font-size: 14px;
+    color: var(--sub);
+    font-style: italic;
+    display: block;
+    margin-top: 3px;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .item.warn .item-text { color: #e06868; }
+  .item.gold .item-text { color: var(--gold); }
+
+  /* ── CONDITIONS ── */
+  .cond-wrap { padding: 10px 16px 16px; }
+  .cond-label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 8px 0 8px;
+  }
+  .cond-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .tag {
+    font-family: 'Crimson Text', serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--sub);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tag:active { transform: scale(0.95); }
+  .tag.on-red  { background: #3a0000; border-color: var(--blood); color: #e06868; }
+  .tag.on-blue { background: #001028; border-color: #1a4a9a; color: #68a8d8; }
+
+  .mini-div { height: 1px; background: var(--border); margin: 10px 0; opacity: 0.5; }
+
+  /* ── RESET BAR ── */
+  .reset-bar {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    flex: 1;
+    padding: 13px 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--raised);
+    color: var(--sub);
+    cursor: pointer;
+    min-height: 50px;
+    transition: all 0.15s;
+  }
+  .btn:active { color: var(--text); background: #222230; }
+  .btn.danger { border-color: var(--blood); color: #e06868; }
+  .btn.danger:active { background: #2a0000; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">⚔ Combat Flow</div>
+      <div class="header-sub">Caelos — DM Reference</div>
+    </div>
+    <div class="header-sigil">🜲</div>
+  </div>
+</div>
+
+<!-- ROUND COUNTER -->
+<div class="round-bar">
+  <div class="round-label">Round</div>
+  <button class="round-btn" onclick="changeRound(-1)">−</button>
+  <div class="round-num" id="roundNum">1</div>
+  <button class="round-btn" onclick="changeRound(1)">+</button>
+  <div class="round-note" id="roundNote">Opening</div>
+</div>
+
+<!-- EVERY ROUND -->
+<div class="section">
+  <div class="sec-head s-red" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🔴</span><span class="sec-title">Every Round — Never Skip</span></div>
+    <span class="chevron open">▶</span>
+  </div>
+  <div class="sec-body open">
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Does the environment react?</div>
+      <span class="item-note">Fire spreading, ceiling crumbling, fog thickening, tide rising</span>
+    </div></div>
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">What does the enemy WANT right now?</div>
+      <span class="item-note">Not just "attack" — scared? Buying time? Protecting something?</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Triggered abilities on turn start/end?</div>
+      <span class="item-note">Auras, ongoing damage, condition timers, lair actions</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Legendary actions available?</div>
+      <span class="item-note">Use them — don't forget they exist</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Narrate cinematically</div>
+      <span class="item-note">"It lunges" not "it attacks." Make it feel dangerous.</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- START OF COMBAT -->
+<div class="section">
+  <div class="sec-head s-orange" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🟠</span><span class="sec-title">Start of Combat</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">State the stakes out loud</div>
+      <span class="item-note">What happens if they lose? What are they protecting?</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Set the scene — one vivid detail</div>
+      <span class="item-note">Sound, smell, the enemy's first move</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Have the statblock open</div>
+      <span class="item-note">HP, AC, recharge abilities — before initiative rolls</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Identify the most dangerous player</div>
+      <span class="item-note">Smart enemies target them or neutralize them early</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Note environmental interactions</div>
+      <span class="item-note">What can players use? What can backfire?</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- DURING COMBAT -->
+<div class="section">
+  <div class="sec-head s-teal" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🟢</span><span class="sec-title">During Combat</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Enemy reacts to damage</div>
+      <span class="item-note">Rage, fear, desperation — behavior shifts as HP drops</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Call out HP thresholds aloud</div>
+      <span class="item-note">"It's wounded" at ~50%, "barely standing" at ~25%</span>
+    </div></div>
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Put someone in genuine danger</div>
+      <span class="item-note">At least once — a player should feel the risk is REAL</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Reward creative solutions</div>
+      <span class="item-note">Clever ideas should work, or at least partially work</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Enemy moves and repositions</div>
+      <span class="item-note">They're fighting to survive too — use the terrain</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Spread the pain — vary targets</div>
+      <span class="item-note">Don't always hit the same player. Keep everyone nervous.</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- END OF COMBAT -->
+<div class="section">
+  <div class="sec-head s-blue" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🔵</span><span class="sec-title">End of Combat</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Describe the aftermath vividly</div>
+      <span class="item-note">The silence after the last blow matters</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Acknowledge what permanently changed</div>
+      <span class="item-note">Something real happened. The world is different now.</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Give players a beat to react</div>
+      <span class="item-note">Don't rush to loot. Let the moment breathe.</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Note threads opened by this fight</div>
+      <span class="item-note">Clues found, enemies fled, witnesses present</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- STAKES -->
+<div class="section">
+  <div class="sec-head s-purple" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🟣</span><span class="sec-title">Stakes — Keep It Real</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">What does losing COST them?</div>
+      <span class="item-note">Death, capture, NPC loss, location destroyed, secret revealed</span>
+    </div></div>
+    <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Is there a clock ticking?</div>
+      <span class="item-note">Someone escaping, ritual completing, reinforcements arriving</span>
+    </div></div>
+    <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Is an NPC in danger?</div>
+      <span class="item-note">Players fight harder when protecting someone they care about</span>
+    </div></div>
+    <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Can the enemy escape or call for help?</div>
+      <span class="item-note">Retreat is a valid enemy action. Use it.</span>
+    </div></div>
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Someone should sweat today</div>
+      <span class="item-note">Easy wins feel hollow. Earned wins feel legendary.</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- PLAYER DOWN -->
+<div class="section">
+  <div class="sec-head s-yellow" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">🟡</span><span class="sec-title">Player Goes Down</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Narrate it — don't read the stat</div>
+      <span class="item-note">"Crashes into the wall" not "you're at 0 HP"</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Does the enemy press the advantage?</div>
+      <span class="item-note">Smart enemies finish downed targets or use them as leverage</span>
+    </div></div>
+    <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Track death saves openly</div>
+      <span class="item-note">Let the whole table feel every roll</span>
+    </div></div>
+    <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body">
+      <div class="item-text">Two fails — remind table of stakes</div>
+      <span class="item-note">Don't let it feel routine. This is real.</span>
+    </div></div>
+  </div>
+</div>
+
+<!-- CONDITIONS -->
+<div class="section">
+  <div class="sec-head s-gray" onclick="toggleSec(this)">
+    <div class="sec-left"><span class="sec-icon">⬡</span><span class="sec-title">Active Conditions</span></div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="sec-body">
+    <div class="cond-wrap">
+      <div class="cond-label">Enemy</div>
+      <div class="cond-row">
+        <span class="tag" onclick="toggleTag(this,'on-red')">Frightened</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Grappled</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Restrained</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Stunned</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Prone</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Poisoned</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Blinded</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Charmed</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Bloodied</span>
+        <span class="tag" onclick="toggleTag(this,'on-red')">Concentrating</span>
+      </div>
+      <div class="mini-div"></div>
+      <div class="cond-label">Party</div>
+      <div class="cond-row">
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Frightened</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Grappled</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Restrained</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Stunned</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Prone</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Poisoned</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Blinded</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">Down (0hp)</span>
+        <span class="tag" onclick="toggleTag(this,'on-blue')">2 Fails</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESET -->
+<div class="reset-bar">
+  <button class="btn" onclick="resetChecks()">↺ Checks</button>
+  <button class="btn" onclick="resetRound()">↺ Round</button>
+  <button class="btn danger" onclick="resetAll()">↺ Full Reset</button>
+</div>
+
+<script>
+  let round = 1;
+  const notes = [[1,"Opening"],[3,"Intensifying"],[5,"Escalate"],[7,"Desperate"],[10,"End this"]];
+
+  function getNote(r) {
+    let n = notes[0][1];
+    for (const [k,v] of notes) { if (r >= k) n = v; }
+    return n;
+  }
+
+  function changeRound(d) {
+    round = Math.max(1, round + d);
+    document.getElementById('roundNum').textContent = round;
+    document.getElementById('roundNote').textContent = getNote(round);
+  }
+
+  function toggleSec(hdr) {
+    const body = hdr.nextElementSibling;
+    const ch = hdr.querySelector('.chevron');
+    body.classList.toggle('open');
+    ch.classList.toggle('open');
+  }
+
+  function toggle(item) {
+    item.querySelector('.cb').classList.toggle('checked');
+    item.querySelector('.item-text').classList.toggle('checked');
+  }
+
+  function toggleTag(tag, cls) {
+    if (tag.classList.contains(cls)) tag.classList.remove(cls);
+    else { tag.classList.remove('on-red','on-blue'); tag.classList.add(cls); }
+  }
+
+  function resetChecks() {
+    document.querySelectorAll('.cb.checked').forEach(e => e.classList.remove('checked'));
+    document.querySelectorAll('.item-text.checked').forEach(e => e.classList.remove('checked'));
+    document.querySelectorAll('.tag').forEach(e => e.classList.remove('on-red','on-blue'));
+  }
+
+  function resetRound() {
+    round = 1;
+    document.getElementById('roundNum').textContent = 1;
+    document.getElementById('roundNote').textContent = 'Opening';
+  }
+
+  function resetAll() { resetChecks(); resetRound(); }
+</script>
+</body>
+</html>
