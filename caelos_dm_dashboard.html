@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Caelos DM">
+<title>⚔ Caelos DM</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%239b1a1a'/><text y='0.9em' font-size='72' x='50%' dominant-baseline='top' text-anchor='middle' style='filter:brightness(10)'>⚔</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --blood:   #9b1a1a;
+    --ember:   #c8722a;
+    --gold:    #e8c87a;
+    --bg:      #0a0a0f;
+    --surface: #12121a;
+    --raised:  #1a1a26;
+    --border:  #2a2a3a;
+    --text:    #ddd8cc;
+    --sub:     #6a6860;
+    --nav-h:   62px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: 'Crimson Text', Georgia, serif;
+    overflow: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* ── GLOBAL HEADER ── */
+  .app-header {
+    background: linear-gradient(160deg, #1c0808 0%, #0e0e1a 55%, #0a0a0f 100%);
+    border-bottom: 2px solid var(--blood);
+    padding: 12px 18px 10px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 15% 50%, rgba(155,26,26,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .app-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .app-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(232,200,122,0.4);
+  }
+  .app-sub {
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+  .party-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--blood);
+    color: var(--gold);
+    background: rgba(155,26,26,0.2);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .party-badge:active { background: rgba(155,26,26,0.4); }
+
+  /* ── TAB CONTENT AREA ── */
+  .tab-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    height: var(--nav-h);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 8px 4px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .nav-btn:active { background: var(--raised); }
+  .nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 2px;
+    background: var(--blood);
+    border-radius: 0 0 2px 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-btn.active::before { opacity: 1; }
+  .nav-icon { font-size: 22px; transition: transform 0.15s; }
+  .nav-btn.active .nav-icon { transform: scale(1.15); }
+  .nav-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--sub);
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .nav-btn.active .nav-label { color: var(--gold); }
+
+  /* ══════════════════════════════
+     TAB: COMBAT
+  ══════════════════════════════ */
+
+  .round-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .round-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    flex: 1;
+  }
+  .round-btn {
+    width: 42px; height: 42px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--sub);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .round-btn:active { background: var(--blood); color: var(--gold); border-color: var(--blood); }
+  .round-num {
+    font-family: 'Cinzel', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 52px;
+    text-align: center;
+    line-height: 1;
+    text-shadow: 0 0 16px rgba(232,200,122,0.35);
+  }
+  .round-note {
+    font-size: 13px;
+    color: var(--sub);
+    font-style: italic;
+    text-align: right;
+    flex: 1;
+  }
+
+  .c-section { border-bottom: 1px solid var(--border); }
+  .c-head {
+    padding: 15px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    min-height: 56px;
+    position: relative;
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .c-head:active { background: var(--raised); }
+  .c-head::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+  }
+  .s-red::before    { background: #9b1a1a; }
+  .s-orange::before { background: #c8722a; }
+  .s-teal::before   { background: #2a9a72; }
+  .s-blue::before   { background: #2a6aaa; }
+  .s-purple::before { background: #7a2aaa; }
+  .s-yellow::before { background: #aaaa2a; }
+  .s-gray::before   { background: #484848; }
+
+  .c-left { display: flex; align-items: center; gap: 12px; }
+  .c-icon { font-size: 20px; }
+  .c-title {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .s-red .c-title    { color: #e06868; }
+  .s-orange .c-title { color: #e0a868; }
+  .s-teal .c-title   { color: #68d8a8; }
+  .s-blue .c-title   { color: #68a8d8; }
+  .s-purple .c-title { color: #c068e0; }
+  .s-yellow .c-title { color: #d8d868; }
+  .s-gray .c-title   { color: #888; }
+
+  .chevron { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .chevron.open { transform: rotate(90deg); }
+
+  .c-body { display: none; background: var(--surface); padding: 4px 0 8px; }
+  .c-body.open { display: block; }
+
+  .item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 13px 16px 13px 20px;
+    cursor: pointer; min-height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.1s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:active { background: var(--raised); }
+  .cb {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-radius: 5px; flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg); transition: all 0.15s;
+  }
+  .cb.checked { background: var(--blood); border-color: #cc2200; }
+  .cb.checked::after { content: '✓'; font-size: 14px; color: #fff; font-weight: 700; }
+  .item-body { flex: 1; }
+  .item-text { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.35; transition: color 0.15s; }
+  .item-text.checked { color: var(--sub); text-decoration: line-through; }
+  .item-note { font-size: 14px; color: var(--sub); font-style: italic; display: block; margin-top: 3px; line-height: 1.4; }
+  .item.warn .item-text { color: #e06868; }
+  .item.gold .item-text { color: var(--gold); }
+
+  .cond-wrap { padding: 10px 16px 16px; }
+  .cond-label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; margin: 8px 0; }
+  .cond-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .tag { font-family: 'Crimson Text', serif; font-size: 15px; font-weight: 600; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--sub); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .tag:active { transform: scale(0.95); }
+  .tag.on-red  { background: #3a0000; border-color: var(--blood); color: #e06868; }
+  .tag.on-blue { background: #001028; border-color: #1a4a9a; color: #68a8d8; }
+  .mini-div { height: 1px; background: var(--border); margin: 10px 0; opacity: 0.5; }
+
+  .reset-bar { display: flex; gap: 8px; padding: 14px 16px; background: var(--bg); border-top: 1px solid var(--border); }
+  .btn { flex: 1; padding: 13px 6px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--border); border-radius: 8px; background: var(--raised); color: var(--sub); cursor: pointer; min-height: 50px; transition: all 0.15s; }
+  .btn:active { color: var(--text); background: #222230; }
+  .btn.danger { border-color: var(--blood); color: #e06868; }
+  .btn.danger:active { background: #2a0000; }
+
+  /* ── PC PARTY CARDS ── */
+  .party-sec { border-bottom: 1px solid var(--border); }
+  .party-sec-head {
+    padding: 15px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; min-height: 56px;
+    position: relative; transition: background 0.15s; user-select: none;
+  }
+  .party-sec-head:active { background: var(--raised); }
+  .party-sec-head::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    border-radius: 0 2px 2px 0; background: var(--gold);
+  }
+  .party-sec-head .c-title { color: var(--gold); }
+
+  .party-toolbar {
+    display: flex; gap: 8px;
+    padding: 8px 12px 4px;
+    background: var(--surface);
+  }
+  .edit-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--raised); color: var(--sub);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .edit-btn.active { border-color: var(--ember); color: var(--ember); background: rgba(200,114,42,0.1); }
+  .edit-btn:active { background: var(--raised); }
+
+  .pc-grid {
+    background: var(--surface);
+    padding: 6px 12px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .pc-card {
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .pc-card.editing { border-color: var(--ember); }
+  .pc-card.danger-hp { border-color: var(--blood); }
+
+  .pc-card-top {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .pc-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--gold); }
+  .pc-class { font-size: 12px; color: var(--sub); font-style: italic; }
+
+  /* HP BAR */
+  .hp-section { display: flex; flex-direction: column; gap: 4px; }
+  .hp-row { display: flex; align-items: center; gap: 8px; }
+  .hp-label { font-family: 'Cinzel', serif; font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; min-width: 28px; }
+  .hp-controls { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .hp-btn {
+    width: 32px; height: 32px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--sub); font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0; line-height: 1;
+  }
+  .hp-btn.dmg:active { background: #3a0000; border-color: var(--blood); color: #e06868; }
+  .hp-btn.heal:active { background: #003a00; border-color: #2a8a2a; color: #68d868; }
+
+  .hp-display {
+    flex: 1; text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--text); line-height: 1;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .hp-display.low { color: var(--ember); }
+  .hp-display.critical { color: #e06868; }
+
+  .hp-meta {
+    display: flex; gap: 10px; align-items: center;
+  }
+  .hp-meta-item {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .hp-meta-lbl { font-family: 'Cinzel', serif; font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
+  .hp-meta-val { font-size: 13px; font-weight: 600; color: var(--sub); }
+  .hp-meta-val.temp { color: #68a8d8; }
+
+  .hp-bar-track {
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .hp-bar-fill {
+    height: 100%; border-radius: 2px;
+    background: #2a8a2a;
+    transition: width 0.3s, background 0.3s;
+  }
+
+  /* STAT GRID */
+  .pc-stats { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pc-stat {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 8px;
+    display: flex; flex-direction: column; align-items: center; min-width: 52px;
+    position: relative;
+  }
+  .pc-stat.hi { border-color: rgba(232,200,122,0.3); }
+  .pc-stat-lbl { font-family: 'Cinzel', serif; font-size: 8px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+  .pc-stat-val { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .pc-stat.hi .pc-stat-val { color: var(--gold); }
+
+  /* EDITABLE INPUT */
+  .pc-stat input, .hp-edit-input {
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700;
+    color: var(--ember); background: transparent;
+    border: none; border-bottom: 1px solid var(--ember);
+    width: 100%; text-align: center; outline: none;
+    padding: 0; line-height: 1.2;
+  }
+  .hp-edit-input { font-size: 14px; width: 52px; text-align: center; }
+
+  .pc-note { font-size: 12px; color: var(--sub); font-style: italic; }
+  .pc-note.warn { color: #c06040; }
+
+  /* HP action rows */
+  .hp-main-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  }
+  .hp-cur-block {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 14px; min-width: 80px;
+  }
+  .hp-cur-lbl { font-family: 'Cinzel', serif; font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
+  .hp-cur-val { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .hp-cur-val.low { color: var(--ember); }
+  .hp-cur-val.critical { color: #e06868; }
+  .hp-side-block { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .hp-side-item { display: flex; align-items: center; gap: 6px; }
+  .hp-side-lbl { font-family: 'Cinzel', serif; font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; min-width: 30px; }
+  .hp-side-val { font-size: 14px; font-weight: 600; color: var(--sub); }
+  .inline-edit {
+    font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600;
+    color: var(--ember); background: transparent;
+    border: none; border-bottom: 1px solid var(--ember);
+    width: 52px; text-align: center; outline: none; padding: 0;
+  }
+  .hp-action-row {
+    display: flex; gap: 8px; align-items: stretch;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; margin-top: 6px;
+  }
+  .hp-action-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .hp-action-lbl { font-family: 'Cinzel', serif; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .dmg-lbl { color: #e06868; }
+  .heal-lbl { color: #68d868; }
+  .hp-action-inputs { display: flex; gap: 5px; align-items: center; }
+  .hp-amt-input {
+    flex: 1; font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700;
+    color: var(--text); background: var(--raised);
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 6px 6px; text-align: center; outline: none; min-width: 0;
+  }
+  .hp-amt-input:focus { border-color: var(--gold); }
+  .hp-apply-btn {
+    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px; padding: 6px 10px; border-radius: 5px;
+    border: none; cursor: pointer; white-space: nowrap; min-height: 36px;
+    transition: all 0.15s;
+  }
+  .dmg-btn { background: #3a0000; color: #e06868; border: 1px solid var(--blood); }
+  .dmg-btn:active { background: var(--blood); color: #fff; }
+  .heal-btn { background: #003a00; color: #68d868; border: 1px solid #2a6a2a; }
+  .heal-btn:active { background: #2a6a2a; color: #fff; }
+  .hp-divider-v { width: 1px; background: var(--border); margin: 0 2px; }
+  .long-rest-btn { border-color: #2a4a6a !important; color: #68a8d8 !important; }
+  .long-rest-btn:active { background: #001428 !important; }
+
+  /* DEATH SAVES */
+  .ds-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+  }
+  .ds-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .ds-lbl { font-family: 'Cinzel', serif; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .success-lbl { color: #68d868; }
+  .fail-lbl { color: #e06868; }
+  .ds-pips { display: flex; gap: 6px; }
+  .ds-pip {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--raised);
+    font-size: 10px; color: transparent;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ds-pip:active { transform: scale(0.9); }
+  .success-pip.filled { background: #2a6a2a; border-color: #68d868; color: #68d868; }
+  .fail-pip.filled    { background: #6a0000; border-color: #e06868; color: #e06868; }
+  .ds-clear-btn {
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
+    letter-spacing: 1px; padding: 5px 8px; border-radius: 5px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer; white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .ds-clear-btn:active { background: #2a0000; border-color: var(--blood); color: #e06868; }
+
+  /* ══════════════════════════════
+     TAB: BESTIARY
+  ══════════════════════════════ */
+  .coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 40px 24px;
+    text-align: center;
+    gap: 16px;
+  }
+  .cs-icon { font-size: 56px; opacity: 0.4; }
+  .cs-title {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 2px;
+    opacity: 0.7;
+  }
+  .cs-sub {
+    font-size: 15px;
+    color: var(--sub);
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 280px;
+  }
+  .cs-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--sub);
+    letter-spacing: 1px;
+  }
+
+  /* ══════════════════════════════
+     SCROLLBAR
+  ══════════════════════════════ */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- GLOBAL HEADER -->
+  <div class="app-header">
+    <div class="app-header-inner">
+      <div>
+        <div class="app-title">⚔ Caelos DM</div>
+        <div class="app-sub">Dungeon Master Dashboard</div>
+      </div>
+      <div class="party-badge" onclick="toggleParty()" id="partyBadge">Party A</div>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div class="tab-content">
+
+    <!-- ── COMBAT TAB ── -->
+    <div class="tab-panel active" id="tab-combat">
+
+      <div class="round-bar">
+        <div class="round-label">Round</div>
+        <button class="round-btn" onclick="changeRound(-1)">−</button>
+        <div class="round-num" id="roundNum">1</div>
+        <button class="round-btn" onclick="changeRound(1)">+</button>
+        <div class="round-note" id="roundNote">Opening</div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-red" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🔴</span><span class="c-title">Every Round — Never Skip</span></div>
+          <span class="chevron open">▶</span>
+        </div>
+        <div class="c-body open">
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Does the environment react?</div><span class="item-note">Fire spreading, ceiling crumbling, fog thickening, tide rising</span></div></div>
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">What does the enemy WANT right now?</div><span class="item-note">Not just "attack" — scared? Buying time? Protecting something?</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Triggered abilities on turn start/end?</div><span class="item-note">Auras, ongoing damage, condition timers, lair actions</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Legendary actions available?</div><span class="item-note">Use them — don't forget they exist</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Narrate cinematically</div><span class="item-note">"It lunges" not "it attacks." Make it feel dangerous.</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-orange" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🟠</span><span class="c-title">Start of Combat</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">State the stakes out loud</div><span class="item-note">What happens if they lose? What are they protecting?</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Set the scene — one vivid detail</div><span class="item-note">Sound, smell, the enemy's first move</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Have the statblock open</div><span class="item-note">HP, AC, recharge abilities — before initiative rolls</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Identify the most dangerous player</div><span class="item-note">Smart enemies target them or neutralize them early</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Note environmental interactions</div><span class="item-note">What can players use? What can backfire?</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-teal" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🟢</span><span class="c-title">During Combat</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Enemy reacts to damage</div><span class="item-note">Rage, fear, desperation — behavior shifts as HP drops</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Call out HP thresholds aloud</div><span class="item-note">"It's wounded" at ~50%, "barely standing" at ~25%</span></div></div>
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Put someone in genuine danger</div><span class="item-note">At least once — a player should feel the risk is REAL</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Reward creative solutions</div><span class="item-note">Clever ideas should work, or at least partially work</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Enemy moves and repositions</div><span class="item-note">They're fighting to survive too — use the terrain</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Spread the pain — vary targets</div><span class="item-note">Don't always hit the same player. Keep everyone nervous.</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-blue" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🔵</span><span class="c-title">End of Combat</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Describe the aftermath vividly</div><span class="item-note">The silence after the last blow matters</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Acknowledge what permanently changed</div><span class="item-note">Something real happened. The world is different now.</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Give players a beat to react</div><span class="item-note">Don't rush to loot. Let the moment breathe.</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Note threads opened by this fight</div><span class="item-note">Clues found, enemies fled, witnesses present</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-purple" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🟣</span><span class="c-title">Stakes — Keep It Real</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">What does losing COST them?</div><span class="item-note">Death, capture, NPC loss, location destroyed, secret revealed</span></div></div>
+          <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Is there a clock ticking?</div><span class="item-note">Someone escaping, ritual completing, reinforcements arriving</span></div></div>
+          <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Is an NPC in danger?</div><span class="item-note">Players fight harder when protecting someone they care about</span></div></div>
+          <div class="item gold" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Can the enemy escape or call for help?</div><span class="item-note">Retreat is a valid enemy action. Use it.</span></div></div>
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Someone should sweat today</div><span class="item-note">Easy wins feel hollow. Earned wins feel legendary.</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-yellow" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🟡</span><span class="c-title">Player Goes Down</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Narrate it — don't read the stat</div><span class="item-note">"Crashes into the wall" not "you're at 0 HP"</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Does the enemy press the advantage?</div><span class="item-note">Smart enemies finish downed targets or use them as leverage</span></div></div>
+          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Track death saves openly</div><span class="item-note">Let the whole table feel every roll</span></div></div>
+          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Two fails — remind table of stakes</div><span class="item-note">Don't let it feel routine. This is real.</span></div></div>
+        </div>
+      </div>
+
+      <div class="c-section">
+        <div class="c-head s-gray" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Active Conditions</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
+          <div class="cond-wrap">
+            <div class="cond-label">Enemy</div>
+            <div class="cond-row">
+              <span class="tag" onclick="toggleTag(this,'on-red')">Frightened</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Grappled</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Restrained</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Stunned</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Prone</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Poisoned</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Blinded</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Charmed</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Bloodied</span>
+              <span class="tag" onclick="toggleTag(this,'on-red')">Concentrating</span>
+            </div>
+            <div class="mini-div"></div>
+            <div class="cond-label">Party</div>
+            <div class="cond-row">
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Frightened</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Grappled</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Restrained</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Stunned</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Prone</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Poisoned</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Blinded</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Down (0hp)</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">2 Fails</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PC PARTY STATS -->
+      <div class="party-sec" id="pc-section">
+        <div class="party-sec-head" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">🧙</span><span class="c-title" id="pc-section-title">Party A — Combat Stats</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body" id="pc-grid-wrap">
+          <div class="party-toolbar">
+            <button class="edit-btn" id="edit-toggle-btn" onclick="toggleEditMode()">✎ Edit Stats</button>
+            <button class="edit-btn" onclick="resetHPs()">↺ Reset HP</button>
+            <button class="edit-btn long-rest-btn" onclick="longRest()">🌙 Long Rest</button>
+          </div>
+          <div class="pc-grid" id="pc-grid"></div>
+        </div>
+      </div>
+
+      <div class="reset-bar">
+        <button class="btn" onclick="resetChecks()">↺ Checks</button>
+        <button class="btn" onclick="resetRound()">↺ Round</button>
+        <button class="btn danger" onclick="resetAll()">↺ Full Reset</button>
+      </div>
+    </div>
+
+    <!-- ── BESTIARY TAB ── -->
+    <div class="tab-panel" id="tab-bestiary">
+      <div class="coming-soon">
+        <div class="cs-icon">🐉</div>
+        <div class="cs-title">Bestiary</div>
+        <div class="cs-sub">Creature statblocks, CR reference, and encounter notes. Coming in the next build.</div>
+        <div class="cs-tag">In Development</div>
+      </div>
+    </div>
+
+    <!-- ── ENCOUNTER TAB ── -->
+    <div class="tab-panel" id="tab-encounter">
+      <div class="coming-soon">
+        <div class="cs-icon">🎲</div>
+        <div class="cs-title">Encounter</div>
+        <div class="cs-sub">CR budget calculator, initiative tracker, and encounter builder. Coming in the next build.</div>
+        <div class="cs-tag">In Development</div>
+      </div>
+    </div>
+
+    <!-- ── PREP TAB ── -->
+    <div class="tab-panel" id="tab-prep">
+      <div class="coming-soon">
+        <div class="cs-icon">📋</div>
+        <div class="cs-title">Session Prep</div>
+        <div class="cs-sub">Pre-session checklist, stakes builder, and NPC quick reference. Coming in the next build.</div>
+        <div class="cs-tag">In Development</div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS TAB ── -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="coming-soon">
+        <div class="cs-icon">⚙️</div>
+        <div class="cs-title">Settings</div>
+        <div class="cs-sub">Party selector, preferences, and app configuration. Coming in the next build.</div>
+        <div class="cs-tag">In Development</div>
+      </div>
+    </div>
+
+  </div><!-- end tab-content -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('combat', this)">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Combat</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('bestiary', this)">
+      <span class="nav-icon">🐉</span>
+      <span class="nav-label">Bestiary</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('encounter', this)">
+      <span class="nav-icon">🎲</span>
+      <span class="nav-label">Encounter</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('prep', this)">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">Prep</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('settings', this)">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">Settings</span>
+    </button>
+  </nav>
+
+</div><!-- end app -->
+
+<script>
+  // ══════════════════════════════
+  // PC DATA — Update these with real stats!
+  // ══════════════════════════════
+  const partyData = {
+    A: [
+      { name: 'Anauk',  cls: 'Dwarf · Fighter · Rune Knight',
+        maxHp: 95, tempHp: 0, curHp: 95, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',       v: '17', hi: true },
+          { l: 'Init',     v: '+1' },
+          { l: 'PP',       v: '13' },
+          { l: 'STR Save', v: '+8' },
+          { l: 'Prof',     v: '+3' },
+        ],
+        note: 'CLOUD RUNE — redirect attack to another target' },
+
+      { name: 'The',    cls: 'Human · Monk',
+        maxHp: 68, tempHp: 0, curHp: 68, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',    v: '17', hi: true },
+          { l: 'Init',  v: '+4' },
+          { l: 'PP',    v: '16' },
+          { l: 'Ki DC', v: '15', hi: true },
+          { l: 'Prof',  v: '+3' },
+        ],
+        note: 'Face never visible. Unarmored Defense.' },
+
+      { name: 'Evelyn', cls: 'Vampire · Cleric/Barbarian',
+        maxHp: 52, tempHp: 0, curHp: 52, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',       v: '14', hi: true },
+          { l: 'Init',     v: '+2' },
+          { l: 'PP',       v: '14' },
+          { l: 'Spell DC', v: '16', hi: true },
+          { l: 'Spell +',  v: '+8' },
+        ],
+        note: 'Rage: resist B/P/S dmg, adv STR checks · ⚠ Track Concentration' },
+
+      { name: 'Lyle',   cls: 'Halfling · Class?',
+        maxHp: 58, tempHp: 0, curHp: 58, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',   v: '15', hi: true },
+          { l: 'Init', v: '+2' },
+          { l: 'PP',   v: '14' },
+          { l: 'Prof', v: '+3' },
+        ],
+        note: 'Lucky: reroll 1s on attack/ability/save' },
+
+      { name: 'Rooker', cls: 'Kenku · Rogue',
+        maxHp: 55, tempHp: 0, curHp: 55, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',      v: '15', hi: true },
+          { l: 'Init',    v: '+4' },
+          { l: 'PP',      v: '15' },
+          { l: 'Snk Atk', v: '4d6', hi: true },
+          { l: 'Prof',    v: '+3' },
+        ],
+        note: 'Sneak Attack needs advantage or adjacent ally' },
+    ],
+    B: [
+      { name: 'Lorelei', cls: 'Fire Genasi · Class?',
+        maxHp: 32, tempHp: 0, curHp: 32, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',   v: '14', hi: true },
+          { l: 'Init', v: '+2' },
+          { l: 'PP',   v: '12' },
+          { l: 'Prof', v: '+2' },
+        ],
+        note: 'Fire resistance. Darkvision 60ft.' },
+
+      { name: 'Val',     cls: 'Tiefling · Artificer',
+        maxHp: 38, tempHp: 0, curHp: 38, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',      v: '18', hi: true },
+          { l: 'Init',    v: '+0' },
+          { l: 'PP',      v: '11' },
+          { l: 'Spell DC', v: '13', hi: true },
+          { l: 'Spell +', v: '+5' },
+        ],
+        note: 'Infusions active — check for magic items on party' },
+
+      { name: 'Luella',  cls: 'Changeling · Rogue',
+        maxHp: 28, tempHp: 0, curHp: 28, deathSaves: { s: 0, f: 0 },
+        stats: [
+          { l: 'AC',      v: '14', hi: true },
+          { l: 'Init',    v: '+3' },
+          { l: 'PP',      v: '14' },
+          { l: 'Snk Atk', v: '2d6', hi: true },
+          { l: 'Prof',    v: '+2' },
+        ],
+        note: 'Changeling: can alter appearance at will' },
+    ]
+  };
+
+  let party = 'A';
+  let editMode = false;
+
+  function hpColor(cur, max) {
+    const pct = cur / max;
+    if (pct <= 0.25) return 'critical';
+    if (pct <= 0.5)  return 'low';
+    return '';
+  }
+  function hpBarColor(cur, max) {
+    const pct = cur / max;
+    if (pct <= 0.25) return '#9b1a1a';
+    if (pct <= 0.5)  return '#c8722a';
+    return '#2a8a2a';
+  }
+
+  function renderPCs() {
+    const grid = document.getElementById('pc-grid');
+    const title = document.getElementById('pc-section-title');
+    title.textContent = 'Party ' + party + ' — Combat Stats';
+    grid.innerHTML = '';
+
+    partyData[party].forEach((pc, idx) => {
+      const pct = Math.max(0, pc.curHp / pc.maxHp);
+      const col = hpColor(pc.curHp, pc.maxHp);
+      const barCol = hpBarColor(pc.curHp, pc.maxHp);
+      const isDanger = pc.curHp <= pc.maxHp * 0.25;
+      const pid = party + '-' + idx;
+
+      const card = document.createElement('div');
+      card.className = 'pc-card' + (isDanger ? ' danger-hp' : '') + (editMode ? ' editing' : '');
+
+      card.innerHTML = `
+        <div class="pc-card-top">
+          <span class="pc-name">${pc.name}</span>
+          <span class="pc-class">${pc.cls}</span>
+        </div>
+
+        <!-- HP DISPLAY -->
+        <div class="hp-section">
+          <div class="hp-main-row">
+            <div class="hp-cur-block">
+              <span class="hp-cur-lbl">Current HP</span>
+              <span class="hp-cur-val ${col}" id="hpval-${pid}">${pc.curHp}</span>
+            </div>
+            <div class="hp-side-block">
+              <div class="hp-side-item">
+                <span class="hp-side-lbl">Max</span>
+                ${editMode
+                  ? `<input class="inline-edit" type="number" value="${pc.maxHp}" id="maxhp-${pid}"
+                       oninput="liveUpdateMax('${party}',${idx},this.value)">`
+                  : `<span class="hp-side-val">${pc.maxHp}</span>`}
+              </div>
+              <div class="hp-side-item">
+                <span class="hp-side-lbl" style="color:#68a8d8">Temp</span>
+                <input class="inline-edit" type="number" value="${pc.tempHp}" min="0" id="temphp-${pid}"
+                  style="color:#68a8d8; border-color:#1a4a9a;"
+                  oninput="liveUpdateTemp('${party}',${idx},this.value)">
+              </div>
+            </div>
+          </div>
+
+          <div class="hp-bar-track">
+            <div class="hp-bar-fill" id="hpbar-${pid}"
+                 style="width:${Math.max(0,pct*100)}%; background:${barCol}"></div>
+          </div>
+
+          <!-- DMG / HEAL INPUT ROW -->
+          <div class="hp-action-row">
+            <div class="hp-action-group">
+              <span class="hp-action-lbl dmg-lbl">Damage</span>
+              <div class="hp-action-inputs">
+                <input class="hp-amt-input" type="number" min="0" placeholder="0"
+                  id="dmg-${pid}" inputmode="numeric">
+                <button class="hp-apply-btn dmg-btn" onclick="applyDmg('${party}',${idx})">Apply</button>
+              </div>
+            </div>
+            <div class="hp-divider-v"></div>
+            <div class="hp-action-group">
+              <span class="hp-action-lbl heal-lbl">Healing</span>
+              <div class="hp-action-inputs">
+                <input class="hp-amt-input" type="number" min="0" placeholder="0"
+                  id="heal-${pid}" inputmode="numeric">
+                <button class="hp-apply-btn heal-btn" onclick="applyHeal('${party}',${idx})">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAT PILLS -->
+        <div class="pc-stats">
+          ${pc.stats.map((s, si) => `
+            <div class="pc-stat${s.hi ? ' hi' : ''}">
+              <span class="pc-stat-lbl">${s.l}</span>
+              ${editMode
+                ? `<input class="stat-edit" type="text" value="${s.v}"
+                     oninput="partyData['${party}'][${idx}].stats[${si}].v=this.value">`
+                : `<span class="pc-stat-val">${s.v}</span>`}
+            </div>
+          `).join('')}
+        </div>
+
+        ${pc.note ? `<div class="pc-note${pc.note.includes('⚠') ? ' warn' : ''}">${pc.note}</div>` : ''}
+
+        <!-- DEATH SAVES -->
+        <div class="ds-row" id="ds-${pid}">
+          <div class="ds-group">
+            <span class="ds-lbl success-lbl">Successes</span>
+            <div class="ds-pips">
+              ${[0,1,2].map(i => `
+                <button class="ds-pip success-pip ${i < pc.deathSaves.s ? 'filled' : ''}"
+                  onclick="toggleDS('${party}',${idx},'s',${i})">●</button>
+              `).join('')}
+            </div>
+          </div>
+          <div class="ds-group">
+            <span class="ds-lbl fail-lbl">Failures</span>
+            <div class="ds-pips">
+              ${[0,1,2].map(i => `
+                <button class="ds-pip fail-pip ${i < pc.deathSaves.f ? 'filled' : ''}"
+                  onclick="toggleDS('${party}',${idx},'f',${i})">●</button>
+              `).join('')}
+            </div>
+          </div>
+          <button class="ds-clear-btn" onclick="clearDS('${party}',${idx})">✕ Clear</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // ── APPLY DAMAGE ──
+  function applyDmg(p, idx) {
+    const pid = p + '-' + idx;
+    const amt = parseInt(document.getElementById('dmg-' + pid).value) || 0;
+    if (!amt) return;
+    const pc = partyData[p][idx];
+    if (pc.tempHp >= amt) {
+      pc.tempHp -= amt;
+    } else {
+      const rem = amt - pc.tempHp;
+      pc.tempHp = 0;
+      pc.curHp = Math.max(0, pc.curHp - rem);
+    }
+    document.getElementById('dmg-' + pid).value = '';
+    updateHPDisplay(p, idx);
+  }
+
+  // ── APPLY HEALING ──
+  function applyHeal(p, idx) {
+    const pid = p + '-' + idx;
+    const amt = parseInt(document.getElementById('heal-' + pid).value) || 0;
+    if (!amt) return;
+    const pc = partyData[p][idx];
+    pc.curHp = Math.min(pc.maxHp, pc.curHp + amt);
+    document.getElementById('heal-' + pid).value = '';
+    updateHPDisplay(p, idx);
+  }
+
+  // ── UPDATE HP DISPLAY without full re-render ──
+  function updateHPDisplay(p, idx) {
+    const pc = partyData[p][idx];
+    const pid = p + '-' + idx;
+    const valEl = document.getElementById('hpval-' + pid);
+    const barEl = document.getElementById('hpbar-' + pid);
+    const card = valEl?.closest('.pc-card');
+    if (!valEl) return;
+    const col = hpColor(pc.curHp, pc.maxHp);
+    valEl.textContent = pc.curHp;
+    valEl.className = 'hp-cur-val ' + col;
+    barEl.style.width = Math.max(0, (pc.curHp / pc.maxHp) * 100) + '%';
+    barEl.style.background = hpBarColor(pc.curHp, pc.maxHp);
+    if (card) {
+      card.classList.toggle('danger-hp', pc.curHp <= pc.maxHp * 0.25);
+    }
+    // update temp display
+    const tempEl = document.getElementById('temphp-' + pid);
+    if (tempEl) tempEl.value = pc.tempHp;
+  }
+
+  function liveUpdateMax(p, idx, val) {
+    const v = parseInt(val);
+    if (!isNaN(v) && v > 0) {
+      partyData[p][idx].maxHp = v;
+      partyData[p][idx].curHp = Math.min(partyData[p][idx].curHp, v);
+    }
+  }
+  function liveUpdateTemp(p, idx, val) {
+    partyData[p][idx].tempHp = Math.max(0, parseInt(val) || 0);
+  }
+
+  function toggleEditMode() {
+    editMode = !editMode;
+    const btn = document.getElementById('edit-toggle-btn');
+    btn.textContent = editMode ? '✔ Lock Stats' : '✎ Edit Stats';
+    btn.classList.toggle('active', editMode);
+    renderPCs();
+  }
+
+  function resetHPs() {
+    partyData[party].forEach(pc => { pc.curHp = pc.maxHp; pc.tempHp = 0; });
+    renderPCs();
+  }
+
+  function longRest() {
+    partyData[party].forEach(pc => {
+      pc.curHp = pc.maxHp;
+      pc.tempHp = 0;
+      pc.deathSaves = { s: 0, f: 0 };
+    });
+    renderPCs();
+  }
+
+  // ── DEATH SAVES ──
+  function toggleDS(p, idx, type, pip) {
+    const ds = partyData[p][idx].deathSaves;
+    // tapping filled pip clears from that pip down; tapping empty fills up to it
+    ds[type] = ds[type] > pip ? pip : pip + 1;
+    ds[type] = Math.max(0, Math.min(3, ds[type]));
+    // re-render just the death save row
+    const pid = p + '-' + idx;
+    const dsRow = document.getElementById('ds-' + pid);
+    if (!dsRow) return;
+    const pc = partyData[p][idx];
+    dsRow.querySelectorAll('.success-pip').forEach((btn, i) => {
+      btn.classList.toggle('filled', i < pc.deathSaves.s);
+    });
+    dsRow.querySelectorAll('.fail-pip').forEach((btn, i) => {
+      btn.classList.toggle('filled', i < pc.deathSaves.f);
+    });
+  }
+
+  function clearDS(p, idx) {
+    partyData[p][idx].deathSaves = { s: 0, f: 0 };
+    const pid = p + '-' + idx;
+    const dsRow = document.getElementById('ds-' + pid);
+    if (!dsRow) return;
+    dsRow.querySelectorAll('.ds-pip').forEach(btn => btn.classList.remove('filled'));
+  }
+
+  // ── PARTY TOGGLE ──
+  function toggleParty() {
+    party = party === 'A' ? 'B' : 'A';
+    document.getElementById('partyBadge').textContent = 'Party ' + party;
+    renderPCs();
+  }
+
+  renderPCs();
+
+  // ── TAB SWITCHING ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+    document.querySelector('.tab-content').scrollTop = 0;
+  }
+
+  // ── ROUND COUNTER ──
+  let round = 1;
+  const notes = [[1,"Opening"],[3,"Intensifying"],[5,"Escalate"],[7,"Desperate"],[10,"End this"]];
+  function getNote(r) {
+    let n = notes[0][1];
+    for (const [k,v] of notes) { if (r >= k) n = v; }
+    return n;
+  }
+  function changeRound(d) {
+    round = Math.max(1, round + d);
+    document.getElementById('roundNum').textContent = round;
+    document.getElementById('roundNote').textContent = getNote(round);
+  }
+
+  // ── COMBAT SECTIONS ──
+  function toggleSec(hdr) {
+    const body = hdr.nextElementSibling;
+    const ch = hdr.querySelector('.chevron');
+    body.classList.toggle('open');
+    ch.classList.toggle('open');
+  }
+
+  // ── CHECKBOXES ──
+  function toggle(item) {
+    item.querySelector('.cb').classList.toggle('checked');
+    item.querySelector('.item-text').classList.toggle('checked');
+  }
+
+  // ── CONDITION TAGS ──
+  function toggleTag(tag, cls) {
+    if (tag.classList.contains(cls)) tag.classList.remove(cls);
+    else { tag.classList.remove('on-red','on-blue'); tag.classList.add(cls); }
+  }
+
+  // ── RESETS ──
+  function resetChecks() {
+    document.querySelectorAll('.cb.checked').forEach(e => e.classList.remove('checked'));
+    document.querySelectorAll('.item-text.checked').forEach(e => e.classList.remove('checked'));
+    document.querySelectorAll('.tag').forEach(e => e.classList.remove('on-red','on-blue'));
+  }
+  function resetRound() {
+    round = 1;
+    document.getElementById('roundNum').textContent = 1;
+    document.getElementById('roundNote').textContent = 'Opening';
+  }
+  function resetAll() { resetChecks(); resetRound(); }
+</script>
+</body>
+</html>
