@@ -526,6 +526,7 @@
   .s-purple .c-title { color: #c068e0; }
   .s-yellow .c-title { color: #d8d868; }
   .s-gray .c-title   { color: #888; }
+  .s-ember .c-title  { color: #ff7a2f; }
 
   .chevron { font-size: 12px; color: var(--sub); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
   .chevron.open { transform: rotate(90deg); }
@@ -2163,35 +2164,157 @@
   .aoe-flash { animation: aoe-hit 0.4s ease-out; }
   @keyframes aoe-hit {
     0%   { transform: scale(1); }
-    25%  { transform: scale(1.02); filter: brightness(1.25); }
-    100% { transform: scale(1); filter: brightness(1); }
+    20%  { transform: scale(1.015); filter: brightness(1.3); }
+    100% { transform: scale(1);    filter: brightness(1); }
   }
+  /* ripple on button press */
+  .aoe-btn { position: relative; overflow: hidden; }
+  .aoe-ripple {
+    position: absolute; border-radius: 50%; transform: scale(0);
+    opacity: 0.45; pointer-events: none;
+    animation: aoe-ripple-expand 0.5s ease-out forwards;
+  }
+  .aoe-btn.dmg .aoe-ripple, .aoe-btn.dmg.enemy .aoe-ripple   { background: rgba(220,80,80,0.6); }
+  .aoe-btn.heal .aoe-ripple, .aoe-btn.heal.enemy .aoe-ripple  { background: rgba(60,200,100,0.5); }
+  .aoe-btn.dmg.both .aoe-ripple  { background: rgba(200,80,220,0.5); }
+  .aoe-btn.heal.both .aoe-ripple { background: rgba(232,200,122,0.5); }
+  @keyframes aoe-ripple-expand {
+    to { transform: scale(4); opacity: 0; }
+  }
+  /* screen-edge flash for "everyone" buttons */
+  .aoe-edge-flash {
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: 0; animation: aoe-edge 0.55s ease-out forwards;
+  }
+  .aoe-edge-flash.dmg  { box-shadow: inset 0 0 80px 20px rgba(220,60,60,0.35); }
+  .aoe-edge-flash.heal { box-shadow: inset 0 0 80px 20px rgba(60,200,100,0.25); }
+  @keyframes aoe-edge {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  /* floating damage/heal numbers */
+  .aoe-float-num {
+    position: fixed; pointer-events: none; z-index: 1000;
+    font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700;
+    animation: float-num 1.1s ease-out forwards;
+  }
+  @keyframes float-num {
+    0%   { opacity: 1; transform: translateY(0)   scale(1); }
+    20%  { opacity: 1; transform: translateY(-8px) scale(1.15); }
+    100% { opacity: 0; transform: translateY(-52px) scale(0.8); }
+  }
+  /* feedback label pop-in */
+  .aoe-targets.pop { animation: lbl-pop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes lbl-pop {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  /* ── SELECTIVE TARGET PICKER ── */
+  .aoe-custom-toggle {
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 5px; cursor: pointer;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--sub); transition: all 0.15s; margin-top: 6px;
+  }
+  .aoe-custom-toggle.active { border-color: var(--ember); color: var(--ember); background: rgba(200,114,42,0.08); }
+  .aoe-custom-wrap {
+    overflow: hidden; max-height: 0;
+    transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+    opacity: 0;
+  }
+  .aoe-custom-wrap.open { max-height: 200px; opacity: 1; }
+  .aoe-custom-section {
+    padding: 8px 0 4px;
+  }
+  .aoe-custom-lbl {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.7px; color: var(--sub);
+    margin-bottom: 5px; display: flex; align-items: center; gap: 8px;
+  }
+  .aoe-custom-select-all {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.4px; padding: 2px 7px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--sub); cursor: pointer; transition: all 0.12s;
+  }
+  .aoe-custom-select-all:active { background: var(--raised); }
+  .aoe-target-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .aoe-target-chip {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--border); color: var(--sub); background: transparent;
+    transition: all 0.13s; user-select: none; letter-spacing: 0.2px;
+  }
+  .aoe-target-chip:active { transform: scale(0.92); }
+  .aoe-target-chip.selected.pc  { background: rgba(42,106,170,0.15); border-color: #2a6aaa; color: #88c8e8; }
+  .aoe-target-chip.selected.enemy { background: rgba(155,26,26,0.15); border-color: var(--blood); color: #e08888; }
 
   /* ══════════════════════════════
      COMBAT TIMER
   ══════════════════════════════ */
   .combat-timer-wrap {
     display: flex; align-items: center; gap: 10px;
-    padding: 6px 16px;
+    padding: 8px 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .timer-digit-wrap {
+    position: relative; display: inline-block;
   }
   .timer-display {
-    font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700;
-    color: var(--gold); letter-spacing: 2px; min-width: 80px;
+    font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700;
+    color: var(--gold); letter-spacing: 3px; min-width: 88px;
     text-shadow: 0 0 12px rgba(232,200,122,0.2);
-    transition: color 0.3s;
+    transition: color 0.8s ease, text-shadow 0.8s ease;
+    display: block; position: relative; z-index: 1;
   }
-  .timer-display.running { animation: timer-tick 1s ease-in-out infinite; }
-  @keyframes timer-tick {
-    0%,100% { text-shadow: 0 0 8px rgba(232,200,122,0.2); }
-    50%      { text-shadow: 0 0 20px rgba(232,200,122,0.5); }
+  .timer-display.running {
+    animation: timer-breathe 2s ease-in-out infinite;
   }
-  .timer-display.warn { color: var(--ember); }
-  .timer-display.danger { color: #e06868; animation: timer-danger 0.8s ease-in-out infinite; }
-  @keyframes timer-danger {
-    0%,100% { text-shadow: 0 0 6px rgba(220,80,80,0.3); }
-    50%      { text-shadow: 0 0 18px rgba(220,80,80,0.7); }
+  @keyframes timer-breathe {
+    0%,100% { text-shadow: 0 0 6px rgba(232,200,122,0.15); }
+    50%      { text-shadow: 0 0 22px rgba(232,200,122,0.55); }
+  }
+  .timer-display.warn {
+    color: var(--ember);
+    animation: timer-breathe-warn 2s ease-in-out infinite;
+  }
+  @keyframes timer-breathe-warn {
+    0%,100% { text-shadow: 0 0 6px rgba(200,114,42,0.2); }
+    50%      { text-shadow: 0 0 24px rgba(200,114,42,0.6); }
+  }
+  .timer-display.danger {
+    color: #e06868;
+    animation: timer-danger-pulse 0.9s ease-in-out infinite;
+  }
+  @keyframes timer-danger-pulse {
+    0%,100% { text-shadow: 0 0 8px rgba(220,60,60,0.3); letter-spacing: 3px; }
+    50%      { text-shadow: 0 0 28px rgba(220,60,60,0.8); letter-spacing: 3.5px; }
+  }
+  /* minute-mark bounce — class toggled by JS */
+  .timer-display.minute-pop {
+    animation: timer-minute-pop 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards !important;
+  }
+  @keyframes timer-minute-pop {
+    0%   { transform: scale(1);    filter: brightness(1); }
+    30%  { transform: scale(1.18); filter: brightness(2.2) saturate(0); }
+    60%  { transform: scale(0.96); filter: brightness(1.4); }
+    100% { transform: scale(1);    filter: brightness(1); }
+  }
+  /* sparkle particles container */
+  .timer-sparkles {
+    position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: visible;
+  }
+  .t-spark {
+    position: absolute; border-radius: 50%;
+    background: white; opacity: 0;
+    animation: t-spark-fly var(--dur) ease-out var(--delay) forwards;
+  }
+  @keyframes t-spark-fly {
+    0%   { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.1); }
   }
   .timer-lbl {
     font-family: 'Rajdhani', sans-serif; font-size: 10px;
@@ -2615,6 +2738,499 @@
   }
   .s-gold .c-title { color:rgba(232,200,122,0.9) !important; }
 
+
+  /* ══════════════════════════════════════════════════════
+     ROUND TRANSITION MODAL
+  ══════════════════════════════════════════════════════ */
+
+  /* ── Overlay ── */
+  .round-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.0);
+    backdrop-filter: blur(0px);
+    z-index: 9000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    animation: modal-overlay-in 0.3s ease forwards;
+  }
+  @keyframes modal-overlay-in {
+    0%   { background: rgba(0,0,0,0.0); backdrop-filter: blur(0px); }
+    100% { background: rgba(0,0,0,0.78); backdrop-filter: blur(4px); }
+  }
+
+  /* ── Sheet ── */
+  .round-modal {
+    background: var(--surface);
+    background-image:
+      repeating-linear-gradient(180deg,
+        rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px,
+        transparent 1px, transparent 10px),
+      /* subtle ember vignette at top */
+      radial-gradient(ellipse 90% 60px at 50% 0%, rgba(180,50,10,0.12) 0%, transparent 100%);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-top: 2px solid rgba(200,80,20,0.4);
+    border-radius: 18px 18px 0 0;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 0 0 env(safe-area-inset-bottom, 12px) 0;
+    animation: modal-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6), 0 -2px 0 rgba(200,80,20,0.25);
+    position: relative;
+  }
+  @keyframes modal-slide-up {
+    from { transform: translateY(110%); }
+    to   { transform: translateY(0); }
+  }
+
+  /* Closing animation class applied by JS */
+  .round-modal-overlay.closing {
+    animation: modal-overlay-out 0.22s ease forwards;
+  }
+  .round-modal-overlay.closing .round-modal {
+    animation: modal-slide-down 0.22s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+  @keyframes modal-overlay-out {
+    to { opacity: 0; }
+  }
+  @keyframes modal-slide-down {
+    to { transform: translateY(110%); }
+  }
+
+  /* ── Header ── */
+  .round-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 11px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+    overflow: hidden;
+  }
+  /* Ember sweep scan line across header */
+  .round-modal-header::after {
+    content: '';
+    position: absolute;
+    left: -40%;
+    top: 0; bottom: 0;
+    width: 30%;
+    background: linear-gradient(90deg, transparent 0%, rgba(220,100,30,0.12) 50%, transparent 100%);
+    animation: header-sweep 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes header-sweep {
+    0%   { left: -40%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 130%; opacity: 0; }
+  }
+  .round-modal-icon {
+    font-size: 22px;
+    animation: icon-pulse 2s ease-in-out infinite;
+  }
+  @keyframes icon-pulse {
+    0%, 100% { transform: scale(1);   filter: drop-shadow(0 0 0px rgba(220,80,20,0)); }
+    50%       { transform: scale(1.15); filter: drop-shadow(0 0 6px rgba(220,80,20,0.8)); }
+  }
+  .round-modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    letter-spacing: 0.5px;
+  }
+  .round-modal-round {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    color: #c87040;
+    background: rgba(200,80,20,0.12);
+    border: 1px solid rgba(200,80,20,0.3);
+    border-radius: 6px;
+    padding: 2px 10px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    animation: badge-glow 2.5s ease-in-out infinite;
+  }
+  @keyframes badge-glow {
+    0%, 100% { box-shadow: 0 0 0px rgba(200,80,20,0); }
+    50%       { box-shadow: 0 0 8px rgba(200,80,20,0.5); }
+  }
+
+  /* ── Body ── */
+  .round-modal-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ── Check items — stagger in ── */
+  .round-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--raised);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 3px solid var(--item-accent, var(--border));
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(-12px);
+    animation: item-slide-in 0.25s ease forwards;
+    /* --item-delay set inline by JS */
+    animation-delay: var(--item-delay, 0s);
+  }
+  @keyframes item-slide-in {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Shimmer on hover */
+  .round-check-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.035) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .round-check-item:active::after { opacity: 1; }
+
+  /* ── Resolved states ── */
+  .round-check-item.resolved-failed {
+    --item-accent: #c83c3c;
+    animation: item-resolve-fail 0.3s cubic-bezier(0.34,1.2,0.64,1) forwards;
+  }
+  .round-check-item.resolved-success {
+    --item-accent: #3a7a3a;
+    animation: item-resolve-success 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes item-resolve-fail {
+    0%   { opacity: 1; }
+    40%  { background: rgba(200,40,40,0.1); }
+    100% { opacity: 0.45; background: var(--raised); }
+  }
+  @keyframes item-resolve-success {
+    0%   { opacity: 1; transform: scale(1); }
+    40%  { transform: scale(1.025); background: rgba(60,160,80,0.14); }
+    100% { opacity: 0.42; transform: scale(1); background: var(--raised); }
+  }
+
+  /* ── Failed button (left) ── */
+  .rci-fail-btn {
+    flex-shrink: 0;
+    align-self: center;
+    background: rgba(200,60,60,0.10);
+    border: 1px solid rgba(200,60,60,0.25);
+    border-radius: 7px;
+    color: #c87070;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+    white-space: nowrap;
+    min-width: 62px;
+  }
+  .rci-fail-btn:active:not(:disabled) {
+    transform: scale(0.93);
+    background: rgba(200,60,60,0.25);
+  }
+  .rci-fail-btn.chosen {
+    background: rgba(200,40,40,0.22);
+    border-color: rgba(220,60,60,0.55);
+    color: #f07070;
+    box-shadow: 0 0 8px rgba(200,40,40,0.35);
+    animation: btn-chosen-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .rci-fail-btn:disabled:not(.chosen) { opacity: 0.25; cursor: default; }
+
+  /* ── Success button (right) ── */
+  .rci-success-btn {
+    flex-shrink: 0;
+    align-self: center;
+    background: rgba(60,160,60,0.10);
+    border: 1px solid rgba(60,160,60,0.25);
+    border-radius: 7px;
+    color: #70c870;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+    white-space: nowrap;
+    min-width: 68px;
+  }
+  .rci-success-btn:active:not(:disabled) {
+    transform: scale(0.93);
+    background: rgba(60,160,60,0.25);
+  }
+  .rci-success-btn.chosen {
+    background: rgba(40,160,40,0.22);
+    border-color: rgba(60,200,60,0.55);
+    color: #80e880;
+    box-shadow: 0 0 8px rgba(40,180,40,0.4);
+    animation: btn-chosen-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .rci-success-btn:disabled:not(.chosen) { opacity: 0.25; cursor: default; }
+
+  @keyframes btn-chosen-pop {
+    0%   { transform: scale(0.88); }
+    100% { transform: scale(1); }
+  }
+
+  /* ── Item text ── */
+  .rci-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .rci-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .rci-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+    text-transform: uppercase;
+  }
+  .rci-tag.purple { background: rgba(160,80,200,0.22); color: #c890f0; }
+  .rci-tag.blue   { background: rgba(80,140,220,0.22); color: #88b8f8; }
+  .rci-tag.green  { background: rgba(60,180,120,0.22); color: #70d8a0; }
+  .rci-tag.red    { background: rgba(200,60,60,0.22);  color: #f07070; }
+  .rci-tag.gold   { background: rgba(200,170,60,0.22); color: #e0c860; }
+  .rci-tag.gray   { background: rgba(120,120,120,0.22);color: #aaa; }
+  .rci-tag.conc   { background: rgba(200,170,60,0.22); color: #e0c860; }
+
+  /* ── Progress bar ── */
+  .round-modal-progress-wrap {
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .round-modal-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #c85014, #e8a040);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.35s cubic-bezier(0.34,1.2,0.64,1);
+    box-shadow: 0 0 6px rgba(200,80,20,0.6);
+  }
+  .round-modal-progress-bar.complete {
+    background: linear-gradient(90deg, #2d8a2d, #60d060);
+    box-shadow: 0 0 8px rgba(80,200,80,0.6);
+    animation: bar-complete-pulse 0.6s ease;
+  }
+  @keyframes bar-complete-pulse {
+    0%   { box-shadow: 0 0 8px rgba(80,200,80,0.6); }
+    50%  { box-shadow: 0 0 20px rgba(80,200,80,1); }
+    100% { box-shadow: 0 0 8px rgba(80,200,80,0.6); }
+  }
+  .round-modal-progress-txt {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    text-align: center;
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+  .round-modal-progress-txt.complete { color: #60d060; }
+
+  /* ── Footer ── */
+  .round-modal-footer {
+    padding: 10px 14px 4px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  /* ── Advance button ── */
+  .round-modal-advance {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #c85014 0%, #8b2500 100%);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.3s;
+  }
+  /* Shimmer sweep on the button when ready */
+  .round-modal-advance::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -60%; bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .round-modal-advance.ready::before {
+    opacity: 1;
+    animation: btn-shimmer 1.8s ease-in-out infinite;
+  }
+  @keyframes btn-shimmer {
+    0%   { left: -60%; }
+    100% { left: 130%; }
+  }
+  .round-modal-advance.ready {
+    box-shadow: 0 0 18px rgba(200,80,20,0.55), 0 4px 12px rgba(0,0,0,0.4);
+    animation: btn-ready-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes btn-ready-pulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(200,80,20,0.45), 0 4px 12px rgba(0,0,0,0.4); }
+    50%       { box-shadow: 0 0 28px rgba(200,80,20,0.8), 0 4px 16px rgba(0,0,0,0.5); }
+  }
+  .round-modal-advance:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+    background: var(--raised);
+    color: var(--sub);
+    box-shadow: none;
+  }
+  .round-modal-advance:not(:disabled):active {
+    transform: scale(0.97);
+  }
+  /* Fire burst when tapped */
+  .round-modal-advance.firing {
+    animation: btn-fire 0.35s ease forwards;
+  }
+  @keyframes btn-fire {
+    0%   { transform: scale(1); box-shadow: 0 0 18px rgba(200,80,20,0.5); }
+    30%  { transform: scale(1.04); box-shadow: 0 0 40px rgba(220,140,20,1); }
+    100% { transform: scale(1); }
+  }
+
+  /* ── Round number bump when advancing ── */
+  @keyframes round-num-slam {
+    0%   { transform: scale(1); color: var(--text); }
+    30%  { transform: scale(1.6); color: #ff7a2f; filter: drop-shadow(0 0 8px rgba(255,100,20,0.9)); }
+    100% { transform: scale(1); color: var(--text); filter: none; }
+  }
+  .round-num.slam {
+    animation: round-num-slam 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  /* ── Screen flash on advance ── */
+  .round-advance-flash {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(220,100,20,0.35) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 9999;
+    animation: advance-flash 0.5s ease forwards;
+  }
+  @keyframes advance-flash {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* ── Skip link ── */
+  .round-modal-skip {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--sub);
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    padding: 8px;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s;
+  }
+  .round-modal-skip:active { opacity: 1; }
+
+  /* ── Clear condition button ── */
+  .rci-clear-btn {
+    flex-shrink: 0;
+    align-self: center;
+    background: rgba(200,60,60,0.12);
+    border: 1px solid rgba(200,60,60,0.3);
+    border-radius: 7px;
+    color: #f07070;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 4px 9px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s, opacity 0.2s;
+    white-space: nowrap;
+  }
+  .rci-clear-btn:active {
+    transform: scale(0.94);
+    background: rgba(200,60,60,0.25);
+  }
+  .rci-clear-btn.cleared {
+    background: rgba(60,140,60,0.15);
+    border-color: rgba(60,180,60,0.3);
+    color: #60d060;
+    cursor: default;
+    opacity: 0.7;
+  }
+  .round-check-item.resolved .rci-clear-btn:not(.cleared) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* ── Empty state ── */
+  .round-modal-empty {
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--sub);
+    padding: 20px 0 10px;
+    animation: empty-fade-in 0.4s ease;
+  }
+  @keyframes empty-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .round-modal-empty .empty-check {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 8px;
+    animation: empty-check-bounce 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+  }
+  @keyframes empty-check-bounce {
+    from { transform: scale(0.3); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -2635,8 +3251,44 @@
   <!-- TAB CONTENT -->
   <div class="tab-content">
 
-    <!-- ── COMBAT TAB ── -->
+    
+  <!-- ════════════════════════════════════════════════════════════════
+    TODO / WHAT TO DO NEXT
+    ════════════════════════════════════════════════════════════════
+
+    1. CODEX TAB (replace Encounter tab)
+       - Full Caelos reference brain: regions, factions, NPCs, lore
+       - Searchable + cross-referenced entries
+       - Session recaps, timeline, active threads
+       - Big project — needs its own focused session
+
+    2. MAGIC ITEM INVENTORY
+       - Belongs in Combat tab (active info, not reference)
+       - Per-PC collapsible section near party stats
+       - Track: item name, attunement, charges, passive effects
+       - Both parties (A and B)
+
+    3. WEATHER TAB EXPANSION
+       - Travel pace / overland consequences (exhaustion, visibility, foraging)
+       - Caelos-specific supernatural weather (ash clouds, Calmeri blizzards, etc.)
+       - Season + time-of-day context from calendar
+       - Adjust flavor text based on current month/region
+
+  ════════════════════════════════════════════════════════════════ -->
+
+<!-- ── COMBAT TAB ── -->
     <div class="tab-panel active" id="tab-combat">
+
+      <!-- COMBAT TIMER -->
+      <div class="combat-timer-wrap">
+        <span class="timer-lbl">⏱ Combat</span>
+        <div class="timer-digit-wrap" id="timerDigitWrap">
+          <span class="timer-display" id="timerDisplay">00:00</span>
+          <div class="timer-sparkles" id="timerSparkles"></div>
+        </div>
+        <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">Start</button>
+        <button class="timer-btn" onclick="resetTimer()" style="margin-left:4px">Reset</button>
+      </div>
 
       <div class="round-bar">
         <div class="round-label">Round</div>
@@ -2645,14 +3297,6 @@
         <button class="round-btn" onclick="changeRound(1)">+</button>
         <div class="round-note" id="roundNote">Opening</div>
         <div class="surprise-toggle"><button class="surprise-btn" id="surpriseBtn" onclick="toggleSurprise()">⚡ Surprise</button></div>
-      </div>
-
-      <!-- COMBAT TIMER -->
-      <div class="combat-timer-wrap">
-        <span class="timer-lbl">⏱ Combat</span>
-        <span class="timer-display" id="timerDisplay">00:00</span>
-        <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">Start</button>
-        <button class="timer-btn" onclick="resetTimer()" style="margin-left:4px">Reset</button>
       </div>
 
       <div class="c-section">
@@ -2725,18 +3369,6 @@
         </div>
       </div>
 
-      <div class="c-section" id="enemy-cond-section">
-        <div class="c-head s-gray" onclick="toggleSec(this)">
-          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Enemies</span></div>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="c-body">
-          <div id="activeEnemyTracker" class="enemy-tracker">
-            <div style="padding:6px 4px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--sub)">No active enemies. Deploy from Bestiary.</div>
-          </div>
-        </div>
-      </div>
-
       <!-- BATTLEFIELD EFFECTS -->
       <div class="c-section" id="bf-section">
         <div class="c-head s-red" onclick="toggleSec(this)" id="bf-head">
@@ -2804,23 +3436,60 @@
         </div>
       </div>
 
-      <!-- AOE BROADCAST -->
-      <div class="aoe-section">
-        <div class="aoe-section-head">
-          <span class="aoe-section-title">💥 Broadcast Damage / Healing</span>
-          <span class="aoe-targets" id="aoeTargetCount"></span>
+<div class="c-section" id="enemy-cond-section">
+        <div class="c-head s-gray" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Enemies</span></div>
+          <span class="chevron">▶</span>
         </div>
+        <div class="c-body">
+          <div id="activeEnemyTracker" class="enemy-tracker">
+            <div style="padding:6px 4px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--sub)">No active enemies. Deploy from Bestiary.</div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <!-- AOE BROADCAST -->
+      <div class="c-section" id="aoe-section">
+        <div class="c-head s-ember" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">💥</span><span class="c-title">Broadcast Damage / Healing</span></div>
+          <span class="aoe-targets" id="aoeTargetCount"></span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
         <div class="aoe-input-row">
           <input class="aoe-input" type="number" min="0" placeholder="Amount" id="aoeAmt" inputmode="numeric">
           <span class="aoe-mod-hint" id="aoeModeHint">Enter amount, then choose a target</span>
         </div>
         <div class="aoe-btn-grid">
-          <button class="aoe-btn dmg" onclick="broadcastAoE('dmg','party')">⚔ Dmg Party</button>
-          <button class="aoe-btn heal" onclick="broadcastAoE('heal','party')">💚 Heal Party</button>
-          <button class="aoe-btn dmg enemy" onclick="broadcastAoE('dmg','enemies')">⚔ Dmg Enemies</button>
-          <button class="aoe-btn heal enemy" onclick="broadcastAoE('heal','enemies')">💚 Heal Enemies</button>
-          <button class="aoe-btn dmg both" onclick="broadcastAoE('dmg','both')">💥 Dmg Everyone</button>
-          <button class="aoe-btn heal both" onclick="broadcastAoE('heal','both')">✨ Heal Everyone</button>
+          <button class="aoe-btn dmg"        onclick="broadcastAoE('dmg','party',   event)">⚔ Dmg Party</button>
+          <button class="aoe-btn heal"       onclick="broadcastAoE('heal','party',  event)">💚 Heal Party</button>
+          <button class="aoe-btn dmg enemy"  onclick="broadcastAoE('dmg','enemies', event)">⚔ Dmg Enemies</button>
+          <button class="aoe-btn heal enemy" onclick="broadcastAoE('heal','enemies',event)">💚 Heal Enemies</button>
+          <button class="aoe-btn dmg both"   onclick="broadcastAoE('dmg','both',    event)">💥 Dmg Everyone</button>
+          <button class="aoe-btn heal both"  onclick="broadcastAoE('heal','both',   event)">✨ Heal Everyone</button>
+        </div>
+        <!-- Custom Target Picker -->
+        <button class="aoe-custom-toggle" id="aoeCustomToggle" onclick="toggleAoeCustom()">🎯 Custom Targets</button>
+        <div class="aoe-custom-wrap" id="aoeCustomWrap">
+          <div class="aoe-custom-section">
+            <div class="aoe-custom-lbl">
+              Party
+              <button class="aoe-custom-select-all" onclick="aoeSelectAll('pc')">All</button>
+              <button class="aoe-custom-select-all" onclick="aoeClearAll('pc')">None</button>
+            </div>
+            <div class="aoe-target-chips" id="aoePartyChips"></div>
+          </div>
+          <div class="aoe-custom-section">
+            <div class="aoe-custom-lbl">
+              Enemies
+              <button class="aoe-custom-select-all" onclick="aoeSelectAll('enemy')">All</button>
+              <button class="aoe-custom-select-all" onclick="aoeClearAll('enemy')">None</button>
+            </div>
+            <div class="aoe-target-chips" id="aoeEnemyChips"></div>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -3219,7 +3888,7 @@
   const pcNotes = {};
   function updatePCNote(pid, val) {
     pcNotes[pid] = val;
-    const el = document.getElementById('qnote-' + pid);
+    const el = document.getElementById(`qnote-${pid}`);
     if (el) el.classList.toggle('has-content', val.trim().length > 0);
     // auto-grow
     if (el) { el.style.height = 'auto'; el.style.height = Math.min(80, el.scrollHeight) + 'px'; }
@@ -3232,36 +3901,22 @@
   }
   // Called when Concentrating condition toggled — show/hide the field
   function syncConcField(pid, isOn) {
-    const wrap = document.getElementById('conc-' + pid);
+    const wrap = document.getElementById(`conc-${pid}`);
     if (!wrap) return;
     wrap.classList.toggle('conc-active', isOn);
     if (!isOn) {
       pcConcentration[pid] = '';
-      const inp = document.getElementById('conc-inp-' + pid);
+      const inp = document.getElementById(`conc-inp-${pid}`);
       if (inp) inp.value = '';
     } else {
-      setTimeout(() => { const inp = document.getElementById('conc-inp-' + pid); if (inp) inp.focus(); }, 320);
+      setTimeout(() => { const inp = document.getElementById(`conc-inp-${pid}`); if (inp) inp.focus(); }, 320);
     }
   }
 
   // ══════════════════════════════════════════════════════
   // ENEMY CONDITIONS — per instance (key: "gi-ii")
   // ══════════════════════════════════════════════════════
-  const ENEMY_CONDITIONS = [
-    { name: 'Frightened',    col: 'purple' },
-    { name: 'Charmed',       col: 'purple' },
-    { name: 'Stunned',       col: 'purple' },
-    { name: 'Incapacitated', col: 'gray'   },
-    { name: 'Poisoned',      col: 'green'  },
-    { name: 'Blinded',       col: 'green'  },
-    { name: 'Grappled',      col: 'blue'   },
-    { name: 'Restrained',    col: 'blue'   },
-    { name: 'Prone',         col: 'blue'   },
-    { name: 'Invisible',     col: 'blue'   },
-    { name: 'Concentrating', col: 'gold'   },
-    { name: 'Bloodied',      col: 'red'    },
-    { name: 'Exhausted',     col: 'gray'   },
-  ];
+  // ENEMY_CONDITIONS merged into CONDITIONS below (single source of truth)
   const enemyConds = {}; // key "gi-ii" → array of condition names
 
   function toggleEnemyCond(gi, ii, name) {
@@ -3271,7 +3926,7 @@
     if (idx >= 0) enemyConds[key].splice(idx, 1);
     else enemyConds[key].push(name);
     // Update just the cond row without full re-render
-    const condRow = document.getElementById('econd-row-' + gi + '-' + ii);
+    const condRow = document.getElementById(`econd-row-${gi}-${ii}`);
     if (condRow) {
       condRow.querySelectorAll('.enemy-cond-tag').forEach(tag => {
         const ec = ENEMY_CONDITIONS.find(e => e.name === tag.textContent);
@@ -3316,32 +3971,173 @@
     updateTimerDisplay();
   }
 
+  let timerLastMinute = 0;
+
   function updateTimerDisplay() {
     const el = document.getElementById('timerDisplay');
     if (!el) return;
     const m = Math.floor(timerSeconds / 60);
     const s = timerSeconds % 60;
     el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+
+    // Color thresholds — yours: 30min = orange, 60min = red
     el.classList.remove('warn','danger','running');
     if (timerRunning) el.classList.add('running');
-    if (timerSeconds >= 2400) el.classList.add('danger');      // 40min+
-    else if (timerSeconds >= 1200) el.classList.add('warn');   // 20min+
+    if (timerSeconds >= 3600)      el.classList.add('danger');  // 60min+
+    else if (timerSeconds >= 1800) el.classList.add('warn');    // 30min+
+
+    // Minute-mark: bounce + sparkle
+    if (timerRunning && m > 0 && m !== timerLastMinute && s === 0) {
+      timerLastMinute = m;
+      fireTimerSparkles(el, m);
+    }
+  }
+
+  function fireTimerSparkles(el, minute) {
+    // Bounce animation
+    el.classList.remove('minute-pop');
+    void el.offsetWidth;
+    el.classList.add('minute-pop');
+    el.addEventListener('animationend', () => el.classList.remove('minute-pop'), { once: true });
+
+    // Determine spark color by stage
+    const isWarn   = timerSeconds >= 1800 && timerSeconds < 3600;
+    const isDanger = timerSeconds >= 3600;
+    const sparkColor = isDanger ? '#ff8888' : isWarn ? '#ffaa55' : '#ffffff';
+
+    const container = document.getElementById('timerSparkles');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const count = 18 + Math.floor(Math.random() * 8);
+    const cx = el.offsetWidth / 2;
+    const cy = el.offsetHeight / 2;
+
+    for (let i = 0; i < count; i++) {
+      const spark = document.createElement('div');
+      spark.className = 't-spark';
+      const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.4;
+      const dist  = 18 + Math.random() * 34;
+      const size  = 2 + Math.random() * 3;
+      const dur   = (0.45 + Math.random() * 0.45).toFixed(2) + 's';
+      const delay = (Math.random() * 0.12).toFixed(2) + 's';
+      spark.style.cssText =
+        'left:' + cx + 'px; top:' + cy + 'px;' +
+        'width:' + size + 'px; height:' + size + 'px;' +
+        'background:' + sparkColor + ';' +
+        '--tx:' + (Math.cos(angle) * dist).toFixed(1) + 'px;' +
+        '--ty:' + (Math.sin(angle) * dist).toFixed(1) + 'px;' +
+        '--dur:' + dur + '; --delay:' + delay + ';';
+      container.appendChild(spark);
+    }
+    setTimeout(() => { if (container) container.innerHTML = ''; }, 900);
   }
 
   // ══════════════════════════════════════════════════════
   // AOE BROADCAST
   // ══════════════════════════════════════════════════════
-  function broadcastAoE(type, scope) {
+
+  // ── Custom target selection state ──
+  let aoeCustomOpen = false;
+  const aoeSelected = { pc: new Set(), enemy: new Set() }; // keys: "A-0", "gi-ii"
+
+  function toggleAoeCustom() {
+    aoeCustomOpen = !aoeCustomOpen;
+    const wrap = document.getElementById('aoeCustomWrap');
+    const btn  = document.getElementById('aoeCustomToggle');
+    if (wrap) wrap.classList.toggle('open', aoeCustomOpen);
+    if (btn)  btn.classList.toggle('active', aoeCustomOpen);
+    if (aoeCustomOpen) renderAoeTargetChips();
+  }
+
+  function renderAoeTargetChips() {
+    // Party chips
+    const partyContainer = document.getElementById('aoePartyChips');
+    if (partyContainer) {
+      partyContainer.innerHTML = partyData[party].map((pc, idx) => {
+        const key = party + '-' + idx;
+        const on  = aoeSelected.pc.has(key);
+        return `<span class="aoe-target-chip pc${on ? ' selected' : ''}" onclick="toggleAoeTarget('pc','${key}',this)">${pc.name}</span>`;
+      }).join('');
+    }
+    // Enemy chips
+    const enemyContainer = document.getElementById('aoeEnemyChips');
+    if (enemyContainer) {
+      if (!activeEnemies.length) {
+        enemyContainer.innerHTML = '<span style="font-family:Nunito,sans-serif;font-size:11px;color:var(--sub);font-style:italic">No enemies deployed</span>';
+        return;
+      }
+      enemyContainer.innerHTML = activeEnemies.flatMap((group, gi) =>
+        group.instances.map((inst, ii) => {
+          const key = gi + '-' + ii;
+          const on  = aoeSelected.enemy.has(key);
+          const label = group.creature.name + (group.instances.length > 1 ? ' #' + inst.id : '');
+          return `<span class="aoe-target-chip enemy${on ? ' selected' : ''}" onclick="toggleAoeTarget('enemy','${key}',this)">${label}</span>`;
+        })
+      ).join('');
+    }
+  }
+
+  function toggleAoeTarget(type, key, el) {
+    const set = aoeSelected[type];
+    if (set.has(key)) { set.delete(key); el.classList.remove('selected'); }
+    else              { set.add(key);    el.classList.add('selected'); }
+  }
+
+  function aoeSelectAll(type) {
+    if (type === 'pc') {
+      partyData[party].forEach((_, idx) => aoeSelected.pc.add(party + '-' + idx));
+    } else {
+      activeEnemies.forEach((group, gi) => group.instances.forEach((_, ii) => aoeSelected.enemy.add(gi + '-' + ii)));
+    }
+    renderAoeTargetChips();
+  }
+
+  function aoeClearAll(type) {
+    aoeSelected[type].clear();
+    renderAoeTargetChips();
+  }
+
+  function broadcastAoE(type, scope, evt) {
     const raw = parseInt(document.getElementById('aoeAmt')?.value) || 0;
     if (!raw) return;
     let affected = 0;
-    const label = type === 'dmg' ? 'hit' : 'healed';
+    const label   = type === 'dmg' ? 'hit' : 'healed';
+    const isBoth  = scope === 'both';
+    const hasCustomPc    = aoeSelected.pc.size > 0;
+    const hasCustomEnemy = aoeSelected.enemy.size > 0;
+    const useCustom = hasCustomPc || hasCustomEnemy;
+
+    // ── Ripple on button ──
+    if (evt && evt.currentTarget) {
+      const btn  = evt.currentTarget;
+      const rect = btn.getBoundingClientRect();
+      const rip  = document.createElement('span');
+      rip.className = 'aoe-ripple';
+      const size = Math.max(btn.offsetWidth, btn.offsetHeight) * 2;
+      rip.style.cssText = 'width:' + size + 'px;height:' + size + 'px;' +
+        'left:' + (evt.clientX - rect.left - size/2) + 'px;' +
+        'top:'  + (evt.clientY - rect.top  - size/2) + 'px;';
+      btn.appendChild(rip);
+      setTimeout(() => rip.remove(), 520);
+    }
+
+    // ── Screen edge flash for "both" scope ──
+    if (isBoth) {
+      const flash = document.createElement('div');
+      flash.className = 'aoe-edge-flash ' + type;
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 580);
+    }
 
     // ── Party targets ──
-    if (scope === 'party' || scope === 'both') {
+    const hitParty = scope === 'party' || isBoth;
+    if (hitParty || useCustom) {
       partyData[party].forEach((pc, idx) => {
         if (pc.curHp <= 0) return;
         const pid = party + '-' + idx;
+        if (useCustom && !aoeSelected.pc.has(pid)) return;
+        if (!useCustom && !hitParty) return;
         const amt = applyModifier(raw, pid);
         if (type === 'dmg') {
           if (pc.tempHp >= amt) { pc.tempHp -= amt; }
@@ -3349,7 +4145,7 @@
         } else {
           pc.curHp = Math.min(pc.maxHp, pc.curHp + amt);
         }
-        const bar = document.getElementById('hpbar-' + pid);
+        const bar = document.getElementById(`hpbar-${pid}`);
         if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add(type === 'dmg' ? 'damaged' : 'healed'); }
         updateHPDisplay(party, idx);
         affected++;
@@ -3357,11 +4153,15 @@
     }
 
     // ── Enemy targets ──
-    if (scope === 'enemies' || scope === 'both') {
+    const hitEnemies = scope === 'enemies' || isBoth;
+    if (hitEnemies || useCustom) {
+      let enemyAffected = false;
       activeEnemies.forEach((group, gi) => {
         group.instances.forEach((inst, ii) => {
           if (inst.downed) return;
           const ekey = gi + '-' + ii;
+          if (useCustom && !aoeSelected.enemy.has(ekey)) return;
+          if (!useCustom && !hitEnemies) return;
           const amt = applyModifier(raw, ekey);
           if (type === 'dmg') {
             inst.cur = Math.max(0, inst.cur - amt);
@@ -3370,22 +4170,49 @@
             inst.cur = Math.min(inst.max, inst.cur + amt);
           }
           affected++;
+          enemyAffected = true;
         });
       });
-      if (scope === 'enemies' || scope === 'both') renderEnemyTracker();
+      if (enemyAffected) renderEnemyTracker();
     }
 
-    // Flash the section
-    const aoeSection = document.querySelector('.aoe-section');
+    // ── Section flash ──
+    const aoeSection = document.getElementById('aoe-section');
     if (aoeSection) { aoeSection.classList.remove('aoe-flash'); void aoeSection.offsetWidth; aoeSection.classList.add('aoe-flash'); }
 
-    // Update feedback label
+    // ── Floating number ──
+    if (affected > 0) spawnAoeFloat(raw, type);
+
+    // ── Feedback label ──
     const lbl = document.getElementById('aoeTargetCount');
-    if (lbl) lbl.textContent = affected + ' target' + (affected !== 1 ? 's' : '') + ' ' + label;
+    if (lbl) {
+      lbl.classList.remove('pop');
+      void lbl.offsetWidth;
+      lbl.textContent = affected + ' target' + (affected !== 1 ? 's' : '') + ' ' + label;
+      lbl.classList.add('pop');
+    }
 
     document.getElementById('aoeAmt').value = '';
     const hint = document.getElementById('aoeModeHint');
     if (hint) hint.textContent = '';
+
+    // Refresh custom chips if open (enemies may have changed)
+    if (aoeCustomOpen) renderAoeTargetChips();
+  }
+
+  function spawnAoeFloat(amount, type) {
+    const section = document.getElementById('aoe-section');
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    const num  = document.createElement('div');
+    num.className = 'aoe-float-num';
+    num.textContent = (type === 'dmg' ? '−' : '+') + amount;
+    num.style.cssText =
+      'left:' + (rect.left + rect.width/2 - 30) + 'px;' +
+      'top:'  + (rect.top + rect.height/2) + 'px;' +
+      'color:' + (type === 'dmg' ? '#ff8080' : '#68dd88') + ';';
+    document.body.appendChild(num);
+    setTimeout(() => num.remove(), 1150);
   }
 
   // ══════════════════════════════════════════════════════
@@ -3458,41 +4285,55 @@
     renderEnemyTracker();
   }
 
+    function hpPct(cur, max) { return max > 0 ? cur / max : 0; }
   function hpColor(cur, max) {
-    const pct = cur / max;
-    if (pct <= 0.25) return 'critical';
-    if (pct <= 0.5)  return 'low';
-    return '';
+    const p = hpPct(cur, max);
+    return p <= 0.25 ? 'critical' : p <= 0.5 ? 'low' : '';
   }
   function hpBarColor(cur, max) {
-    const pct = cur / max;
-    if (pct <= 0.25) return '#9b1a1a';
-    if (pct <= 0.5)  return '#c8722a';
-    return '#2a8a2a';
+    const p = hpPct(cur, max);
+    return p <= 0.25 ? '#9b1a1a' : p <= 0.5 ? '#c8722a' : '#2a8a2a';
   }
 
   // Condition definitions
+  // Single source of truth — PC and Enemy conditions unified
+  // col: chip/tag/modal color token | cls: PC card tag class | card: PC card glow
   const CONDITIONS = [
-    { name: 'Frightened',    cls: 'cond-purple', card: 'conditioned-purple' },
-    { name: 'Charmed',       cls: 'cond-purple', card: 'conditioned-purple' },
-    { name: 'Stunned',       cls: 'cond-purple', card: 'conditioned-purple' },
-    { name: 'Incapacitated', cls: 'cond-gray',   card: 'conditioned-gray'   },
-    { name: 'Poisoned',      cls: 'cond-green',  card: 'conditioned-green'  },
-    { name: 'Exhaustion',    cls: 'cond-green',  card: 'conditioned-green'  },
-    { name: 'Blinded',       cls: 'cond-green',  card: 'conditioned-green'  },
-    { name: 'Petrified',     cls: 'cond-green',  card: 'conditioned-green'  },
-    { name: 'Grappled',      cls: 'cond-blue',   card: 'conditioned-blue'   },
-    { name: 'Restrained',    cls: 'cond-blue',   card: 'conditioned-blue'   },
-    { name: 'Prone',         cls: 'cond-blue',   card: 'conditioned-blue'   },
-    { name: 'Invisible',     cls: 'cond-blue',   card: 'conditioned-blue'   },
-    { name: 'Concentrating', cls: 'cond-gold',   card: 'conditioned-gold'   },
-    { name: 'Cursed',        cls: 'cond-gold',   card: 'conditioned-gold'   },
-    { name: 'Blessed',       cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Frightened',    col: 'purple', cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Charmed',       col: 'purple', cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Stunned',       col: 'purple', cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Incapacitated', col: 'gray',   cls: 'cond-gray',   card: 'conditioned-gray'   },
+    { name: 'Poisoned',      col: 'green',  cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Exhaustion',    col: 'gray',   cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Blinded',       col: 'green',  cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Petrified',     col: 'green',  cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Grappled',      col: 'blue',   cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Restrained',    col: 'blue',   cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Prone',         col: 'blue',   cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Invisible',     col: 'blue',   cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Concentrating', col: 'gold',   cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Cursed',        col: 'gold',   cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Blessed',       col: 'gold',   cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Bloodied',      col: 'red',    cls: 'cond-blood',  card: 'conditioned-blood'  },
+    { name: 'Exhausted',     col: 'gray',   cls: 'cond-green',  card: 'conditioned-green'  },
   ];
+  const ENEMY_CONDITIONS = CONDITIONS; // backward compat alias
+
+  // Ordered priority list for condition card glows
+  const COND_GLOWS = ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray'];
 
   function getCondDef(name, pc) {
     const custom = (pc && pc.customConditions) ? pc.customConditions.find(c => c.name === name) : null;
-    return custom || CONDITIONS.find(c => c.name === name) || { cls: '', card: '' };
+    return custom || CONDITIONS.find(c => c.name === name) || { col: 'gray', cls: '', card: '' };
+  }
+
+  // Returns the highest-priority glow class for a PC's active conditions
+  function getCondGlow(pc) {
+    if (!pc.conditions || !pc.conditions.length) return '';
+    for (const glow of COND_GLOWS) {
+      if (pc.conditions.some(cn => getCondDef(cn, pc).card === glow)) return glow;
+    }
+    return '';
   }
 
   function togglePCCondition(p, idx, condName) {
@@ -3503,18 +4344,14 @@
     const pid = p + '-' + idx;
     // Sync concentration field visibility
     if (condName === 'Concentrating') syncConcField(pid, pc.conditions.includes('Concentrating'));
-    const card = document.getElementById('pccard-' + pid);
+    const card = document.getElementById(`pccard-${pid}`);
     if (!card) return;
     card.querySelectorAll('.pc-cond-tag').forEach(tag => {
       const def = getCondDef(tag.dataset.cond, pc);
       tag.className = 'pc-cond-tag' + (pc.conditions.includes(tag.dataset.cond) ? ' ' + def.cls : '');
     });
-    ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray'].forEach(c => card.classList.remove(c));
-    if (!card.classList.contains('downed')) {
-      for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
-        if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { card.classList.add(pr); break; }
-      }
-    }
+    COND_GLOWS.forEach(c => card.classList.remove(c));
+    if (!card.classList.contains('downed')) { const g = getCondGlow(pc); if (g) card.classList.add(g); }
     updateSectionGlows();
   }
 
@@ -3525,22 +4362,17 @@
     grid.innerHTML = '';
 
     partyData[party].forEach((pc, idx) => {
-      const pct = Math.max(0, pc.curHp / pc.maxHp);
-      const col = hpColor(pc.curHp, pc.maxHp);
-      const barCol = hpBarColor(pc.curHp, pc.maxHp);
-      const isDanger = pc.curHp <= pc.maxHp * 0.25 && pc.curHp > 0;
+      const pct      = hpPct(pc.curHp, pc.maxHp);
+      const col      = hpColor(pc.curHp, pc.maxHp);
+      const barCol   = hpBarColor(pc.curHp, pc.maxHp);
       const isDowned = pc.curHp <= 0;
+      const isDanger = pct <= 0.25 && !isDowned;
       const pid = party + '-' + idx;
 
-      let condGlow = '';
-      if (!isDowned && pc.conditions && pc.conditions.length > 0) {
-        for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
-          if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { condGlow = pr; break; }
-        }
-      }
+      const condGlow = isDowned ? '' : getCondGlow(pc);
 
       const card = document.createElement('div');
-      card.id = 'pccard-' + pid;
+      card.id = `pccard-${pid}`;
       card.className = 'pc-card' + (isDanger ? ' danger-hp' : '') + (isDowned ? ' downed' : '') + (condGlow ? ' ' + condGlow : '') + (editMode ? ' editing' : '');
 
       card.innerHTML = `
@@ -3694,14 +4526,14 @@
       // Res/Vuln buttons
       const mod = getDmgMod(pid);
       if (mod !== 'none') {
-        const resBtn  = document.getElementById('res-'  + pid);
-        const vulnBtn = document.getElementById('vuln-' + pid);
+        const resBtn  = document.getElementById(`res-${pid}`);
+        const vulnBtn = document.getElementById(`vuln-${pid}`);
         if (resBtn)  resBtn.classList.toggle('res-active',  mod === 'res');
         if (vulnBtn) vulnBtn.classList.toggle('vuln-active', mod === 'vuln');
       }
 
       // Quick note — restore content + auto-height
-      const noteEl = document.getElementById('qnote-' + pid);
+      const noteEl = document.getElementById(`qnote-${pid}`);
       if (noteEl && pcNotes[pid]) {
         noteEl.value = pcNotes[pid];
         noteEl.classList.toggle('has-content', pcNotes[pid].trim().length > 0);
@@ -3711,80 +4543,69 @@
 
       // Concentration field visibility
       const isConc = pc.conditions && pc.conditions.includes('Concentrating');
-      const concWrap = document.getElementById('conc-' + pid);
+      const concWrap = document.getElementById(`conc-${pid}`);
       if (concWrap) concWrap.classList.toggle('conc-active', isConc);
-      const concInp = document.getElementById('conc-inp-' + pid);
+      const concInp = document.getElementById(`conc-inp-${pid}`);
       if (concInp && pcConcentration[pid]) concInp.value = pcConcentration[pid];
     });
   }
 
+    function _flashHPBar(pid, cls) {
+    const bar = document.getElementById(`hpbar-${pid}`);
+    if (bar) { bar.classList.remove('healed', 'damaged'); void bar.offsetWidth; bar.classList.add(cls); }
+  }
+
   function applyDmg(p, idx) {
-    const pid = p + '-' + idx;
-    const raw = parseInt(document.getElementById('dmg-' + pid).value) || 0;
+    const pid = `${p}-${idx}`;
+    const raw = parseInt(document.getElementById(`dmg-${pid}`).value) || 0;
     if (!raw) return;
-    const amt = applyModifier(raw, pid); // apply Res/Vuln before subtracting
-    const pc = partyData[p][idx];
-    if (pc.tempHp >= amt) {
-      pc.tempHp -= amt;
-    } else {
-      const rem = amt - pc.tempHp;
-      pc.tempHp = 0;
-      pc.curHp = Math.max(0, pc.curHp - rem);
-    }
-    document.getElementById('dmg-' + pid).value = '';
+    const pc  = partyData[p][idx];
+    const amt = applyModifier(raw, pid);
+    if (pc.tempHp >= amt) { pc.tempHp -= amt; }
+    else { const rem = amt - pc.tempHp; pc.tempHp = 0; pc.curHp = Math.max(0, pc.curHp - rem); }
+    document.getElementById(`dmg-${pid}`).value = '';
     updateHPDisplay(p, idx);
-    const bar = document.getElementById('hpbar-' + pid);
-    if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add('damaged'); }
+    _flashHPBar(pid, 'damaged');
   }
 
   function applyHeal(p, idx) {
-    const pid = p + '-' + idx;
-    const amt = parseInt(document.getElementById('heal-' + pid).value) || 0;
+    const pid = `${p}-${idx}`;
+    const amt = parseInt(document.getElementById(`heal-${pid}`).value) || 0;
     if (!amt) return;
     const pc = partyData[p][idx];
     pc.curHp = Math.min(pc.maxHp, pc.curHp + amt);
-    document.getElementById('heal-' + pid).value = '';
+    document.getElementById(`heal-${pid}`).value = '';
     updateHPDisplay(p, idx);
-    const bar = document.getElementById('hpbar-' + pid);
-    if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add('healed'); }
+    _flashHPBar(pid, 'healed');
   }
 
   // ── UPDATE HP DISPLAY without full re-render ──
-  function updateHPDisplay(p, idx) {
-    const pc = partyData[p][idx];
-    const pid = p + '-' + idx;
-    const valEl = document.getElementById('hpval-' + pid);
-    const barEl = document.getElementById('hpbar-' + pid);
-    const card = document.getElementById('pccard-' + pid);
+    function updateHPDisplay(p, idx) {
+    const pc  = partyData[p][idx];
+    const pid = `${p}-${idx}`;
+    const valEl = document.getElementById(`hpval-${pid}`);
     if (!valEl) return;
-    const col = hpColor(pc.curHp, pc.maxHp);
+    const pct      = hpPct(pc.curHp, pc.maxHp);
+    const isDowned = pc.curHp <= 0;
     valEl.textContent = pc.curHp;
-    valEl.className = 'hp-cur-val ' + col;
-    barEl.style.width = Math.max(0, (pc.curHp / pc.maxHp) * 100) + '%';
-    barEl.style.background = hpBarColor(pc.curHp, pc.maxHp);
+    valEl.className   = `hp-cur-val ${hpColor(pc.curHp, pc.maxHp)}`;
+    const barEl = document.getElementById(`hpbar-${pid}`);
+    if (barEl) { barEl.style.width = `${Math.max(0, pct * 100)}%`; barEl.style.background = hpBarColor(pc.curHp, pc.maxHp); }
+    const card = document.getElementById(`pccard-${pid}`);
     if (card) {
-      const isDowned = pc.curHp <= 0;
-      card.classList.toggle('danger-hp', pc.curHp <= pc.maxHp * 0.25 && !isDowned);
+      card.classList.toggle('danger-hp', pct <= 0.25 && !isDowned);
       card.classList.toggle('downed', isDowned);
-      // Re-apply condition glow — downed wins
-      ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray'].forEach(c => card.classList.remove(c));
-      if (!isDowned && pc.conditions && pc.conditions.length > 0) {
-        for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
-          if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { card.classList.add(pr); break; }
-        }
-      }
+      COND_GLOWS.forEach(c => card.classList.remove(c));
+      if (!isDowned) { const g = getCondGlow(pc); if (g) card.classList.add(g); }
     }
-    const tempEl = document.getElementById('temphp-' + pid);
+    const tempEl = document.getElementById(`temphp-${pid}`);
     if (tempEl) tempEl.value = pc.tempHp;
     updateSectionGlows();
   }
 
   function liveUpdateMax(p, idx, val) {
     const v = parseInt(val);
-    if (!isNaN(v) && v > 0) {
-      partyData[p][idx].maxHp = v;
-      partyData[p][idx].curHp = Math.min(partyData[p][idx].curHp, v);
-    }
+    if (v > 0) { partyData[p][idx].maxHp = v; partyData[p][idx].curHp = Math.min(partyData[p][idx].curHp, v); }
   }
   function liveUpdateTemp(p, idx, val) {
     partyData[p][idx].tempHp = Math.max(0, parseInt(val) || 0);
@@ -3824,7 +4645,7 @@
     ds[type] = Math.max(0, Math.min(3, ds[type]));
     // re-render just the death save row
     const pid = p + '-' + idx;
-    const dsRow = document.getElementById('ds-' + pid);
+    const dsRow = document.getElementById(`ds-${pid}`);
     if (!dsRow) return;
     const pc = partyData[p][idx];
     dsRow.querySelectorAll('.success-pip').forEach((btn, i) => {
@@ -3838,7 +4659,7 @@
   function clearDS(p, idx) {
     partyData[p][idx].deathSaves = { s: 0, f: 0 };
     const pid = p + '-' + idx;
-    const dsRow = document.getElementById('ds-' + pid);
+    const dsRow = document.getElementById(`ds-${pid}`);
     if (!dsRow) return;
     dsRow.querySelectorAll('.ds-pip').forEach(btn => btn.classList.remove('filled'));
   }
@@ -3850,6 +4671,8 @@
     renderPCs();
     const lbl = document.getElementById('aoeTargetCount');
     if (lbl) lbl.textContent = '';
+    aoeSelected.pc.clear();
+    if (aoeCustomOpen) renderAoeTargetChips();
   }
 
   renderPCs();
@@ -3881,6 +4704,15 @@
     return n;
   }
   function changeRound(d) {
+    // Only show the transition modal when advancing forward (not going back)
+    if (d > 0 && round >= 1) {
+      openRoundModal();
+    } else {
+      applyRoundChange(d);
+    }
+  }
+
+  function applyRoundChange(d) {
     round = Math.max(1, round + d);
     const el = document.getElementById('roundNum');
     el.textContent = round;
@@ -3890,12 +4722,296 @@
     document.getElementById('roundNote').textContent = getNote(round);
   }
 
+  // ── CONDITIONS THAT NEED A ROUND-END RECHECK ──
+  // Each entry: condition name → { hint, rule }
+  const ROUND_CHECK_CONDITIONS = {
+    'Grappled':      { hint: 'Escape DC or drag check?', rule: 'Athletics/Acrobatics to escape. Moves at 0 speed until free.' },
+    'Restrained':    { hint: 'Save or ongoing?',         rule: 'Attacker has adv, target has disadv. Speed 0. Check if effect has duration/save.' },
+    'Stunned':       { hint: 'Save to end?',             rule: 'Incapacitated, auto-fail Str/Dex saves. Constitution save to end if applicable.' },
+    'Frightened':    { hint: 'Wisdom save to end?',      rule: 'Cannot move closer to source. Disadv on checks/attacks while source is visible.' },
+    'Charmed':       { hint: 'Check duration / save',    rule: 'Cannot attack charmer. Charmer has adv on social checks vs target.' },
+    'Incapacitated': { hint: 'What caused this?',        rule: 'No actions or reactions. Check if condition expires this round.' },
+    'Poisoned':      { hint: 'Con save to end?',         rule: 'Disadv on attack rolls and ability checks. Check if save ends it.' },
+    'Blinded':       { hint: 'Duration check',           rule: 'Auto-fail sight-based checks. Attacks against have adv; attacks from have disadv.' },
+    'Prone':         { hint: 'Getting up?',              rule: 'Half movement to stand. Attacks within 5ft have adv; ranged have disadv.' },
+    'Invisible':     { hint: 'Still active?',            rule: 'Location can be guessed. Attacks have adv; attacks against have disadv.' },
+    'Concentrating': { hint: 'Spell still valid?',       rule: 'Check if any damage triggers a DC 10 Con save. What happens if it drops?' },
+    'Exhausted':     { hint: 'Note level',               rule: 'Exhaustion is cumulative. Long rest removes one level.' },
+  };
+
+  // ── ROUND MODAL ──
+  let roundModalItems = []; // { id, resolved }
+
+  function openRoundModal() {
+    const checks = gatherRoundChecks();
+    roundModalItems = checks.map((c, i) => ({ ...c, id: i, resolved: false, cleared: false }));
+
+    const nextRound = round + 1;
+    document.getElementById('roundModalRoundLabel').textContent = `R${round} → R${nextRound}`;
+    document.getElementById('roundModalNextNum').textContent = nextRound;
+
+    renderRoundModalBody();
+    updateRoundModalFooter();
+
+    document.getElementById('roundModalOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function gatherRoundChecks() {
+    const checks = [];
+
+    // ── PC Concentration checks ──
+    const pcList = partyData[party] || [];
+    pcList.forEach((pc, idx) => {
+      const conds = pc.conditions || [];
+      const concSpell = pcConcentration[`${party}-${idx}`];
+      if (concSpell || conds.includes('Concentrating')) {
+        checks.push({
+          type: 'pc', pcParty: party, pcIdx: idx,
+          name: pc.name, condition: 'Concentrating', spell: concSpell || '',
+          col: 'gold',
+          hint: ROUND_CHECK_CONDITIONS['Concentrating'].hint,
+          rule: ROUND_CHECK_CONDITIONS['Concentrating'].rule,
+        });
+      }
+      conds.forEach(cond => {
+        if (cond === 'Concentrating') return;
+        const info = ROUND_CHECK_CONDITIONS[cond];
+        if (info) {
+          checks.push({
+            type: 'pc', pcParty: party, pcIdx: idx,
+            name: pc.name, condition: cond,
+            col: condColor(cond),
+            hint: info.hint, rule: info.rule,
+          });
+        }
+      });
+    });
+
+    // ── Enemy condition checks ──
+    activeEnemies.forEach((group, gi) => {
+      group.instances.forEach((inst, ii) => {
+        if (inst.downed) return;
+        const key = `${gi}-${ii}`;
+        const conds = enemyConds[key] || [];
+        conds.forEach(cond => {
+          const info = ROUND_CHECK_CONDITIONS[cond];
+          if (!info) return;
+          const label = group.creature.name + (group.instances.length > 1 ? ` #${inst.id}` : '');
+          checks.push({
+            type: 'enemy', key,
+            name: label, condition: cond,
+            col: condColor(cond),
+            hint: info.hint, rule: info.rule,
+          });
+        });
+      });
+    });
+
+    return checks;
+  }
+
+  function condColor(cond) {
+    return (CONDITIONS.find(c => c.name === cond) || {col:'gray'}).col;
+  }
+
+  function renderRoundModalBody() {
+    const body = document.getElementById('roundModalBody');
+    if (roundModalItems.length === 0) {
+      body.innerHTML = `<div class="round-modal-empty"><span class="empty-check">✅</span>No active conditions to check.<br><span style="font-size:11px;opacity:0.6">Clean slate — advance when ready.</span></div>`;
+      return;
+    }
+    body.innerHTML = roundModalItems.map((item, idx) => {
+      const resolvedClass = item.resolved ? (item.cleared ? ' resolved-success' : ' resolved-failed') : '';
+      return `
+      <div class="round-check-item${resolvedClass}"
+           id="rci-${item.id}"
+           style="--item-accent:${accentForCol(item.col)};--item-delay:${(idx * 0.06).toFixed(2)}s">
+        <button class="rci-fail-btn${item.resolved && !item.cleared ? ' chosen' : ''}"
+                onclick="toggleRoundCheck(${item.id})"
+                ${item.resolved && item.cleared ? 'disabled' : ''}>
+          ${item.resolved && !item.cleared ? '✗ Failed' : 'Failed'}
+        </button>
+        <div class="rci-body">
+          <div class="rci-title">
+            <span class="rci-tag ${item.col}">${item.condition}</span>
+            ${item.name}${item.spell ? ` — <em style="color:var(--sub);font-size:13px">${item.spell}</em>` : ''}
+          </div>
+          <div class="rci-sub">${item.hint} · <span style="opacity:0.7">${item.rule}</span></div>
+        </div>
+        <button class="rci-success-btn${item.cleared ? ' chosen' : ''}"
+                onclick="clearRoundCondition(${item.id})"
+                ${item.resolved && !item.cleared ? 'disabled' : ''}>
+          ${item.cleared ? '✓ Success' : 'Success'}
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  // Clear the actual condition from the target AND mark resolved
+  function clearRoundCondition(id) {
+    const item = roundModalItems.find(i => i.id === id);
+    if (!item) return;
+
+    // Remove the condition from the actual target
+    if (item.type === 'enemy') {
+      // Parse "gi-ii" from item.key
+      const [gi, ii] = item.key.split('-').map(Number);
+      // Remove it directly (toggleEnemyCond toggles — check first it's actually on)
+      const key = item.key;
+      if (enemyConds[key]) {
+        const idx = enemyConds[key].indexOf(item.condition);
+        if (idx >= 0) {
+          enemyConds[key].splice(idx, 1);
+          // Refresh the enemy condition row in the tracker
+          const condRow = document.getElementById(`econd-row-${gi}-${ii}`);
+          if (condRow) {
+            condRow.querySelectorAll('.enemy-cond-tag').forEach(tag => {
+              const on = (enemyConds[key] || []).includes(tag.dataset.cond);
+              const colCls = ENEMY_CONDITIONS.find(c => c.name === tag.dataset.cond)?.col || 'gray';
+              tag.className = 'enemy-cond-tag' + (on ? ' active ' + colCls : '');
+            });
+          }
+        }
+      }
+    } else if (item.type === 'pc') {
+      const pc = partyData[item.pcParty][item.pcIdx];
+      if (pc) {
+        const ci = pc.conditions.indexOf(item.condition);
+        if (ci >= 0) pc.conditions.splice(ci, 1);
+        const pid = `${item.pcParty}-${item.pcIdx}`;
+        if (item.condition === 'Concentrating') {
+          pcConcentration[pid] = '';
+          syncConcField(pid, false);
+        }
+        // Refresh PC card condition tags and glow
+        const card = document.getElementById(`pccard-${pid}`);
+        if (card) {
+          card.querySelectorAll('.pc-cond-tag').forEach(tag => {
+            const def = getCondDef(tag.dataset.cond, pc);
+            tag.className = 'pc-cond-tag' + (pc.conditions.includes(tag.dataset.cond) ? ' ' + def.cls : '');
+          });
+          COND_GLOWS.forEach(c => card.classList.remove(c));
+          if (pc.curHp > 0) { const g = getCondGlow(pc); if (g) card.classList.add(g); }
+        }
+      }
+    }
+
+    // Mark item resolved + cleared
+    item.resolved = true;
+    item.cleared  = true;
+    const el = document.getElementById(`rci-${id}`);
+    if (el) {
+      el.classList.remove('resolved-failed', 'unresolving');
+      el.classList.add('resolved-success');
+      const failBtn = el.querySelector('.rci-fail-btn');
+      const succBtn = el.querySelector('.rci-success-btn');
+      if (failBtn) { failBtn.classList.remove('chosen'); failBtn.disabled = true; failBtn.textContent = 'Failed'; }
+      if (succBtn) { succBtn.classList.add('chosen'); succBtn.disabled = true; succBtn.textContent = '✓ Success'; }
+    }
+    updateRoundModalFooter();
+  }
+
+  function accentForCol(col) {
+    const map = { purple:'#a050c8', blue:'#5090dc', green:'#3cb478', red:'#c83c3c', gold:'#c8a83c', gray:'#666', conc:'#c8a83c' };
+    return map[col] || '#666';
+  }
+
+  function toggleRoundCheck(id) {
+    const item = roundModalItems.find(i => i.id === id);
+    if (!item || item.cleared) return; // can't un-success
+    item.resolved = !item.resolved;
+    const el = document.getElementById(`rci-${id}`);
+    if (el) {
+      el.classList.remove('resolved-failed', 'resolved-success', 'unresolving');
+      if (item.resolved) {
+        el.classList.add('resolved-failed');
+        el.querySelector('.rci-fail-btn').classList.add('chosen');
+        el.querySelector('.rci-fail-btn').textContent = '✗ Failed';
+        el.querySelector('.rci-success-btn').disabled = true;
+      } else {
+        el.classList.add('unresolving');
+        el.querySelector('.rci-fail-btn').classList.remove('chosen');
+        el.querySelector('.rci-fail-btn').textContent = 'Failed';
+        el.querySelector('.rci-success-btn').disabled = false;
+        setTimeout(() => el.classList.remove('unresolving'), 220);
+      }
+    }
+    updateRoundModalFooter();
+  }
+
+  function updateRoundModalFooter() {
+    const total    = roundModalItems.length;
+    const resolved = roundModalItems.filter(i => i.resolved).length;
+    const allDone  = total === 0 || resolved === total;
+    const pct      = total === 0 ? 100 : Math.round((resolved / total) * 100);
+
+    const bar  = document.getElementById('roundModalProgressBar');
+    const txt  = document.getElementById('roundModalProgress');
+    const btn  = document.getElementById('roundModalAdvance');
+
+    if (bar) {
+      bar.style.width = pct + '%';
+      bar.classList.toggle('complete', allDone && total > 0);
+    }
+    if (txt) {
+      txt.textContent = total === 0 ? '' : `${resolved} / ${total} addressed`;
+      txt.classList.toggle('complete', allDone && total > 0);
+    }
+    btn.disabled = !allDone;
+    btn.classList.toggle('ready', allDone);
+  }
+
+  function confirmRoundAdvance() {
+    const btn = document.getElementById('roundModalAdvance');
+    btn.classList.add('firing');
+    // Flash the screen
+    const flash = document.createElement('div');
+    flash.className = 'round-advance-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 520);
+    // Close with animation then slam the round number
+    setTimeout(() => {
+      closeRoundModal();
+      advanceRoundWithSlam();
+    }, 200);
+  }
+
+  function skipRoundModal() {
+    closeRoundModal();
+    advanceRoundWithSlam();
+  }
+
+  function advanceRoundWithSlam() {
+    applyRoundChange(1);
+    // Replace bump with slam
+    const el = document.getElementById('roundNum');
+    el.classList.remove('bump', 'slam');
+    void el.offsetWidth;
+    el.classList.add('slam');
+    setTimeout(() => el.classList.remove('slam'), 520);
+  }
+
+  function closeRoundModal() {
+    const overlay = document.getElementById('roundModalOverlay');
+    overlay.classList.add('closing');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      overlay.classList.remove('closing');
+      document.body.style.overflow = '';
+    }, 220);
+  }
+
+  function roundModalBgClick(e) {
+    if (e.target === document.getElementById('roundModalOverlay')) {
+      skipRoundModal();
+    }
+  }
+
   // ── COMBAT SECTIONS ──
   function toggleSec(hdr) {
-    const body = hdr.nextElementSibling;
-    const ch = hdr.querySelector('.chevron');
-    body.classList.toggle('open');
-    ch.classList.toggle('open');
+    const isOpen = hdr.nextElementSibling.classList.toggle('open');
+    hdr.querySelector('.chevron').classList.toggle('open', isOpen);
   }
 
   // ── CHECKBOXES ──
@@ -4350,18 +5466,22 @@
   // BATTLEFIELD EFFECTS
   // ══════════════════════════════
   let bfWeatherOn = false;
-  let bfOtherOn = false;
+  let bfOtherOn   = false;
 
-  function setBFWeatherToggle(on) {
-    bfWeatherOn = on;
-    const toggle = document.getElementById('bf-weather-toggle');
-    const box = document.getElementById('bf-weather-box');
-    const title = document.getElementById('bf-weather-title');
+  // Shared updater for both BF effect boxes (weather and other)
+  function setBFEffect(type, on) {
+    if (type === 'weather') bfWeatherOn = on;
+    else                    bfOtherOn   = on;
+    const toggle = document.getElementById(`bf-${type}-toggle`);
+    const box    = document.getElementById(`bf-${type}-box`);
+    const title  = document.getElementById(`bf-${type}-title`);
     if (toggle) { toggle.textContent = on ? 'On' : 'Off'; toggle.className = 'bf-toggle-btn' + (on ? ' on' : ''); }
-    if (box) box.className = 'bf-effect-box' + (on ? ' active-effect' : '');
-    if (title) title.className = 'bf-effect-title' + (on ? ' active-lbl' : '');
+    if (box)    box.className   = 'bf-effect-box'   + (on ? ' active-effect' : '');
+    if (title)  title.className = 'bf-effect-title' + (on ? ' active-lbl'    : '');
     updateBFSectionGlow();
   }
+  // Convenience wrappers kept for call sites
+  function setBFWeatherToggle(on) { setBFEffect('weather', on); }
 
   function updateBFWeather() {
     const sel = document.getElementById('bf-weather-select');
@@ -4401,21 +5521,9 @@
     setBFWeatherToggle(hasAnyEffect);
   }
 
-  function toggleBFWeather() {
-    setBFWeatherToggle(!bfWeatherOn);
-  }
+  function toggleBFWeather() { setBFWeatherToggle(!bfWeatherOn); }
 
-  function toggleBFOther() {
-    bfOtherOn = !bfOtherOn;
-    const toggle = document.getElementById('bf-other-toggle');
-    const box = document.getElementById('bf-other-box');
-    const title = document.getElementById('bf-other-title');
-    toggle.textContent = bfOtherOn ? 'On' : 'Off';
-    toggle.className = 'bf-toggle-btn' + (bfOtherOn ? ' on' : '');
-    box.className = 'bf-effect-box' + (bfOtherOn ? ' active-effect' : '');
-    title.className = 'bf-effect-title' + (bfOtherOn ? ' active-lbl' : '');
-    updateBFSectionGlow();
-  }
+  function toggleBFOther() { setBFEffect('other', !bfOtherOn); }
 
   function checkBFOtherActive() {
     const input = document.getElementById('bf-other-input');
@@ -4429,9 +5537,9 @@
   function updateBFSectionGlow() {
     const sec = document.getElementById('bf-section');
     if (!sec) return;
-    const anyActive = bfWeatherOn || bfOtherOn;
-    sec.classList.toggle('battlefield-active', anyActive);
-    sec.classList.toggle('has-active', anyActive);
+    const on = bfWeatherOn || bfOtherOn;
+    sec.classList.toggle('battlefield-active', on);
+    sec.classList.toggle('has-active', on);
   }
 
   // ══════════════════════════════
@@ -5849,6 +6957,9 @@ function renderEnemyTracker() {
   const container=document.getElementById('activeEnemyTracker');
   if(!container) return;
 
+  // Refresh AoE custom chips if open
+  if (typeof aoeCustomOpen !== 'undefined' && aoeCustomOpen) renderAoeTargetChips();
+
   // Header glow when enemies are active
   const secHead=document.querySelector('#enemy-cond-section .c-head');
   if(secHead){
@@ -6214,5 +7325,27 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
   };
 
 </script>
+
+  <!-- ══ ROUND TRANSITION MODAL ══ -->
+  <div class="round-modal-overlay" id="roundModalOverlay" style="display:none" onclick="roundModalBgClick(event)">
+    <div class="round-modal" id="roundModal">
+      <div class="round-modal-header">
+        <span class="round-modal-icon">⚔</span>
+        <span class="round-modal-title">Round Transition</span>
+        <span class="round-modal-round" id="roundModalRoundLabel">R1 → R2</span>
+      </div>
+      <div class="round-modal-body" id="roundModalBody">
+        <!-- populated by JS -->
+      </div>
+      <div class="round-modal-footer">
+        <div class="round-modal-progress-wrap"><div class="round-modal-progress-bar" id="roundModalProgressBar"></div></div>
+        <div class="round-modal-progress-txt" id="roundModalProgress"></div>
+        <button class="round-modal-advance" id="roundModalAdvance" onclick="confirmRoundAdvance()">
+          ⚔ Advance to Round <span id="roundModalNextNum"></span>
+        </button>
+        <button class="round-modal-skip" onclick="skipRoundModal()">Skip checks &amp; advance anyway</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
