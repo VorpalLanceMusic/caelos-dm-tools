@@ -1,7 +1,7 @@
 # CAELOS DM DASHBOARD — DEV CODEX
 
 ## FILE
-`caelos_dm_dashboard.html` — single-file HTML PWA, ~114kb, 2651 lines. GitHub Pages hosted. Pixel 10 Pro target. No build tools, no external JS.
+`caelos_dm_dashboard.html` — single-file HTML PWA, ~138kb. GitHub Pages hosted. Pixel 10 Pro target. No build tools, no external JS.
 
 ## DESIGN SYSTEM
 ```
@@ -10,7 +10,9 @@
 --border:  #2a2a3a   --text:    #ddd8cc   --sub:     #6a6860
 --nav-h:   62px      chartreuse:#b4ff00   (BF active alert)
 ```
-Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anywhere.
+Fonts: **Rajdhani** (headers/labels) + **Nunito** (body). Loaded via Google Fonts. Milestone leveling — no XP anywhere.
+
+> **Font change from v1:** Cinzel + Crimson Text replaced with Rajdhani + Nunito for mobile readability. All explicit `letter-spacing` values reduced ~40% to compensate for Rajdhani's wider natural spacing. Small label sizes bumped 1–2px across the board.
 
 ---
 
@@ -18,7 +20,7 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 
 - Two party datasets `partyData.A` and `partyData.B`, swapped via party badge toggle
 - `sessionStorage` for per-date weather keyed as `Y-M-D`
-- Nav tabs: **Combat** · **Weather** (replaced Settings)
+- Nav tabs: **Combat** · **Bestiary** · **Encounter** · **Prep** · **Weather**
 - `currentWeather` global string drives both Weather tab and Battlefield Effects in sync
 
 ### PC Data Shape
@@ -86,7 +88,7 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 ### Combat Tab
 - **Round tracker** — +/- buttons, round number bumps with scale animation on change, round note label (Opening/Early/Mid/Climax etc.)
 - **Section headers** — color-coded (red/orange/teal/blue/purple/gray), tap to expand with slide-unfurl animation
-- **Sections:** Start of Combat · During Combat · End of Combat · Stakes · Active Conditions — Enemy
+- **Sections:** Every Round · Start of Combat · During Combat · End of Combat · Stakes · Active Conditions — Enemy · Battlefield Effects
 - **Checklist items** — cb.checked pops with scale burst; item text strikes through
 - **Active Conditions — Enemy** — full tag set with color families (see below); `#enemy-cond-wrap` block animates matching dominant condition; `clearEnemyConditions()` button
 
@@ -225,36 +227,66 @@ pushWeatherToBattlefield()— push + switch to combat tab + open BF section
 
 ---
 
-## TEXTURE SYSTEM
+## TEXTURE SYSTEM v2 — MATERIAL IDENTITY
 
-All patterns are CSS-only via `background-image` layering. No images. All rgba, never competes with text or animations. Current opacity range: 6–14%.
+All textures are CSS-only via `background-image` layering. No external images. All `rgba`, never competes with text or animations. Opacity range ~3–7% (halved from v1 for subtlety).
 
-| Surface | Pattern Type | Color | Notes |
-|---------|-------------|-------|-------|
-| `.app::before` | Dual offset dot grid | white | Fixed pseudo-element, `z-index:0`, `pointer-events:none` — does NOT touch layout |
-| `.app-header` | 135° diagonal etch | white | Layered over existing blood→dark gradient via separate `background-image` |
-| `.bottom-nav` | Tight 8px chainmail dot grid | white | |
-| `.c-head` | 120° brushed metal hairlines | white | Different angle from header = distinct material feel |
-| `.c-body` | Gold crosshatch (0° + 90°) | gold | Aged parchment — two gradient layers |
-| `.pc-card` | Corner radial depth + 45° diagonal grain | white | Top-left lighter, bottom-right darker = carved stone block |
-| `.hp-action-row` | Horizontal ruled lines 12px | white | Ledger / surgeon's chart feel |
-| `.cond-wrap` | 12px gold dot grid | gold | Old tactical map |
-| `#enemy-cond-section .c-body` | 150° red hatch + 0° gold rules | red + gold | Dangerous territory read |
-| `.party-sec-head` | 135° gold diagonal | gold | |
-| `.reset-bar` | Tight 10px square grid (0° + 90°) | white | Forge floor grating |
-| `#tab-weather` | Three offset star-field dot layers | gold + white | Prime-number sizes (47/23/71px) so pattern never repeats predictably |
-| `.wx-card-head` | 90° vertical column lines | white | Weather station readout feel |
-| `.wx-card-body` | 160° diagonal grain | white | |
-| `.wx-effects` | 0° horizontal rules 8px | blood red | Reinforces blood left-border |
-| `.wx-pre-cell` | 90° vertical hairlines | white | |
+**Critical rules:**
+- Textures use `background-color` + `background-image` separately — never `background` shorthand, which wipes `background-image` in the cascade
+- `.app` must have `position: relative` for `::before` to work
+- Body/html get NO `background-image` — layout lives there and must stay clean
+- `.reset-bar` is intentionally texture-free — smooth flat surface
 
-**Critical:** `.app` must have `position: relative` for `::before` to work. Body/html get NO background-image — layout lives there and must stay clean.
+### Unified Wall System (Combat Tab Section Headers)
+The section headers form one continuous stone wall read top→bottom. Each `.c-head` is a horizontal course of the same material, graduating from outer rampart (light, weathered) to dungeon floor (dark, ancient). A single shared vertical bedrock grain runs through all courses as the unifying element.
 
-- **Bestiary tab** — HIGH PRIORITY (referenced in codex)
+| Course | Section | Material | Character |
+|--------|---------|----------|-----------|
+| 1 | Every Round `s-red` | Outer rampart — weathered limestone | Horizontal erosion lines + diagonal surface fractures + top light catch |
+| 2 | Start of Combat `s-orange` | Upper interior wall | Diagonal hewing marks at two angles + faint torch warmth from left |
+| 3 | During Combat `s-teal` | Mid wall | Wide pressure cracks + coarse grit + dampness begins at bottom edge |
+| 4 | End of Combat `s-blue` | Lower wall — damp stone | Horizontal seepage bands + cold blue-dark cast |
+| 5 | Stakes `s-purple` | Deep wall — barely worked | Raw chisel gouges + barely any light + heavy darkness accumulation |
+| 6 | Active Conditions `s-gray` | Flagstone floor — worn smooth | Foot-polished horizontal lines + old impact scars from dropped weapons |
+| BF | Battlefield Effects | Forge/hellfire floor | Heat scoring bands + ember diagonal streaks + heat glow rising from below |
+
+### Section Body Color Whispers
+Each open `.c-body` gets a faint bloom of its section's accent color bleeding down from the header edge — barely visible, just enough to feel intentional. Defined as `.s-wrap-{color} > .c-body` overrides.
+
+### Other Surface Textures
+
+| Surface | Material Identity | Technique |
+|---------|------------------|-----------|
+| `.app::before` | Volcanic basalt slab | Diagonal pressure-crack fissures at 73°/157° + deep corner vignette |
+| `.app-header` | Scorched iron plate | Fine grinding marks at 112°/118° + heat-score bands every 18px + edge shadow |
+| `.bottom-nav` | Hammered iron threshold | Top catch-light (bright 1px line feathering to nothing) + horizontal forging compression grain + bottom anchor shadow + center wear bloom. Border-top is a soft light line, not a hard border |
+| `.c-body` | Recessed stone cavity | Subtle top shadow only — content feels inset into the wall |
+| `.pc-card` | Carved obsidian block | Polish scratches at 52°/142° + volcanic glass depth gradients (top-left catch, bottom-right sink) |
+| `.pc-grid` | Dungeon floor stone | Broad block grid implied by faint mortar lines (48×68px) |
+| `.hp-action-row` | Machined tool-steel | Tight lathe-turning lines (light+shadow pairs every 8px) + edge chamfers |
+| `.hp-cur-block` | Worn iron strongbox | Horizontal ruled surface + rivet-corner depth gradients |
+| `.cond-wrap` | Pitted bronze tactical plate | Three-layer oxidation dots at offset sizes + horizontal casting grain + verdigris edge |
+| `#enemy-cond-section .c-body` | Dried blood on stone | Diagonal blood smear streaks at 148°/152° + stain diffusion pooling toward bottom |
+| `.party-sec-head` | Hammered gold leaf | Strike lines at 138°/48° + center light catch + edge curl shadow |
+| `.party-toolbar` | Rough stone shelf | Diagonal tool marks + under-shadow |
+| `.bf-body` | War-room command slate | Coarse stone grain at two crossing angles + top shadow |
+| `#tab-weather` | Night sky membrane | Four star layers at prime-number sizes (47/23/71/37px) + nebula diffusion at 60%/20% + void edge vignette |
+| `.wx-header` | Stone instrument housing | Diagonal grain + top shadow |
+| `.wx-date-bar` | Stone ledge | Vertical score lines + top shadow |
+| `.wx-card-head` | Bone/ivory instrument panel | Horizontal growth-ring lines every 5px + diagonal stress lines + ivory warmth + tool-wear edge |
+| `.wx-card-body` | Aged vellum manuscript | Organic horizontal fiber grain + diagonal tension lines + age-spot stains at 15%/80% |
+| `.wx-effects` | Blood ink on vellum | Seep lines every 7px + quill scoring + blood margin stain bleeding from left border |
+| `.wx-pre-cell` | Slate calendar stones | Vertical score lines + horizontal sheet layering + polished face sheen |
+
+---
+
+## PENDING / ROADMAP
+
+- **Bestiary tab** — HIGH PRIORITY
 - **Encounter tab** — MEDIUM
 - **Prep tab** — MEDIUM
 - **Party A multiclass level splits** — need from players
 - **Val Artificer subclass** — need from player
 - **Full magic item inventories** — both parties
-- **Evelyn's second Sceplture Supreme item** — TBD in codex
+- **Evelyn's second Sculpture Supreme item** — TBD
 - **Codex cross-reference** — caelos_codex_condensed_v4c.md not yet integrated
