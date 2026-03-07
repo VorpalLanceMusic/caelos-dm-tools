@@ -166,6 +166,22 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 | Checkbox check | `cb-pop` 0.25s | Scale burst |
 | Tag activate | `tag-ignite` 0.3s | Scale pop |
 | HP bar | `hp-scan` 3s infinite | Scanline sweep |
+| Weather card — Clear | `wx-anim-clear` 5s | Warm gold breathe, slow and peaceful |
+| Weather card — Overcast | `wx-anim-overcast` 6s | Cool blue-gray listless pulse |
+| Weather card — Moderate Rain | `wx-anim-modrain` 4s | Same as overcast, faster |
+| Weather card — Hazy | `wx-anim-hazy` 7s | Warm amber shimmer drift, murky |
+| Weather card — Fog | `wx-anim-fog` 8s | White-gray drift, saturate fades in/out |
+| Weather card — Extreme Heat | `wx-anim-exheat` 2.8s | Aggressive amber-red throb, uncomfortable |
+| Weather card — Extreme Cold | `wx-anim-excold` 3.2s | Icy blue crystalline flicker, brittle |
+| Weather card — Thunderstorm | `wx-anim-thunder` 4.5s | 89% quiet, then sharp electric white crack + afterglow |
+| Weather card — Tornado | `wx-anim-tornado` 1.8s linear | Clockwise box-shadow rotation sweep |
+| Weather card — Blizzard | `wx-anim-blizzard` 2.2s | Cold strobe + micro translateX shudder |
+| Weather card — Acid Rain | `wx-anim-acid` 2.5s | Sickly green hue-rotate corrosive pulse |
+| Weather card — Petrifying Rain | `wx-anim-petrify` 6s | Slow stone-gray creeping desaturation |
+| Weather card — Freezing Rain | `wx-anim-freeze` 3.8s | Two sharp brittle ice spikes at irregular intervals |
+| Weather card — Hurricane | `wx-anim-hurricane` 1.2s linear | Rotating light source + card shudder translateX/Y |
+| Weather card — Sleeping Fog | `wx-anim-sleepfog` 9s | Eerie slow purple-white drift, dreamy and wrong |
+| Weather card — Veil of Stars | `wx-anim-veilstars` 10s | Cosmic hue-rotate drift, shifting corner light sources |
 | HP damage | `hp-damage-flash` 0.4s | Dim + desaturate |
 | HP heal | `hp-healed-flash` 0.5s | Brightness flash |
 | Death save success | `pip-success` 0.4s | Green bloom + outward flare |
@@ -202,7 +218,7 @@ resetWeather()            — set both tabs to 'clear'
 resetChecks()             — full combat state wipe (checks/tags/conditions/BF/weather)
 resetAll()                — resetChecks + resetRound + clear weather
 longRest()                — full HP restore + wipe conditions/death saves
-renderWeatherCard()       — render weather card in wx-card-area
+renderWeatherCard()       — render weather card in wx-card-area; applies wx-anim-{key} class from WX_ANIM map for per-weather animation
 syncBFWeather()           — push currentWeather to BF dropdown
 pushWeatherToBattlefield()— push + switch to combat tab + open BF section
 ```
