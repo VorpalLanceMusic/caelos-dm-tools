@@ -883,6 +883,144 @@
   .long-rest-btn { border-color: #2a4a6a !important; color: #68a8d8 !important; }
   .long-rest-btn:active { background: #001428 !important; }
 
+  /* ── RESISTANCE / VULNERABILITY TOGGLES ── */
+  .dmg-modifier-row {
+    display: flex; align-items: center; gap: 5px; margin-left: 2px;
+  }
+  .dmg-mod-lbl {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--sub); white-space: nowrap;
+  }
+  .dmg-mod-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.4px; padding: 5px 9px; border-radius: 5px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap; min-height: 30px; line-height: 1;
+  }
+  .dmg-mod-btn:active { transform: scale(0.94); }
+  .dmg-mod-btn.res-active  { background: rgba(42,106,170,0.2); border-color: #2a6aaa; color: #68a8d8; box-shadow: 0 0 8px rgba(42,106,170,0.25); }
+  .dmg-mod-btn.vuln-active { background: rgba(200,114,42,0.2); border-color: #c8722a; color: #e8a858; box-shadow: 0 0 8px rgba(200,114,42,0.3); }
+  .enemy-mod-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.3px; padding: 3px 7px; border-radius: 4px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer;
+    transition: all 0.13s; white-space: nowrap; min-height: 28px; line-height: 1; flex-shrink: 0;
+  }
+  .enemy-mod-btn:active { transform: scale(0.93); }
+  .enemy-mod-btn.res-active  { background: rgba(42,106,170,0.2); border-color: #2a6aaa; color: #68a8d8; box-shadow: 0 0 6px rgba(42,106,170,0.25); }
+  .enemy-mod-btn.vuln-active { background: rgba(200,114,42,0.2); border-color: #c8722a; color: #e8a858; box-shadow: 0 0 6px rgba(200,114,42,0.3); }
+
+  /* ══════════════════════════════
+     QUICK NOTE — per PC card
+  ══════════════════════════════ */
+  .pc-quicknote-wrap {
+    margin-top: 6px;
+    position: relative;
+  }
+  .pc-quicknote {
+    width: 100%; box-sizing: border-box;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif; font-size: 13px;
+    padding: 6px 10px 6px 28px;
+    outline: none; resize: none;
+    line-height: 1.4; min-height: 32px; max-height: 80px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+  .pc-quicknote::placeholder { color: var(--sub); font-style: italic; }
+  .pc-quicknote:focus { border-color: rgba(232,200,122,0.35); box-shadow: 0 0 6px rgba(232,200,122,0.1); }
+  .pc-quicknote.has-content { border-color: rgba(232,200,122,0.25); }
+  .pc-quicknote-icon {
+    position: absolute; left: 8px; top: 7px;
+    font-size: 13px; pointer-events: none; opacity: 0.45;
+  }
+
+  /* ══════════════════════════════
+     CONCENTRATION TRACKER
+  ══════════════════════════════ */
+  .pc-conc-wrap {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+    opacity: 0;
+  }
+  .pc-conc-wrap.conc-active {
+    max-height: 60px;
+    opacity: 1;
+  }
+  .pc-conc-inner {
+    margin-top: 5px;
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(232,200,122,0.04);
+    border: 1px solid rgba(232,200,122,0.22);
+    border-radius: 6px;
+    padding: 5px 10px;
+    animation: conc-pulse 3s ease-in-out infinite;
+  }
+  @keyframes conc-pulse {
+    0%,100% { border-color: rgba(232,200,122,0.22); box-shadow: 0 0 4px rgba(232,200,122,0.06); }
+    50%      { border-color: rgba(232,200,122,0.5);  box-shadow: 0 0 10px rgba(232,200,122,0.18); }
+  }
+  .pc-conc-icon { font-size: 14px; flex-shrink: 0; }
+  .pc-conc-lbl {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--gold); flex-shrink: 0;
+  }
+  .pc-conc-input {
+    flex: 1; background: transparent; border: none;
+    border-bottom: 1px solid rgba(232,200,122,0.3);
+    color: var(--gold); font-family: 'Nunito', sans-serif; font-size: 13px;
+    font-weight: 600; outline: none; padding: 1px 4px;
+    min-width: 0;
+  }
+  .pc-conc-input::placeholder { color: rgba(232,200,122,0.4); font-style: italic; font-weight: 400; }
+  .pc-conc-input:focus { border-bottom-color: var(--gold); }
+
+  /* ══════════════════════════════
+     ENEMY RECHARGE TRACKER
+  ══════════════════════════════ */
+  .enemy-recharge-strip {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    padding: 6px 10px 4px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .recharge-lbl {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--sub); align-self: center; flex-shrink: 0;
+    margin-right: 2px;
+  }
+  .recharge-chip {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--ember); background: rgba(200,114,42,0.12);
+    color: var(--ember); transition: all 0.18s; user-select: none;
+    letter-spacing: 0.3px; position: relative; overflow: hidden;
+    animation: recharge-ready 3.5s ease-in-out infinite;
+  }
+  @keyframes recharge-ready {
+    0%,100% { box-shadow: 0 0 4px rgba(200,114,42,0.2); border-color: rgba(200,114,42,0.6); }
+    50%      { box-shadow: 0 0 10px rgba(200,114,42,0.45); border-color: rgba(200,114,42,1); }
+  }
+  .recharge-chip:active { transform: scale(0.94); }
+  .recharge-chip.spent {
+    border-color: var(--border); background: transparent;
+    color: var(--sub); animation: none;
+    box-shadow: none; opacity: 0.55;
+    text-decoration: line-through;
+  }
+  .recharge-chip.spent::after {
+    content: ' (spent)';
+    font-size: 9px; font-weight: 400; letter-spacing: 0; opacity: 0.7;
+  }
+
   /* ══════════════════════════════
      DOWNED STATE — 0 HP
      Vivid red border + dim red bg + heartbeat
@@ -1968,6 +2106,171 @@
   .enemy-reminder-chip.passive { background:rgba(42,106,170,0.15);color:rgba(150,180,230,0.85);border:1px solid rgba(42,106,170,0.2); }
   .enemy-reminder-chip.triggered { background:rgba(155,26,26,0.15);color:rgba(230,150,150,0.9);border:1px solid rgba(155,26,26,0.3);animation:reminder-pulse 3s ease-in-out infinite; }
 
+  /* ══════════════════════════════
+     AOE BROADCAST SECTION
+  ══════════════════════════════ */
+  .aoe-section {
+    margin: 0; padding: 10px 12px 12px;
+    background: var(--raised);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .aoe-section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .aoe-section-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; color: var(--sub);
+  }
+  .aoe-targets {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px;
+    color: var(--ember); letter-spacing: 0.3px; font-weight: 600;
+  }
+  .aoe-input-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .aoe-input {
+    width: 80px; font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700;
+    color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 8px; text-align: center; outline: none; flex-shrink: 0;
+    transition: border-color 0.15s;
+  }
+  .aoe-input:focus { border-color: var(--blood); }
+  .aoe-mod-hint {
+    font-family: 'Nunito', sans-serif; font-size: 11px;
+    color: var(--sub); font-style: italic;
+  }
+  .aoe-btn-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  }
+  .aoe-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.4px; padding: 9px 8px; border-radius: 7px;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    text-align: center;
+  }
+  .aoe-btn:active { transform: scale(0.95); }
+  .aoe-btn.dmg         { background: rgba(155,26,26,0.15);  color: #e06868; border: 1px solid rgba(155,26,26,0.4); }
+  .aoe-btn.dmg:active  { background: rgba(155,26,26,0.35); }
+  .aoe-btn.heal        { background: rgba(42,154,114,0.1);  color: #68dd88; border: 1px solid rgba(42,154,114,0.35); }
+  .aoe-btn.heal:active { background: rgba(42,154,114,0.3); }
+  .aoe-btn.dmg.enemy   { background: rgba(200,80,20,0.12);  color: #e08848; border-color: rgba(200,80,20,0.4); }
+  .aoe-btn.heal.enemy  { background: rgba(42,130,180,0.1);  color: #68aadd; border-color: rgba(42,130,180,0.35); }
+  .aoe-btn.dmg.both    { background: rgba(120,20,120,0.12); color: #d068d0; border-color: rgba(120,20,120,0.4); grid-column: span 2; }
+  .aoe-btn.heal.both   { background: rgba(200,180,42,0.1);  color: var(--gold); border-color: rgba(200,180,42,0.35); grid-column: span 2; }
+  .aoe-flash { animation: aoe-hit 0.4s ease-out; }
+  @keyframes aoe-hit {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(1.02); filter: brightness(1.25); }
+    100% { transform: scale(1); filter: brightness(1); }
+  }
+
+  /* ══════════════════════════════
+     COMBAT TIMER
+  ══════════════════════════════ */
+  .combat-timer-wrap {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .timer-display {
+    font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700;
+    color: var(--gold); letter-spacing: 2px; min-width: 80px;
+    text-shadow: 0 0 12px rgba(232,200,122,0.2);
+    transition: color 0.3s;
+  }
+  .timer-display.running { animation: timer-tick 1s ease-in-out infinite; }
+  @keyframes timer-tick {
+    0%,100% { text-shadow: 0 0 8px rgba(232,200,122,0.2); }
+    50%      { text-shadow: 0 0 20px rgba(232,200,122,0.5); }
+  }
+  .timer-display.warn { color: var(--ember); }
+  .timer-display.danger { color: #e06868; animation: timer-danger 0.8s ease-in-out infinite; }
+  @keyframes timer-danger {
+    0%,100% { text-shadow: 0 0 6px rgba(220,80,80,0.3); }
+    50%      { text-shadow: 0 0 18px rgba(220,80,80,0.7); }
+  }
+  .timer-lbl {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.8px; color: var(--sub);
+    flex: 1;
+  }
+  .timer-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.5px; padding: 5px 12px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer; transition: all 0.15s;
+  }
+  .timer-btn.running { border-color: var(--ember); color: var(--ember); background: rgba(200,114,42,0.1); }
+  .timer-btn:active { transform: scale(0.94); }
+
+  /* ══════════════════════════════
+     ENEMY CONDITION TAGS — per instance
+  ══════════════════════════════ */
+  .enemy-cond-row {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 4px 12px 6px;
+  }
+  .enemy-cond-tag {
+    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 10px;
+    border: 1px solid var(--border); color: var(--sub);
+    cursor: pointer; transition: all 0.13s; user-select: none;
+  }
+  .enemy-cond-tag:active { transform: scale(0.91); }
+  .enemy-cond-tag.econd-on-purple { background: rgba(122,42,170,0.15); border-color: #7a2aaa; color: #c068e0; }
+  .enemy-cond-tag.econd-on-green  { background: rgba(42,138,42,0.15);  border-color: #2a8a2a; color: #68d868; }
+  .enemy-cond-tag.econd-on-blue   { background: rgba(42,106,170,0.15); border-color: #2a6aaa; color: #68a8d8; }
+  .enemy-cond-tag.econd-on-gold   { background: rgba(232,200,122,0.1); border-color: var(--gold); color: var(--gold); }
+  .enemy-cond-tag.econd-on-red    { background: rgba(155,26,26,0.15);  border-color: #9b1a1a; color: #e06868; }
+  .enemy-cond-tag.econd-on-gray   { background: rgba(80,80,90,0.15);   border-color: #505060; color: #9090a8; }
+
+  /* ══════════════════════════════
+     DEPLOY QUEUE TOAST
+  ══════════════════════════════ */
+  .deploy-queue-toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--raised); border: 1px solid var(--ember);
+    border-radius: 10px; padding: 8px 14px;
+    display: flex; align-items: center; gap: 10px;
+    z-index: 300; pointer-events: all;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(200,114,42,0.2);
+    animation: toast-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(16px) scale(0.92); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1); }
+  }
+  .deploy-queue-toast.hiding {
+    animation: toast-out 0.25s ease-in forwards;
+  }
+  @keyframes toast-out {
+    to { opacity: 0; transform: translateX(-50%) translateY(12px) scale(0.94); }
+  }
+  .toast-text {
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
+    color: var(--ember); letter-spacing: 0.3px;
+  }
+  .toast-go-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 6px;
+    border: 1px solid var(--ember); background: rgba(200,114,42,0.15);
+    color: var(--ember); cursor: pointer; transition: all 0.15s;
+  }
+  .toast-go-btn:active { background: rgba(200,114,42,0.35); }
+  .toast-dismiss-btn {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px;
+    color: var(--sub); background: none; border: none; cursor: pointer;
+    padding: 2px 4px; opacity: 0.6; transition: opacity 0.15s;
+  }
+  .toast-dismiss-btn:active { opacity: 1; }
+
+  /* Stagger card sheen so they don't all fire at once */
   /* Stagger card sheen so they don't all fire at once */
   .bcard-wrap:nth-child(2) .bcard-back::after { animation-delay: -2s; }
   .bcard-wrap:nth-child(3) .bcard-back::after { animation-delay: -4s; }
@@ -2344,6 +2647,14 @@
         <div class="surprise-toggle"><button class="surprise-btn" id="surpriseBtn" onclick="toggleSurprise()">⚡ Surprise</button></div>
       </div>
 
+      <!-- COMBAT TIMER -->
+      <div class="combat-timer-wrap">
+        <span class="timer-lbl">⏱ Combat</span>
+        <span class="timer-display" id="timerDisplay">00:00</span>
+        <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">Start</button>
+        <button class="timer-btn" onclick="resetTimer()" style="margin-left:4px">Reset</button>
+      </div>
+
       <div class="c-section">
         <div class="c-head s-red" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🔴</span><span class="c-title">Every Round — Never Skip</span></div>
@@ -2490,6 +2801,26 @@
             </div>
 
           </div>
+        </div>
+      </div>
+
+      <!-- AOE BROADCAST -->
+      <div class="aoe-section">
+        <div class="aoe-section-head">
+          <span class="aoe-section-title">💥 Broadcast Damage / Healing</span>
+          <span class="aoe-targets" id="aoeTargetCount"></span>
+        </div>
+        <div class="aoe-input-row">
+          <input class="aoe-input" type="number" min="0" placeholder="Amount" id="aoeAmt" inputmode="numeric">
+          <span class="aoe-mod-hint" id="aoeModeHint">Enter amount, then choose a target</span>
+        </div>
+        <div class="aoe-btn-grid">
+          <button class="aoe-btn dmg" onclick="broadcastAoE('dmg','party')">⚔ Dmg Party</button>
+          <button class="aoe-btn heal" onclick="broadcastAoE('heal','party')">💚 Heal Party</button>
+          <button class="aoe-btn dmg enemy" onclick="broadcastAoE('dmg','enemies')">⚔ Dmg Enemies</button>
+          <button class="aoe-btn heal enemy" onclick="broadcastAoE('heal','enemies')">💚 Heal Enemies</button>
+          <button class="aoe-btn dmg both" onclick="broadcastAoE('dmg','both')">💥 Dmg Everyone</button>
+          <button class="aoe-btn heal both" onclick="broadcastAoE('heal','both')">✨ Heal Everyone</button>
         </div>
       </div>
 
@@ -2782,7 +3113,7 @@
         ],
         note: 'CLOUD RUNE — redirect attack to another target' },
 
-      { name: 'The',    cls: 'Aasimar · Rogue · Assassin',
+      { name: 'The',    cls: 'Aasimar · Rogue (Assassin/Mastermind) · Warlock',
         maxHp: 68, tempHp: 0, curHp: 68, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',      v: '17', hi: true },
@@ -2791,7 +3122,7 @@
           { l: 'Snk Atk', v: '?d6', hi: true },
           { l: 'Prof',    v: '+3' },
         ],
-        note: 'Assassinate: auto-crit on surprised target. Face never visible.' },
+        note: 'Assassinate: auto-crit on surprised target. Mastermind: Help as bonus action (30ft). Face never visible.' },
 
       { name: 'Evelyn', cls: 'Dhampir · Cleric/Barbarian',
         maxHp: 52, tempHp: 0, curHp: 52, deathSaves: { s: 0, f: 0 }, conditions: [], customConditions: [{ name: 'Raging', cls: 'cond-gold', card: 'conditioned-gold' }, { name: 'Hungry', cls: 'cond-blood', card: 'conditioned-blood' }],
@@ -2832,7 +3163,7 @@
           { l: 'AC',       v: '14', hi: true },
           { l: 'Init',     v: '+2' },
           { l: 'PP',       v: '12' },
-          { l: 'Spell DC', v: '?',  hi: true },
+          { l: 'Spell DC', v: '13', hi: true },
           { l: 'Prof',     v: '+2' },
         ],
         note: 'Wild Shape available. Fire resistance. Darkvision 60ft.' },
@@ -2865,6 +3196,267 @@
   const PARTY_NAMES = { A: 'Heroes of Hayward', B: 'The Starfall Society' };
   function partyName(p) { return PARTY_NAMES[p || party] || ('Party ' + (p || party)); }
   let editMode = false;
+
+  // ── DAMAGE MODIFIER STATE ──
+  // 'none' | 'res' | 'vuln' per target key ("A-0", "B-2" for PCs; "gi-ii" for enemies)
+  const dmgMod = {};
+  function getDmgMod(key)          { return dmgMod[key] || 'none'; }
+  function applyModifier(raw, key) {
+    const mod = getDmgMod(key);
+    if (mod === 'res')  return Math.floor(raw / 2);
+    if (mod === 'vuln') return Math.floor(raw * 2);
+    return raw;
+  }
+  function toggleDmgMod(key, type, resBtnId, vulnBtnId) {
+    dmgMod[key] = (dmgMod[key] === type) ? 'none' : type;
+    const resBtn  = document.getElementById(resBtnId);
+    const vulnBtn = document.getElementById(vulnBtnId);
+    if (resBtn)  resBtn.classList.toggle('res-active',  dmgMod[key] === 'res');
+    if (vulnBtn) vulnBtn.classList.toggle('vuln-active', dmgMod[key] === 'vuln');
+  }
+
+  // ── QUICK NOTES — session-only per PC ──
+  const pcNotes = {};
+  function updatePCNote(pid, val) {
+    pcNotes[pid] = val;
+    const el = document.getElementById('qnote-' + pid);
+    if (el) el.classList.toggle('has-content', val.trim().length > 0);
+    // auto-grow
+    if (el) { el.style.height = 'auto'; el.style.height = Math.min(80, el.scrollHeight) + 'px'; }
+  }
+
+  // ── CONCENTRATION — per PC ──
+  const pcConcentration = {};
+  function updateConcentration(pid, val) {
+    pcConcentration[pid] = val;
+  }
+  // Called when Concentrating condition toggled — show/hide the field
+  function syncConcField(pid, isOn) {
+    const wrap = document.getElementById('conc-' + pid);
+    if (!wrap) return;
+    wrap.classList.toggle('conc-active', isOn);
+    if (!isOn) {
+      pcConcentration[pid] = '';
+      const inp = document.getElementById('conc-inp-' + pid);
+      if (inp) inp.value = '';
+    } else {
+      setTimeout(() => { const inp = document.getElementById('conc-inp-' + pid); if (inp) inp.focus(); }, 320);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════
+  // ENEMY CONDITIONS — per instance (key: "gi-ii")
+  // ══════════════════════════════════════════════════════
+  const ENEMY_CONDITIONS = [
+    { name: 'Frightened',    col: 'purple' },
+    { name: 'Charmed',       col: 'purple' },
+    { name: 'Stunned',       col: 'purple' },
+    { name: 'Incapacitated', col: 'gray'   },
+    { name: 'Poisoned',      col: 'green'  },
+    { name: 'Blinded',       col: 'green'  },
+    { name: 'Grappled',      col: 'blue'   },
+    { name: 'Restrained',    col: 'blue'   },
+    { name: 'Prone',         col: 'blue'   },
+    { name: 'Invisible',     col: 'blue'   },
+    { name: 'Concentrating', col: 'gold'   },
+    { name: 'Bloodied',      col: 'red'    },
+    { name: 'Exhausted',     col: 'gray'   },
+  ];
+  const enemyConds = {}; // key "gi-ii" → array of condition names
+
+  function toggleEnemyCond(gi, ii, name) {
+    const key = gi + '-' + ii;
+    if (!enemyConds[key]) enemyConds[key] = [];
+    const idx = enemyConds[key].indexOf(name);
+    if (idx >= 0) enemyConds[key].splice(idx, 1);
+    else enemyConds[key].push(name);
+    // Update just the cond row without full re-render
+    const condRow = document.getElementById('econd-row-' + gi + '-' + ii);
+    if (condRow) {
+      condRow.querySelectorAll('.enemy-cond-tag').forEach(tag => {
+        const ec = ENEMY_CONDITIONS.find(e => e.name === tag.textContent);
+        if (!ec) return;
+        const on = enemyConds[key].includes(ec.name);
+        tag.className = 'enemy-cond-tag' + (on ? ' econd-on-' + ec.col : '');
+      });
+    }
+  }
+
+  // ══════════════════════════════════════════════════════
+  // COMBAT TIMER
+  // ══════════════════════════════════════════════════════
+  let timerSeconds = 0;
+  let timerRunning = false;
+  let timerInterval = null;
+
+  function toggleTimer() {
+    timerRunning = !timerRunning;
+    const btn = document.getElementById('timerBtn');
+    const display = document.getElementById('timerDisplay');
+    if (timerRunning) {
+      btn.textContent = 'Pause';
+      btn.classList.add('running');
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    } else {
+      btn.textContent = 'Resume';
+      btn.classList.remove('running');
+      clearInterval(timerInterval);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    timerSeconds = 0;
+    const btn = document.getElementById('timerBtn');
+    if (btn) { btn.textContent = 'Start'; btn.classList.remove('running'); }
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const el = document.getElementById('timerDisplay');
+    if (!el) return;
+    const m = Math.floor(timerSeconds / 60);
+    const s = timerSeconds % 60;
+    el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    el.classList.remove('warn','danger','running');
+    if (timerRunning) el.classList.add('running');
+    if (timerSeconds >= 2400) el.classList.add('danger');      // 40min+
+    else if (timerSeconds >= 1200) el.classList.add('warn');   // 20min+
+  }
+
+  // ══════════════════════════════════════════════════════
+  // AOE BROADCAST
+  // ══════════════════════════════════════════════════════
+  function broadcastAoE(type, scope) {
+    const raw = parseInt(document.getElementById('aoeAmt')?.value) || 0;
+    if (!raw) return;
+    let affected = 0;
+    const label = type === 'dmg' ? 'hit' : 'healed';
+
+    // ── Party targets ──
+    if (scope === 'party' || scope === 'both') {
+      partyData[party].forEach((pc, idx) => {
+        if (pc.curHp <= 0) return;
+        const pid = party + '-' + idx;
+        const amt = applyModifier(raw, pid);
+        if (type === 'dmg') {
+          if (pc.tempHp >= amt) { pc.tempHp -= amt; }
+          else { const rem = amt - pc.tempHp; pc.tempHp = 0; pc.curHp = Math.max(0, pc.curHp - rem); }
+        } else {
+          pc.curHp = Math.min(pc.maxHp, pc.curHp + amt);
+        }
+        const bar = document.getElementById('hpbar-' + pid);
+        if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add(type === 'dmg' ? 'damaged' : 'healed'); }
+        updateHPDisplay(party, idx);
+        affected++;
+      });
+    }
+
+    // ── Enemy targets ──
+    if (scope === 'enemies' || scope === 'both') {
+      activeEnemies.forEach((group, gi) => {
+        group.instances.forEach((inst, ii) => {
+          if (inst.downed) return;
+          const ekey = gi + '-' + ii;
+          const amt = applyModifier(raw, ekey);
+          if (type === 'dmg') {
+            inst.cur = Math.max(0, inst.cur - amt);
+            if (inst.cur === 0) inst.downed = true;
+          } else {
+            inst.cur = Math.min(inst.max, inst.cur + amt);
+          }
+          affected++;
+        });
+      });
+      if (scope === 'enemies' || scope === 'both') renderEnemyTracker();
+    }
+
+    // Flash the section
+    const aoeSection = document.querySelector('.aoe-section');
+    if (aoeSection) { aoeSection.classList.remove('aoe-flash'); void aoeSection.offsetWidth; aoeSection.classList.add('aoe-flash'); }
+
+    // Update feedback label
+    const lbl = document.getElementById('aoeTargetCount');
+    if (lbl) lbl.textContent = affected + ' target' + (affected !== 1 ? 's' : '') + ' ' + label;
+
+    document.getElementById('aoeAmt').value = '';
+    const hint = document.getElementById('aoeModeHint');
+    if (hint) hint.textContent = '';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // DEPLOY QUEUE — stay on bestiary, show toast
+  // ══════════════════════════════════════════════════════
+  let deployToastEl = null;
+  let deployToastTimer = null;
+
+  function queueToCombat(id) {
+    const c = BESTIARY.find(x => x.id === id);
+    if (!c) return;
+    // Add to activeEnemies without switching tab
+    const existing = activeEnemies.find(e => e.creature.id === id);
+    if (existing) {
+      for (let i = 0; i < deployCount; i++)
+        existing.instances.push({id: existing.instances.length+1, cur: c.hp, max: c.hp, downed: false});
+    } else {
+      const instances = [];
+      for (let i = 0; i < deployCount; i++) instances.push({id: i+1, cur: c.hp, max: c.hp, downed: false});
+      activeEnemies.push({creature: c, instances});
+    }
+    renderEnemyTracker();
+    showDeployToast(deployCount + '× ' + c.name + ' queued');
+    // Reset deploy count
+    deployCount = 1;
+    const dcv = document.getElementById('deployCountVal');
+    if (dcv) dcv.textContent = 1;
+  }
+
+  function showDeployToast(msg) {
+    if (deployToastEl) {
+      deployToastEl.remove();
+      clearTimeout(deployToastTimer);
+    }
+    const total = activeEnemies.reduce((n, g) => n + g.instances.length, 0);
+    deployToastEl = document.createElement('div');
+    deployToastEl.className = 'deploy-queue-toast';
+    deployToastEl.innerHTML =
+      '<span class="toast-text">⚔ ' + msg + ' · ' + total + ' total</span>' +
+      '<button class="toast-go-btn" onclick="goToCombatFromToast()">Go to Combat</button>' +
+      '<button class="toast-dismiss-btn" onclick="dismissDeployToast()">✕</button>';
+    document.body.appendChild(deployToastEl);
+    deployToastTimer = setTimeout(dismissDeployToast, 4000);
+  }
+
+  function goToCombatFromToast() {
+    dismissDeployToast();
+    switchTab('combat');
+    const sec = document.getElementById('enemy-cond-section');
+    if (sec) { const b = sec.querySelector('.c-body'); if (b && b.style.display==='none') { const h = sec.querySelector('.c-head'); if (h) h.click(); } }
+  }
+
+  function dismissDeployToast() {
+    if (!deployToastEl) return;
+    deployToastEl.classList.add('hiding');
+    setTimeout(() => { if (deployToastEl) { deployToastEl.remove(); deployToastEl = null; } }, 260);
+    clearTimeout(deployToastTimer);
+  }
+
+  // ── ENEMY RECHARGE — per group, keyed by gi + ability name ──
+  const rechargeState = {}; // key: "gi:abilityName" → true=spent
+  function toggleRecharge(gi, name, btnId) {
+    const key = gi + ':' + name;
+    rechargeState[key] = !rechargeState[key];
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.toggle('spent', rechargeState[key]);
+  }
+  function resetGroupRecharges(gi) {
+    Object.keys(rechargeState).forEach(k => { if (k.startsWith(gi + ':')) delete rechargeState[k]; });
+    renderEnemyTracker();
+  }
 
   function hpColor(cur, max) {
     const pct = cur / max;
@@ -2909,6 +3501,8 @@
     if (i >= 0) pc.conditions.splice(i, 1);
     else pc.conditions.push(condName);
     const pid = p + '-' + idx;
+    // Sync concentration field visibility
+    if (condName === 'Concentrating') syncConcField(pid, pc.conditions.includes('Concentrating'));
     const card = document.getElementById('pccard-' + pid);
     if (!card) return;
     card.querySelectorAll('.pc-cond-tag').forEach(tag => {
@@ -2991,6 +3585,13 @@
                 <button class="hp-apply-btn dmg-btn" onclick="applyDmg('${party}',${idx})">Apply</button>
               </div>
             </div>
+            <div class="dmg-modifier-row">
+              <span class="dmg-mod-lbl">Mod:</span>
+              <button class="dmg-mod-btn" id="res-${pid}"
+                onclick="toggleDmgMod('${pid}','res','res-${pid}','vuln-${pid}')">½ Res</button>
+              <button class="dmg-mod-btn" id="vuln-${pid}"
+                onclick="toggleDmgMod('${pid}','vuln','res-${pid}','vuln-${pid}')">×2 Vuln</button>
+            </div>
             <div class="hp-action-group">
               <span class="hp-action-lbl heal-lbl">Healing</span>
               <div class="hp-action-inputs">
@@ -3030,6 +3631,30 @@
             : ''}
         </div>
 
+        <!-- CONCENTRATION TRACKER — slides in when Concentrating toggled -->
+        <div class="pc-conc-wrap${pc.conditions && pc.conditions.includes('Concentrating') ? ' conc-active' : ''}" id="conc-${pid}">
+          <div class="pc-conc-inner">
+            <span class="pc-conc-icon">🔮</span>
+            <span class="pc-conc-lbl">Conc:</span>
+            <input class="pc-conc-input" type="text" id="conc-inp-${pid}"
+              placeholder="Spell name…"
+              value="${pcConcentration[pid] || ''}"
+              oninput="updateConcentration('${pid}', this.value)"
+              maxlength="40">
+          </div>
+        </div>
+
+        <!-- QUICK NOTE — session scratchpad -->
+        <div class="pc-quicknote-wrap">
+          <span class="pc-quicknote-icon">✏</span>
+          <textarea class="pc-quicknote${(pcNotes[pid]||'').trim() ? ' has-content' : ''}"
+            id="qnote-${pid}"
+            placeholder="Quick note…"
+            rows="1"
+            oninput="updatePCNote('${pid}', this.value)"
+          >${pcNotes[pid] || ''}</textarea>
+        </div>
+
         ${pc.note ? `<div class="pc-note${pc.note.includes('⚠') ? ' warn' : ''}">${pc.note}</div>` : ''}
 
         <!-- DOWNED TIPS — only visible at 0HP -->
@@ -3061,12 +3686,43 @@
       `;
       grid.appendChild(card);
     });
+
+    // Restore persistent state after re-render
+    partyData[party].forEach((pc, idx) => {
+      const pid = party + '-' + idx;
+
+      // Res/Vuln buttons
+      const mod = getDmgMod(pid);
+      if (mod !== 'none') {
+        const resBtn  = document.getElementById('res-'  + pid);
+        const vulnBtn = document.getElementById('vuln-' + pid);
+        if (resBtn)  resBtn.classList.toggle('res-active',  mod === 'res');
+        if (vulnBtn) vulnBtn.classList.toggle('vuln-active', mod === 'vuln');
+      }
+
+      // Quick note — restore content + auto-height
+      const noteEl = document.getElementById('qnote-' + pid);
+      if (noteEl && pcNotes[pid]) {
+        noteEl.value = pcNotes[pid];
+        noteEl.classList.toggle('has-content', pcNotes[pid].trim().length > 0);
+        noteEl.style.height = 'auto';
+        noteEl.style.height = Math.min(80, noteEl.scrollHeight) + 'px';
+      }
+
+      // Concentration field visibility
+      const isConc = pc.conditions && pc.conditions.includes('Concentrating');
+      const concWrap = document.getElementById('conc-' + pid);
+      if (concWrap) concWrap.classList.toggle('conc-active', isConc);
+      const concInp = document.getElementById('conc-inp-' + pid);
+      if (concInp && pcConcentration[pid]) concInp.value = pcConcentration[pid];
+    });
   }
 
   function applyDmg(p, idx) {
     const pid = p + '-' + idx;
-    const amt = parseInt(document.getElementById('dmg-' + pid).value) || 0;
-    if (!amt) return;
+    const raw = parseInt(document.getElementById('dmg-' + pid).value) || 0;
+    if (!raw) return;
+    const amt = applyModifier(raw, pid); // apply Res/Vuln before subtracting
     const pc = partyData[p][idx];
     if (pc.tempHp >= amt) {
       pc.tempHp -= amt;
@@ -3148,11 +3804,14 @@
   }
 
   function longRest() {
-    partyData[party].forEach(pc => {
+    partyData[party].forEach((pc, idx) => {
       pc.curHp = pc.maxHp;
       pc.tempHp = 0;
       pc.deathSaves = { s: 0, f: 0 };
       pc.conditions = [];
+      const pid = party + '-' + idx;
+      pcNotes[pid] = '';
+      pcConcentration[pid] = '';
     });
     renderPCs();
   }
@@ -3189,6 +3848,8 @@
     party = party === 'A' ? 'B' : 'A';
     document.getElementById('partyBadge').textContent = partyName();
     renderPCs();
+    const lbl = document.getElementById('aoeTargetCount');
+    if (lbl) lbl.textContent = '';
   }
 
   renderPCs();
@@ -3284,6 +3945,8 @@
 
   function clearPCConditions(p, idx) {
     partyData[p][idx].conditions = [];
+    const pid = p + '-' + idx;
+    syncConcField(pid, false);
     renderPCs();
     updateSectionGlows();
   }
@@ -3338,6 +4001,7 @@
   function resetAll() {
     resetChecks();
     resetRound();
+    resetTimer();
     // Clear weather entirely
     currentWeather = 'none';
     const wxDrop = document.getElementById('wx-dropdown');
@@ -5138,7 +5802,8 @@ function openDetail(id) {
         <span class="deploy-count-val" id="deployCountVal">1</span>
         <button class="deploy-count-btn" onclick="adjustDeploy(1)">+</button>
       </div>
-      <button class="deploy-btn" onclick="deployToCombat('${id}')">⚔ Deploy to Combat</button>
+      <button class="deploy-btn queue-btn" style="background:linear-gradient(135deg,#1a3a1a,#0a200a);color:#88dd88;border-color:rgba(42,154,114,0.5);flex:0.7;font-size:13px;" onclick="queueToCombat('${id}')">+ Queue</button>
+      <button class="deploy-btn" onclick="deployToCombat('${id}')">⚔ Deploy</button>
     </div>
   `;
   deployCount=1;
@@ -5217,21 +5882,41 @@ function renderEnemyTracker() {
 
     const passiveChips=(c.reminders&&c.reminders.passive||[]).map(r=>'<div class="enemy-reminder-chip passive">'+r+'</div>').join('');
     const triggeredChips=(c.reminders&&c.reminders.triggered||[]).map(r=>'<div class="enemy-reminder-chip triggered">'+r+'</div>').join('');
+    const rechargeAbilities=[];
+    [...(c.actions||[]),...(c.bonusActions||[])].forEach(a=>{ if(a.recharge) rechargeAbilities.push({name:a.name,recharge:a.recharge}); });
+    const rechargeStrip=rechargeAbilities.length>0
+      ? rechargeAbilities.reduce((html,a)=>{
+          const spent=rechargeState[gi+':'+a.name]||false;
+          const btnId='rchip-'+gi+'-'+a.name.replace(/\s+/g,'_');
+          return html+'<span class="recharge-chip'+(spent?' spent':'')+'" id="'+btnId+'" onclick="toggleRecharge('+gi+',\''+a.name+'\',\''+btnId+'\')">'+a.name+' <span style="font-size:10px;opacity:0.7">('+a.recharge+')</span></span>';
+        },'<div class="enemy-recharge-strip"><span class="recharge-lbl">Ἳ2 Recharge:</span>')+'</div>'
+      : '';
 
     const gertieNote=c.id==='gertie'?'<div class="gertie-note">💚 Keep my girl safe at ALL COSTS! 💚</div>':'';
 
     const rows=group.instances.map((inst,ii)=>{
       const pct=Math.max(0,(inst.cur/inst.max)*100);
       const barColor=inst.downed?'#444':pct>60?'#2a8a2a':pct>30?'#c8722a':'#cc2222';
+      const ekey=gi+'-'+ii;
+      const instConds=enemyConds[ekey]||[];
+      const econdTags=ENEMY_CONDITIONS.map(ec=>{
+        const on=instConds.includes(ec.name);
+        return '<span class="enemy-cond-tag'+(on?' econd-on-'+ec.col:'')+'" onclick="toggleEnemyCond('+gi+','+ii+',\''+ec.name+'\')">'+ec.name+'</span>';
+      }).join('');
       return `<div class="enemy-row${inst.downed?' downed':''}" id="erow-${gi}-${ii}">
         <div class="enemy-row-name">${c.name}${group.instances.length>1?' #'+inst.id:''}</div>
         <div class="enemy-hp-bar-wrap"><div class="enemy-hp-bar" id="ebar-${gi}-${ii}" style="width:${pct}%;background:${barColor}"></div></div>
         <div class="enemy-hp-text" id="ehp-${gi}-${ii}">${inst.cur}/${inst.max}</div>
         <input class="enemy-hp-input" type="number" min="1" placeholder="amt" id="eamt-${gi}-${ii}">
+        <button class="enemy-mod-btn" id="eres-${gi}-${ii}"
+          onclick="toggleDmgMod('${ekey}','res','eres-${gi}-${ii}','evuln-${gi}-${ii}')">½</button>
+        <button class="enemy-mod-btn" id="evuln-${gi}-${ii}"
+          onclick="toggleDmgMod('${ekey}','vuln','eres-${gi}-${ii}','evuln-${gi}-${ii}')">×2</button>
         <button class="enemy-hp-btn dmg" onclick="enemyHpChange(${gi},${ii},-1)">−</button>
         <button class="enemy-hp-btn heal" onclick="enemyHpChange(${gi},${ii},1)">+</button>
         <div class="enemy-skull" onclick="dismissEnemy(${gi},${ii})" title="Dismiss">☠</div>
-      </div>`;
+      </div>
+      <div class="enemy-cond-row" id="econd-row-${gi}-${ii}">${econdTags}</div>`;
     }).join('');
 
     return `<div class="enemy-group" id="egroup-${gi}">
@@ -5254,15 +5939,18 @@ function renderEnemyTracker() {
       </div>
       ${gertieNote}
       ${rows}
+      ${rechargeStrip}
       ${passiveChips||triggeredChips?'<div class="enemy-reminders">'+passiveChips+triggeredChips+'</div>':''}
     </div>`;
   }).join('');
 }
 
 function enemyHpChange(gi,ii,dir) {
-  const amt=parseInt(document.getElementById('eamt-'+gi+'-'+ii)?.value)||10;
+  const raw=parseInt(document.getElementById('eamt-'+gi+'-'+ii)?.value)||10;
   const inst=activeEnemies[gi]?.instances[ii];
   if(!inst) return;
+  // Apply Res/Vuln only on damage (dir === -1), not on healing
+  const amt = (dir === -1) ? applyModifier(raw, gi+'-'+ii) : raw;
   inst.cur=Math.max(0,Math.min(inst.max,inst.cur+(dir*amt)));
   inst.downed=inst.cur<=0;
   const bar=document.getElementById('ebar-'+gi+'-'+ii);
@@ -5282,7 +5970,14 @@ function dismissEnemy(gi,ii) {
   renderEnemyTracker();
 }
 
-function dismissGroup(gi) { activeEnemies.splice(gi,1); renderEnemyTracker(); }
+function dismissGroup(gi) {
+  const group = activeEnemies[gi];
+  if (group) {
+    group.instances.forEach((_,ii) => { delete enemyConds[gi+'-'+ii]; delete rechargeState[gi+':'+((group.creature.actions||[]).concat(group.creature.bonusActions||[]).filter(a=>a.recharge).map(a=>a.name))]; });
+  }
+  activeEnemies.splice(gi,1);
+  renderEnemyTracker();
+}
 function filterBestiary(val) { renderBestiaryGrid(val,document.getElementById('bestiaryTypeFilter')?.value||''); }
 function filterBestiaryType(val) { renderBestiaryGrid(document.getElementById('bestiarySearch')?.value||'',val); }
 
