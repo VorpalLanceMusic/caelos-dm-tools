@@ -92,7 +92,7 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 
 ### PC Party Cards
 - `#pccard-{party}-{idx}` — each card has id for direct DOM targeting
-- **HP system:** current HP display · max HP · temp HP input · damage/heal apply buttons · HP bar with scanline sweep + healed flash + damaged flash
+- **HP system:** current HP display · max HP · temp HP input · damage/heal apply buttons with fixed-width 64px number input · HP bar with scanline sweep + healed flash + damaged flash
 - **Stat pills** — AC, Init, PP, plus class-specific (Sneak Attack, Spell DC, etc.)
 - **Condition tracker** — tap-to-toggle preset list per card; Clear button appears only when conditions active
 - **Downed tips** — appear inside card only at 0HP (narrate it, ask for memory, press advantage, stakes reminder)
