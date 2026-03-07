@@ -68,7 +68,11 @@
     font-weight: 700;
     color: var(--gold);
     letter-spacing: 3px;
-    text-shadow: 0 0 20px rgba(232,200,122,0.4);
+    animation: title-breathe 6s ease-in-out infinite;
+  }
+  @keyframes title-breathe {
+    0%,100% { text-shadow: 0 0 12px rgba(232,200,122,0.3), 0 0 30px rgba(232,200,122,0.1); }
+    50%      { text-shadow: 0 0 20px rgba(232,200,122,0.6), 0 0 50px rgba(232,200,122,0.2); }
   }
   .app-sub {
     font-size: 12px;
@@ -89,8 +93,13 @@
     cursor: pointer;
     letter-spacing: 1px;
     transition: all 0.2s;
+    animation: badge-breathe 5s ease-in-out infinite;
   }
-  .party-badge:active { background: rgba(155,26,26,0.4); }
+  @keyframes badge-breathe {
+    0%,100% { box-shadow: 0 0 4px rgba(155,26,26,0.2); border-color: rgba(155,26,26,0.6); }
+    50%      { box-shadow: 0 0 10px rgba(155,26,26,0.5); border-color: rgba(200,40,40,0.9); }
+  }
+  .party-badge:active { background: rgba(155,26,26,0.4); transform: scale(0.96); }
 
   /* ── TAB CONTENT AREA ── */
   .tab-content {
@@ -129,6 +138,12 @@
     transition: background 0.15s;
   }
   .nav-btn:active { background: var(--raised); }
+  .nav-btn:active .nav-icon { animation: nav-tap 0.25s ease-out; }
+  @keyframes nav-tap {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.82); }
+    100% { transform: scale(1.15); }
+  }
   .nav-btn::before {
     content: '';
     position: absolute;
@@ -141,7 +156,11 @@
   }
   .nav-btn.active::before { opacity: 1; }
   .nav-icon { font-size: 22px; transition: transform 0.15s; }
-  .nav-btn.active .nav-icon { transform: scale(1.15); }
+  .nav-btn.active .nav-icon { transform: scale(1.15); animation: nav-icon-settle 4s ease-in-out infinite; }
+  @keyframes nav-icon-settle {
+    0%,100% { filter: drop-shadow(0 0 0px transparent); }
+    50%      { filter: drop-shadow(0 0 6px rgba(232,200,122,0.5)); }
+  }
   .nav-label {
     font-family: 'Cinzel', serif;
     font-size: 9px;
@@ -185,7 +204,15 @@
     justify-content: center;
     transition: all 0.15s;
   }
-  .round-btn:active { background: var(--blood); color: var(--gold); border-color: var(--blood); }
+  .round-btn:active {
+    background: var(--blood); color: var(--gold); border-color: var(--blood);
+    animation: btn-thud 0.2s ease-out;
+  }
+  @keyframes btn-thud {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(0.88); }
+    100% { transform: scale(1); }
+  }
   .round-num {
     font-family: 'Cinzel', serif;
     font-size: 36px;
@@ -195,6 +222,13 @@
     text-align: center;
     line-height: 1;
     text-shadow: 0 0 16px rgba(232,200,122,0.35);
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .round-num.bump { animation: round-bump 0.35s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes round-bump {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.35); color: #fff; text-shadow: 0 0 20px rgba(232,200,122,0.9); }
+    100% { transform: scale(1); }
   }
   .round-note {
     font-size: 13px;
@@ -247,11 +281,18 @@
   .s-yellow .c-title { color: #d8d868; }
   .s-gray .c-title   { color: #888; }
 
-  .chevron { font-size: 12px; color: var(--sub); transition: transform 0.2s; }
+  .chevron { font-size: 12px; color: var(--sub); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
   .chevron.open { transform: rotate(90deg); }
 
   .c-body { display: none; background: var(--surface); padding: 4px 0 8px; }
-  .c-body.open { display: block; }
+  .c-body.open {
+    display: block;
+    animation: section-unfurl 0.22s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes section-unfurl {
+    0%   { opacity: 0; transform: translateY(-6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
 
   .item {
     display: flex; align-items: flex-start; gap: 14px;
@@ -269,10 +310,15 @@
     display: flex; align-items: center; justify-content: center;
     background: var(--bg); transition: all 0.15s;
   }
-  .cb.checked { background: var(--blood); border-color: #cc2200; }
+  .cb.checked { background: var(--blood); border-color: #cc2200; animation: cb-pop 0.25s cubic-bezier(0.36,0.07,0.19,0.97); }
+  @keyframes cb-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
   .cb.checked::after { content: '✓'; font-size: 14px; color: #fff; font-weight: 700; }
   .item-body { flex: 1; }
-  .item-text { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.35; transition: color 0.15s; }
+  .item-text { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.35; transition: color 0.3s; }
   .item-text.checked { color: var(--sub); text-decoration: line-through; }
   .item-note { font-size: 14px; color: var(--sub); font-style: italic; display: block; margin-top: 3px; line-height: 1.4; }
   .item.warn .item-text { color: #e06868; }
@@ -281,10 +327,20 @@
   .cond-wrap { padding: 10px 16px 16px; }
   .cond-label { font-family: 'Cinzel', serif; font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; margin: 8px 0; }
   .cond-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-  .tag { font-family: 'Crimson Text', serif; font-size: 15px; font-weight: 600; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--sub); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .tag { font-family: 'Crimson Text', serif; font-size: 15px; font-weight: 600; padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--sub); cursor: pointer; transition: all 0.2s; user-select: none; }
   .tag:active { transform: scale(0.95); }
-  .tag.on-red  { background: #3a0000; border-color: var(--blood); color: #e06868; }
-  .tag.on-blue { background: #001028; border-color: #1a4a9a; color: #68a8d8; }
+  .tag.on-red    { background: #3a0000; border-color: var(--blood); color: #e06868; animation: tag-ignite 0.3s ease-out; }
+  .tag.on-blue   { background: #001028; border-color: #1a4a9a; color: #68a8d8; animation: tag-ignite 0.3s ease-out; }
+  .tag.on-purple { background: rgba(122,42,170,0.2); border-color: #7a2aaa; color: #c068e0; animation: tag-ignite 0.3s ease-out; }
+  .tag.on-green  { background: rgba(42,138,42,0.2);  border-color: #2a8a2a; color: #68d868; animation: tag-ignite 0.3s ease-out; }
+  .tag.on-gold   { background: rgba(232,200,122,0.15); border-color: var(--gold); color: var(--gold); animation: tag-ignite 0.3s ease-out; }
+  .tag.on-gray   { background: rgba(80,80,90,0.2); border-color: #505060; color: #9090a8; animation: tag-ignite 0.3s ease-out; }
+  .tag.on-blood  { background: rgba(155,26,26,0.25); border-color: #9b1a1a; color: #e06868; animation: tag-ignite 0.3s ease-out; }
+  @keyframes tag-ignite {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
   .mini-div { height: 1px; background: var(--border); margin: 10px 0; opacity: 0.5; }
 
   .reset-bar { display: flex; gap: 8px; padding: 14px 16px; background: var(--bg); border-top: 1px solid var(--border); }
@@ -339,7 +395,16 @@
     transition: border-color 0.2s;
   }
   .pc-card.editing { border-color: var(--ember); }
-  .pc-card.danger-hp { border-color: var(--blood); }
+  .pc-card.danger-hp {
+    border-color: var(--blood);
+    animation: danger-flicker 2.8s ease-in-out infinite;
+  }
+  @keyframes danger-flicker {
+    0%,100% { border-color: #9b1a1a; box-shadow: 0 0 6px rgba(155,26,26,0.2); }
+    40%     { border-color: #cc2200; box-shadow: 0 0 14px rgba(200,40,0,0.4); }
+    55%     { border-color: #882200; box-shadow: 0 0 4px rgba(155,26,26,0.15); }
+    70%     { border-color: #cc2200; box-shadow: 0 0 12px rgba(200,40,0,0.35); }
+  }
 
   .pc-card-top {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -384,12 +449,37 @@
   .hp-meta-val.temp { color: #68a8d8; }
 
   .hp-bar-track {
-    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; position: relative;
   }
   .hp-bar-fill {
     height: 100%; border-radius: 2px;
     background: #2a8a2a;
-    transition: width 0.3s, background 0.3s;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1), background 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .hp-bar-fill::after {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: hp-scan 3s ease-in-out infinite;
+  }
+  @keyframes hp-scan {
+    0%   { left: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 120%; opacity: 0; }
+  }
+  .hp-bar-fill.healed { animation: hp-healed-flash 0.5s ease-out; }
+  @keyframes hp-healed-flash {
+    0%   { filter: brightness(1); }
+    30%  { filter: brightness(2.2); }
+    100% { filter: brightness(1); }
+  }
+  .hp-bar-fill.damaged { animation: hp-damage-flash 0.4s ease-out; }
+  @keyframes hp-damage-flash {
+    0%   { filter: brightness(1); }
+    20%  { filter: brightness(0.3) saturate(3); }
+    100% { filter: brightness(1); }
   }
 
   /* STAT GRID */
@@ -442,35 +532,261 @@
     width: 52px; text-align: center; outline: none; padding: 0;
   }
   .hp-action-row {
-    display: flex; gap: 8px; align-items: stretch;
+    display: flex; flex-direction: column; gap: 8px;
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 8px; padding: 8px 10px; margin-top: 6px;
   }
-  .hp-action-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
-  .hp-action-lbl { font-family: 'Cinzel', serif; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .hp-action-group { display: flex; align-items: center; gap: 8px; }
+  .hp-action-lbl { font-family: 'Cinzel', serif; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; min-width: 48px; }
   .dmg-lbl { color: #e06868; }
   .heal-lbl { color: #68d868; }
-  .hp-action-inputs { display: flex; gap: 5px; align-items: center; }
+  .hp-action-inputs { display: flex; gap: 6px; align-items: center; flex: 1; }
   .hp-amt-input {
     flex: 1; font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700;
     color: var(--text); background: var(--raised);
     border: 1px solid var(--border); border-radius: 5px;
-    padding: 6px 6px; text-align: center; outline: none; min-width: 0;
+    padding: 8px 6px; text-align: center; outline: none; min-width: 0;
   }
   .hp-amt-input:focus { border-color: var(--gold); }
   .hp-apply-btn {
-    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700;
-    letter-spacing: 0.5px; padding: 6px 10px; border-radius: 5px;
-    border: none; cursor: pointer; white-space: nowrap; min-height: 36px;
-    transition: all 0.15s;
+    font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.5px; padding: 8px 16px; border-radius: 5px;
+    border: none; cursor: pointer; white-space: nowrap; min-height: 40px;
+    transition: all 0.15s; flex-shrink: 0;
   }
   .dmg-btn { background: #3a0000; color: #e06868; border: 1px solid var(--blood); }
   .dmg-btn:active { background: var(--blood); color: #fff; }
   .heal-btn { background: #003a00; color: #68d868; border: 1px solid #2a6a2a; }
   .heal-btn:active { background: #2a6a2a; color: #fff; }
-  .hp-divider-v { width: 1px; background: var(--border); margin: 0 2px; }
+  .hp-divider-v { display: none; }
   .long-rest-btn { border-color: #2a4a6a !important; color: #68a8d8 !important; }
   .long-rest-btn:active { background: #001428 !important; }
+
+  /* ══════════════════════════════
+     DOWNED STATE — 0 HP
+     Vivid red border + dim red bg + heartbeat
+  ══════════════════════════════ */
+  .pc-card.downed {
+    opacity: 0.82;
+    background: rgba(80,0,0,0.35);
+    border-width: 2px;
+    animation: downed-pulse 2s ease-in-out infinite;
+  }
+  .pc-card.downed .ds-row {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  @keyframes downed-pulse {
+    0%, 100% {
+      border-color: #cc1100;
+      box-shadow: 0 0 0 1px #cc1100, 0 0 12px rgba(200,0,0,0.4), inset 0 0 18px rgba(140,0,0,0.25);
+    }
+    50% {
+      border-color: #ff2200;
+      box-shadow: 0 0 0 2px #ff2200, 0 0 28px rgba(255,40,0,0.65), inset 0 0 28px rgba(180,0,0,0.4);
+    }
+  }
+
+  /* ══════════════════════════════
+     PC CONDITION TRACKER — tags
+  ══════════════════════════════ */
+  .pc-cond-row {
+    display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 0;
+  }
+  .pc-cond-tag {
+    font-family: 'Crimson Text', serif; font-size: 13px; font-weight: 600;
+    padding: 4px 10px; border-radius: 14px;
+    border: 1px solid var(--border); color: var(--sub);
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .pc-cond-tag:active { transform: scale(0.93); }
+  .pc-cond-tag.cond-purple { background: rgba(122,42,170,0.2); border-color: #7a2aaa; color: #c068e0; }
+  .pc-cond-tag.cond-green  { background: rgba(42,138,42,0.2);  border-color: #2a8a2a; color: #68d868; }
+  .pc-cond-tag.cond-blue   { background: rgba(42,106,170,0.2); border-color: #2a6aaa; color: #68a8d8; }
+  .pc-cond-tag.cond-gold   { background: rgba(232,200,122,0.15); border-color: var(--gold); color: var(--gold); }
+  .pc-cond-tag.cond-blood  { background: rgba(155,26,26,0.25); border-color: #9b1a1a; color: #e06868; }
+  .pc-cond-tag.cond-gray   { background: rgba(80,80,90,0.25); border-color: #505060; color: #9090a8; }
+
+  /* Incapacitated card state — static/desaturate + slow dim flicker like a dying signal */
+  .pc-card.conditioned-gray:not(.downed) {
+    border-color: #505060;
+    animation: cond-incap 2.5s ease-in-out infinite;
+  }
+  @keyframes cond-incap {
+    0%,100% { box-shadow: 0 0 6px rgba(80,80,90,0.2);  filter: saturate(0.5) brightness(0.9); border-color: #505060; }
+    30%     { box-shadow: 0 0 2px rgba(80,80,90,0.1);  filter: saturate(0.3) brightness(0.7); border-color: #383840; }
+    60%     { box-shadow: 0 0 10px rgba(100,100,120,0.3); filter: saturate(0.6) brightness(0.95); border-color: #606070; }
+    80%     { box-shadow: 0 0 2px rgba(80,80,90,0.1);  filter: saturate(0.2) brightness(0.65); border-color: #383840; }
+  }
+
+  /* Clear conditions button — per player card */
+  .cond-clear-btn {
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--sub); cursor: pointer;
+    transition: all 0.15s; align-self: flex-start;
+    margin-top: 1px;
+  }
+  .cond-clear-btn:active { background: #1a0808; border-color: var(--blood); color: #e06868; animation: btn-thud 0.2s ease-out; }
+
+  /* Enemy conditions reset button */
+  .enemy-cond-clear-btn {
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer; transition: all 0.15s;
+    display: block; margin: 8px 0 4px;
+  }
+  .enemy-cond-clear-btn:active { background: #1a0808; border-color: var(--blood); color: #e06868; animation: btn-thud 0.2s ease-out; }
+
+  /* ══════════════════════════════
+     ENEMY CONDITION WRAP — animated block states
+     Mirror of PC card condition animations, applied to the cond-wrap box
+  ══════════════════════════════ */
+  #enemy-cond-wrap {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px 10px;
+    margin: 4px 0 2px;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative; overflow: hidden;
+  }
+
+  /* purple — hue-shift + blur pulse */
+  #enemy-cond-wrap.econd-purple { animation: cond-psychic 4s ease-in-out infinite; }
+
+  /* green — sickly brightness flicker */
+  #enemy-cond-wrap.econd-green  { animation: cond-poison 3s ease-in-out infinite; }
+
+  /* blue — slow float bob */
+  #enemy-cond-wrap.econd-blue   { animation: cond-restrained 3.5s ease-in-out infinite; }
+
+  /* gold — radar sweep */
+  #enemy-cond-wrap.econd-gold   { animation: cond-magical 3s linear infinite; }
+
+  /* red — bloodied, danger flicker */
+  #enemy-cond-wrap.econd-red {
+    border-color: var(--blood);
+    animation: danger-flicker 2.8s ease-in-out infinite;
+  }
+
+  /* gray — incapacitated, dying signal desaturate */
+  #enemy-cond-wrap.econd-gray {
+    border-color: #505060;
+    animation: cond-incap 2.5s ease-in-out infinite;
+  }
+
+  /* blood — bloodied, heartbeat pulse like Hungry */
+  #enemy-cond-wrap.econd-blood {
+    border-color: #9b1a1a;
+    animation: cond-hunger 1.6s ease-in-out infinite;
+  }
+
+  /* Weather reset button */
+  .wx-reset-btn {
+    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 10px 0; border-radius: 8px; width: 100%;
+    border: 1px solid #2a6aaa; background: rgba(42,106,170,0.08);
+    color: #68a8d8; cursor: pointer; transition: all 0.2s;
+    margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .wx-reset-btn:active { background: rgba(42,106,170,0.2); border-color: #5090cc; animation: btn-thud 0.2s ease-out; }
+
+  /* ══════════════════════════════
+     CONDITION CARD STATES
+     Each gets its own animation identity
+  ══════════════════════════════ */
+
+  /* PURPLE — mind/psychic: hue-shift + blur pulse. Reality unraveling. */
+  .pc-card.conditioned-purple:not(.downed) {
+    border-color: #7a2aaa;
+    animation: cond-psychic 4s ease-in-out infinite;
+  }
+  @keyframes cond-psychic {
+    0%   { box-shadow: 0 0 8px rgba(122,42,170,0.3);  border-color: #7a2aaa; filter: hue-rotate(0deg); }
+    25%  { box-shadow: 0 0 18px rgba(180,80,230,0.5); border-color: #b060e0; filter: hue-rotate(12deg); }
+    50%  { box-shadow: 0 0 24px rgba(122,42,170,0.6); border-color: #9030c0; filter: hue-rotate(0deg) blur(0.4px); }
+    75%  { box-shadow: 0 0 14px rgba(180,80,230,0.4); border-color: #b060e0; filter: hue-rotate(-8deg); }
+    100% { box-shadow: 0 0 8px rgba(122,42,170,0.3);  border-color: #7a2aaa; filter: hue-rotate(0deg); }
+  }
+
+  /* GREEN — poison/physical: sickly brightness flicker like a guttering torch */
+  .pc-card.conditioned-green:not(.downed) {
+    border-color: #2a8a2a;
+    animation: cond-poison 3s ease-in-out infinite;
+  }
+  @keyframes cond-poison {
+    0%   { box-shadow: 0 0 6px rgba(42,138,42,0.25); border-color: #2a8a2a; filter: brightness(1); }
+    20%  { box-shadow: 0 0 16px rgba(80,200,80,0.4); border-color: #50c050; filter: brightness(1.08); }
+    35%  { box-shadow: 0 0 8px rgba(42,138,42,0.2);  border-color: #2a6a2a; filter: brightness(0.92); }
+    55%  { box-shadow: 0 0 20px rgba(80,200,80,0.5); border-color: #50c050; filter: brightness(1.1); }
+    75%  { box-shadow: 0 0 6px rgba(42,138,42,0.2);  border-color: #2a8a2a; filter: brightness(0.94); }
+    100% { box-shadow: 0 0 6px rgba(42,138,42,0.25); border-color: #2a8a2a; filter: brightness(1); }
+  }
+
+  /* BLUE — restraint/movement: slow float bob. Weighted down. */
+  .pc-card.conditioned-blue:not(.downed) {
+    border-color: #2a6aaa;
+    animation: cond-restrained 3.5s ease-in-out infinite;
+  }
+  @keyframes cond-restrained {
+    0%   { box-shadow: 0 0 10px rgba(42,106,170,0.3); transform: translateY(0px);    border-color: #2a6aaa; }
+    50%  { box-shadow: 0 0 20px rgba(80,160,230,0.5); transform: translateY(-3px);   border-color: #5090cc; }
+    100% { box-shadow: 0 0 10px rgba(42,106,170,0.3); transform: translateY(0px);    border-color: #2a6aaa; }
+  }
+
+  /* GOLD — magical/concentration: slow gradient sweep around border like a radar ping */
+  .pc-card.conditioned-gold:not(.downed) {
+    border-color: rgba(232,200,122,0.6);
+    animation: cond-magical 3s linear infinite;
+  }
+  @keyframes cond-magical {
+    0%   { box-shadow: 2px 0 14px rgba(232,200,122,0.15),  0 0 6px rgba(232,200,122,0.2);  border-color: rgba(232,200,122,0.4); }
+    25%  { box-shadow: 0 2px 14px rgba(255,220,140,0.4),   2px 0 6px rgba(232,200,122,0.1); border-color: rgba(255,220,140,0.8); }
+    50%  { box-shadow: -2px 0 14px rgba(232,200,122,0.15), 0 2px 6px rgba(232,200,122,0.2); border-color: rgba(232,200,122,0.4); }
+    75%  { box-shadow: 0 -2px 14px rgba(255,220,140,0.4), -2px 0 6px rgba(232,200,122,0.1); border-color: rgba(255,220,140,0.8); }
+    100% { box-shadow: 2px 0 14px rgba(232,200,122,0.15),  0 0 6px rgba(232,200,122,0.2);  border-color: rgba(232,200,122,0.4); }
+  }
+
+  /* BLOOD/HUNGRY — heartbeat scale pulse. Primal. Visceral. */
+  .pc-card.conditioned-blood:not(.downed) {
+    border-color: #9b1a1a;
+    animation: cond-hunger 1.6s ease-in-out infinite;
+  }
+  @keyframes cond-hunger {
+    0%   { box-shadow: 0 0 8px rgba(155,26,26,0.3);  transform: scale(1.000); border-color: #9b1a1a; }
+    10%  { box-shadow: 0 0 18px rgba(200,40,40,0.6); transform: scale(1.012); border-color: #cc2020; }
+    20%  { box-shadow: 0 0 8px rgba(155,26,26,0.3);  transform: scale(1.000); border-color: #9b1a1a; }
+    35%  { box-shadow: 0 0 14px rgba(200,40,40,0.5); transform: scale(1.007); border-color: #bb2020; }
+    50%  { box-shadow: 0 0 8px rgba(155,26,26,0.3);  transform: scale(1.000); border-color: #9b1a1a; }
+    100% { box-shadow: 0 0 8px rgba(155,26,26,0.3);  transform: scale(1.000); border-color: #9b1a1a; }
+  }
+
+  /* ══════════════════════════════
+     DEATH SAVES — hidden from table
+  ══════════════════════════════ */
+  .ds-pip { position: relative; }
+  .success-pip.filled { background: #1a3a1a; border-color: #2a5a2a; color: transparent; box-shadow: inset 0 0 0 3px rgba(68,200,68,0.6); }
+  .fail-pip.filled    { background: #3a0808; border-color: #6a1010; color: transparent; box-shadow: inset 0 0 0 3px rgba(200,68,68,0.6); }
+
+  /* ══════════════════════════════
+     DOWNED TIPS — show at 0HP
+  ══════════════════════════════ */
+  .downed-tips {
+    display: none;
+    background: rgba(80,0,0,0.3); border: 1px solid rgba(155,26,26,0.4);
+    border-radius: 6px; padding: 8px 10px; margin-bottom: 2px;
+  }
+  .pc-card.downed .downed-tips { display: block; }
+  .downed-tip {
+    font-size: 13px; color: #c07060; font-style: italic;
+    line-height: 1.5; padding: 2px 0;
+  }
+  .downed-tip::before { content: '▸ '; color: #9b1a1a; font-style: normal; }
 
   /* DEATH SAVES */
   .ds-row {
@@ -489,12 +805,32 @@
     border: 2px solid var(--border);
     background: var(--raised);
     font-size: 10px; color: transparent;
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; justify-content: center;
   }
-  .ds-pip:active { transform: scale(0.9); }
-  .success-pip.filled { background: #2a6a2a; border-color: #68d868; color: #68d868; }
-  .fail-pip.filled    { background: #6a0000; border-color: #e06868; color: #e06868; }
+  .ds-pip:active { transform: scale(0.85); }
+  .success-pip.filled {
+    background: #1a3a1a; border-color: #2a5a2a; color: transparent;
+    box-shadow: inset 0 0 0 3px rgba(68,200,68,0.6);
+    animation: pip-success 0.4s cubic-bezier(0.36,0.07,0.19,0.97);
+  }
+  .fail-pip.filled {
+    background: #3a0808; border-color: #6a1010; color: transparent;
+    box-shadow: inset 0 0 0 3px rgba(200,68,68,0.6);
+    animation: pip-fail 0.35s ease-out;
+  }
+  @keyframes pip-success {
+    0%   { transform: scale(1); box-shadow: inset 0 0 0 3px rgba(68,200,68,0); }
+    40%  { transform: scale(1.3); box-shadow: inset 0 0 0 3px rgba(68,200,68,1), 0 0 10px rgba(68,200,68,0.6); }
+    100% { transform: scale(1); box-shadow: inset 0 0 0 3px rgba(68,200,68,0.6); }
+  }
+  @keyframes pip-fail {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-3px); }
+    40%     { transform: translateX(3px); }
+    60%     { transform: translateX(-2px); }
+    80%     { transform: translateX(2px); }
+  }
   .ds-clear-btn {
     font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
     letter-spacing: 1px; padding: 5px 8px; border-radius: 5px;
@@ -542,6 +878,377 @@
     color: var(--sub);
     letter-spacing: 1px;
   }
+
+  /* ══════════════════════════════
+     SECTION GLOW — ACTIVE STATE
+  ══════════════════════════════ */
+  .c-section.has-active .c-head,
+  .party-sec.has-active .party-sec-head {
+    box-shadow: inset 0 0 0 1px rgba(200,114,42,0.35);
+    background: rgba(200,114,42,0.05);
+  }
+  .c-section.has-active .c-head::after,
+  .party-sec.has-active .party-sec-head::after {
+    content: '●';
+    font-size: 8px;
+    color: var(--ember);
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  /* Battlefield Effects section gets a more dramatic glow when active */
+  .c-section.battlefield-active .c-head {
+    box-shadow: inset 0 0 0 1px rgba(180,255,0,0.5), 0 0 12px rgba(180,255,0,0.15);
+    background: rgba(180,255,0,0.06);
+    animation: border-pulse 2s ease-in-out infinite;
+  }
+  @keyframes border-pulse {
+    0%, 100% { box-shadow: inset 0 0 0 1px rgba(180,255,0,0.5), 0 0 8px rgba(180,255,0,0.1); }
+    50% { box-shadow: inset 0 0 0 1px rgba(180,255,0,0.9), 0 0 20px rgba(180,255,0,0.3); }
+  }
+  .c-section.battlefield-active .c-head::before { background: #b4ff00 !important; }
+  .c-section.battlefield-active .c-head::after {
+    content: '⚠';
+    font-size: 13px;
+    color: #b4ff00;
+    position: absolute;
+    right: 34px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: pulse-dot 1.4s ease-in-out infinite;
+  }
+
+  /* ══════════════════════════════
+     BATTLEFIELD EFFECTS SECTION
+  ══════════════════════════════ */
+  .bf-body { background: var(--surface); padding: 12px 16px 16px; }
+
+  .bf-weather-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .bf-weather-lbl {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1px;
+    min-width: 62px;
+  }
+  .bf-weather-select {
+    flex: 1; font-family: 'Crimson Text', serif; font-size: 15px;
+    background: var(--raised); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; outline: none; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+  }
+  .bf-weather-select:focus { border-color: var(--gold); }
+  .bf-weather-select.active-weather { border-color: #b4ff00; color: #b4ff00; background: rgba(180,255,0,0.06); }
+
+  .bf-effect-box {
+    background: var(--raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .bf-effect-box.active-effect {
+    border-color: rgba(180,255,0,0.5);
+    box-shadow: 0 0 14px rgba(180,255,0,0.12), inset 0 0 20px rgba(180,255,0,0.04);
+    animation: bf-active-pulse 3s ease-in-out infinite;
+  }
+  @keyframes bf-active-pulse {
+    0%,100% { border-color: rgba(180,255,0,0.4); box-shadow: 0 0 10px rgba(180,255,0,0.1); }
+    50%      { border-color: rgba(180,255,0,0.75); box-shadow: 0 0 22px rgba(180,255,0,0.25); }
+  }
+  .bf-effect-box.active-effect::after {
+    content: '';
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(180,255,0,0.4) 50%, transparent 100%);
+    animation: bf-scanline 2.5s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes bf-scanline {
+    0%   { top: 0%; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .bf-effect-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .bf-effect-title {
+    font-family: 'Cinzel', serif; font-size: 11px; font-weight: 600;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1.5px;
+    transition: color 0.2s;
+  }
+  .bf-effect-title.active-lbl { color: #b4ff00; }
+  .bf-toggle-btn {
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--sub); cursor: pointer; transition: all 0.2s;
+  }
+  .bf-toggle-btn.on {
+    background: rgba(180,255,0,0.1); border-color: #b4ff00; color: #b4ff00;
+    animation: toggle-on-breathe 2s ease-in-out infinite;
+  }
+  @keyframes toggle-on-breathe {
+    0%,100% { box-shadow: 0 0 4px rgba(180,255,0,0.2); }
+    50%      { box-shadow: 0 0 10px rgba(180,255,0,0.5); }
+  }
+
+  .bf-weather-desc {
+    font-size: 14px; color: var(--sub); font-style: italic;
+    line-height: 1.5; padding: 4px 0;
+  }
+  .bf-weather-desc.has-effect { color: #e09080; font-style: normal; }
+
+  .bf-other-input {
+    width: 100%; font-family: 'Crimson Text', serif; font-size: 15px;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; outline: none; resize: none;
+    line-height: 1.4; min-height: 40px;
+  }
+  .bf-other-input:focus { border-color: var(--gold); }
+  .bf-other-input::placeholder { color: var(--sub); font-style: italic; }
+  .bf-details-input {
+    width: 100%; font-family: 'Crimson Text', serif; font-size: 14px;
+    background: var(--bg); color: #e09080;
+    border: 1px solid rgba(155,26,26,0.3); border-radius: 6px;
+    padding: 8px 10px; outline: none; resize: none;
+    line-height: 1.5; min-height: 60px; margin-top: 8px;
+  }
+  .bf-details-input:focus { border-color: var(--blood); }
+  .bf-details-input::placeholder { color: var(--sub); font-style: italic; }
+
+  /* ══════════════════════════════
+     TAB: WEATHER
+  ══════════════════════════════ */
+  .wx-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+  }
+  .wx-title {
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600;
+    color: var(--gold); letter-spacing: 2px; margin-bottom: 4px;
+  }
+  .wx-sub { font-size: 13px; color: var(--sub); font-style: italic; }
+
+  .wx-date-bar {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px 16px 8px; background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .wx-date-lbl {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .wx-date-sel {
+    font-family: 'Crimson Text', serif; font-size: 15px;
+    background: var(--raised); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 8px; outline: none; cursor: pointer;
+    -webkit-appearance: none; appearance: none; flex: 1;
+  }
+  .wx-day-sel { max-width: 64px; flex: none; }
+  .wx-year-input {
+    font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
+    background: var(--raised); color: var(--gold);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 8px; text-align: center; outline: none; width: 72px;
+  }
+  .wx-year-input:focus { border-color: var(--gold); }
+
+  .wx-roll-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .wx-roll-lbl {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .wx-roll-input {
+    width: 72px; font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700;
+    background: var(--raised); color: var(--gold);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 8px; text-align: center; outline: none;
+  }
+  .wx-roll-input:focus { border-color: var(--gold); }
+  .wx-roll-btn {
+    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 8px 14px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--raised);
+    color: var(--sub); cursor: pointer; transition: all 0.15s;
+  }
+  .wx-roll-btn:active { border-color: var(--gold); color: var(--gold); }
+
+  .wx-select-bar {
+    padding: 10px 16px 0;
+  }
+  .wx-select-lbl {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1px;
+    display: block; margin-bottom: 6px;
+  }
+  .wx-dropdown {
+    width: 100%; font-family: 'Crimson Text', serif; font-size: 16px;
+    background: var(--raised); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; outline: none; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    margin-bottom: 12px;
+  }
+  .wx-dropdown:focus { border-color: var(--gold); }
+
+  .wx-card {
+    margin: 0 16px 16px;
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .wx-card-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+  }
+  .wx-card-icon { font-size: 26px; }
+  .wx-card-name {
+    font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
+    flex: 1;
+  }
+  .wx-severity {
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 600;
+    padding: 3px 8px; border-radius: 10px; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .wx-sev-none     { background: rgba(42,154,114,0.15); color: #68d8a8; border: 1px solid rgba(42,154,114,0.3); }
+  .wx-sev-mild     { background: rgba(42,106,170,0.15); color: #68a8d8; border: 1px solid rgba(42,106,170,0.3); }
+  .wx-sev-moderate { background: rgba(200,114,42,0.15); color: #e0a868; border: 1px solid rgba(200,114,42,0.3); }
+  .wx-sev-severe   { background: rgba(155,26,26,0.2);   color: #e06868; border: 1px solid rgba(155,26,26,0.4); }
+  .wx-sev-super    { background: rgba(122,42,170,0.2);  color: #c068e0; border: 1px solid rgba(122,42,170,0.4); }
+
+  .wx-card-body { padding: 0 14px 14px; }
+  .wx-desc {
+    font-size: 15px; color: var(--text); line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .wx-effects {
+    background: var(--bg); border-radius: 6px; padding: 10px 12px;
+    border-left: 3px solid var(--blood);
+  }
+  .wx-effects-lbl {
+    font-family: 'Cinzel', serif; font-size: 9px; color: var(--blood);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
+    display: block;
+  }
+  .wx-effect-item {
+    font-size: 14px; color: #e09080; line-height: 1.5;
+    padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .wx-effect-item:last-child { border-bottom: none; }
+
+  .wx-push-btn {
+    width: 100%; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-top: 10px; padding: 10px;
+    border-radius: 6px; border: 1px solid var(--blood);
+    background: rgba(155,26,26,0.15); color: #e06868;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .wx-push-btn:active { background: rgba(155,26,26,0.4); }
+  .wx-push-btn.pushed { background: rgba(155,26,26,0.3); color: #fff; border-color: #cc2200; }
+
+  .wx-none-card {
+    margin: 0 16px 16px; padding: 20px 16px;
+    background: var(--surface); border-radius: 10px;
+    border: 1px solid var(--border); text-align: center;
+  }
+  .wx-none-icon { font-size: 36px; margin-bottom: 8px; }
+  .wx-none-text { font-size: 14px; color: var(--sub); font-style: italic; }
+
+  .wx-pre-rolls {
+    margin: 0 16px 16px;
+  }
+  .wx-pre-title {
+    font-family: 'Cinzel', serif; font-size: 11px;
+    color: var(--sub); text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 8px; display: block;
+  }
+  .wx-pre-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+  }
+  .wx-pre-cell {
+    background: var(--raised); border: 1px solid var(--border);
+    border-radius: 5px; padding: 6px 2px; text-align: center;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .wx-pre-cell:active { background: var(--border); }
+  .wx-pre-cell.active-day { border-color: var(--gold); background: rgba(232,200,122,0.1); }
+  .wx-pre-day { font-family: 'Cinzel', serif; font-size: 8px; color: var(--sub); letter-spacing: 0.5px; }
+  .wx-pre-val { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: var(--text); margin: 2px 0; }
+  .wx-pre-icon { font-size: 12px; }
+
+  /* ══════════════════════════════
+     SECTION ACTIVE GLOWS — per color
+  ══════════════════════════════ */
+  .c-section.has-active.s-wrap-orange .c-head {
+    background: rgba(200,114,42,0.07);
+    animation: glow-orange 2s ease-in-out infinite;
+  }
+  .c-section.has-active.s-wrap-orange .c-head::before { background: var(--ember); }
+  @keyframes glow-orange {
+    0%,100% { box-shadow: inset 0 0 0 1px rgba(200,114,42,0.4), 0 0 8px rgba(200,114,42,0.1); }
+    50%      { box-shadow: inset 0 0 0 1px rgba(200,114,42,0.9), 0 0 20px rgba(200,114,42,0.3); }
+  }
+  .c-section.has-active.s-wrap-teal .c-head {
+    background: rgba(42,154,114,0.07);
+    animation: glow-teal 2s ease-in-out infinite;
+  }
+  .c-section.has-active.s-wrap-teal .c-head::before { background: #2a9a72; }
+  @keyframes glow-teal {
+    0%,100% { box-shadow: inset 0 0 0 1px rgba(42,154,114,0.4), 0 0 8px rgba(42,154,114,0.1); }
+    50%      { box-shadow: inset 0 0 0 1px rgba(42,154,114,0.9), 0 0 20px rgba(42,154,114,0.3); }
+  }
+  .c-section.has-active.s-wrap-blue .c-head {
+    background: rgba(42,106,170,0.07);
+    animation: glow-blue 2s ease-in-out infinite;
+  }
+  .c-section.has-active.s-wrap-blue .c-head::before { background: #2a6aaa; }
+  @keyframes glow-blue {
+    0%,100% { box-shadow: inset 0 0 0 1px rgba(42,106,170,0.4), 0 0 8px rgba(42,106,170,0.1); }
+    50%      { box-shadow: inset 0 0 0 1px rgba(42,106,170,0.9), 0 0 20px rgba(42,106,170,0.3); }
+  }
+  .c-section.has-active.s-wrap-purple .c-head {
+    background: rgba(122,42,170,0.07);
+    animation: glow-purple 2s ease-in-out infinite;
+  }
+  .c-section.has-active.s-wrap-purple .c-head::before { background: #7a2aaa; }
+  @keyframes glow-purple {
+    0%,100% { box-shadow: inset 0 0 0 1px rgba(122,42,170,0.4), 0 0 8px rgba(122,42,170,0.1); }
+    50%      { box-shadow: inset 0 0 0 1px rgba(122,42,170,0.9), 0 0 20px rgba(122,42,170,0.3); }
+  }
+  .c-section.has-active.s-wrap-red .c-head {
+    background: rgba(155,26,26,0.07);
+    animation: glow-red 2s ease-in-out infinite;
+  }
+  @keyframes glow-red {
+    0%,100% { box-shadow: inset 0 0 0 1px rgba(155,26,26,0.5), 0 0 8px rgba(155,26,26,0.15); }
+    50%      { box-shadow: inset 0 0 0 1px rgba(155,26,26,1),   0 0 20px rgba(155,26,26,0.35); }
+  }
+  /* active dot color per section */
+  .c-section.has-active.s-wrap-orange .c-head::after { color: var(--ember); }
+  .c-section.has-active.s-wrap-teal   .c-head::after { color: #68d8a8; }
+  .c-section.has-active.s-wrap-blue   .c-head::after { color: #68a8d8; }
+  .c-section.has-active.s-wrap-purple .c-head::after { color: #c068e0; }
+  .c-section.has-active.s-wrap-red    .c-head::after { color: #e06868; }
 
   /* ══════════════════════════════
      SCROLLBAR
@@ -593,7 +1300,7 @@
         </div>
       </div>
 
-      <div class="c-section">
+      <div class="c-section s-wrap-orange">
         <div class="c-head s-orange" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🟠</span><span class="c-title">Start of Combat</span></div>
           <span class="chevron">▶</span>
@@ -607,7 +1314,7 @@
         </div>
       </div>
 
-      <div class="c-section">
+      <div class="c-section s-wrap-teal">
         <div class="c-head s-teal" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🟢</span><span class="c-title">During Combat</span></div>
           <span class="chevron">▶</span>
@@ -622,7 +1329,7 @@
         </div>
       </div>
 
-      <div class="c-section">
+      <div class="c-section s-wrap-blue">
         <div class="c-head s-blue" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🔵</span><span class="c-title">End of Combat</span></div>
           <span class="chevron">▶</span>
@@ -635,7 +1342,7 @@
         </div>
       </div>
 
-      <div class="c-section">
+      <div class="c-section s-wrap-purple">
         <div class="c-head s-purple" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🟣</span><span class="c-title">Stakes — Keep It Real</span></div>
           <span class="chevron">▶</span>
@@ -649,52 +1356,100 @@
         </div>
       </div>
 
-      <div class="c-section">
-        <div class="c-head s-yellow" onclick="toggleSec(this)">
-          <div class="c-left"><span class="c-icon">🟡</span><span class="c-title">Player Goes Down</span></div>
+      <div class="c-section" id="enemy-cond-section">
+        <div class="c-head s-gray" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Active Conditions — Enemy</span></div>
           <span class="chevron">▶</span>
         </div>
         <div class="c-body">
-          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Narrate it — don't read the stat</div><span class="item-note">"Crashes into the wall" not "you're at 0 HP"</span></div></div>
-          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Does the enemy press the advantage?</div><span class="item-note">Smart enemies finish downed targets or use them as leverage</span></div></div>
-          <div class="item" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Track death saves openly</div><span class="item-note">Let the whole table feel every roll</span></div></div>
-          <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Two fails — remind table of stakes</div><span class="item-note">Don't let it feel routine. This is real.</span></div></div>
+          <div class="cond-wrap" id="enemy-cond-wrap">
+            <div class="cond-row">
+              <span class="tag" onclick="toggleTag(this,'on-purple')">Frightened</span>
+              <span class="tag" onclick="toggleTag(this,'on-purple')">Charmed</span>
+              <span class="tag" onclick="toggleTag(this,'on-purple')">Stunned</span>
+              <span class="tag" onclick="toggleTag(this,'on-gray')">Incapacitated</span>
+              <span class="tag" onclick="toggleTag(this,'on-green')">Poisoned</span>
+              <span class="tag" onclick="toggleTag(this,'on-green')">Exhaustion</span>
+              <span class="tag" onclick="toggleTag(this,'on-green')">Blinded</span>
+              <span class="tag" onclick="toggleTag(this,'on-green')">Petrified</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Grappled</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Restrained</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Prone</span>
+              <span class="tag" onclick="toggleTag(this,'on-blue')">Invisible</span>
+              <span class="tag" onclick="toggleTag(this,'on-gold')">Concentrating</span>
+              <span class="tag" onclick="toggleTag(this,'on-gold')">Cursed</span>
+              <span class="tag" onclick="toggleTag(this,'on-gold')">Raging</span>
+              <span class="tag" onclick="toggleTag(this,'on-gold')">Blessed</span>
+              <span class="tag" onclick="toggleTag(this,'on-blood')">Bloodied</span>
+            </div>
+            <button class="enemy-cond-clear-btn" onclick="clearEnemyConditions()">✕ Clear All Conditions</button>
+          </div>
         </div>
       </div>
 
-      <div class="c-section">
-        <div class="c-head s-gray" onclick="toggleSec(this)">
-          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Active Conditions</span></div>
+      <!-- BATTLEFIELD EFFECTS -->
+      <div class="c-section" id="bf-section">
+        <div class="c-head s-red" onclick="toggleSec(this)" id="bf-head">
+          <div class="c-left"><span class="c-icon">🌩</span><span class="c-title">Battlefield Effects</span></div>
           <span class="chevron">▶</span>
         </div>
-        <div class="c-body">
-          <div class="cond-wrap">
-            <div class="cond-label">Enemy</div>
-            <div class="cond-row">
-              <span class="tag" onclick="toggleTag(this,'on-red')">Frightened</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Grappled</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Restrained</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Stunned</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Prone</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Poisoned</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Blinded</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Charmed</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Bloodied</span>
-              <span class="tag" onclick="toggleTag(this,'on-red')">Concentrating</span>
+        <div class="c-body" id="bf-body">
+          <div class="bf-body">
+
+            <!-- WEATHER ROW -->
+            <div class="bf-effect-box" id="bf-weather-box">
+              <div class="bf-effect-header">
+                <span class="bf-effect-title" id="bf-weather-title">Weather</span>
+                <button class="bf-toggle-btn" id="bf-weather-toggle" onclick="toggleBFWeather()">Off</button>
+              </div>
+              <select class="bf-weather-select" id="bf-weather-select" onchange="onBFWeatherChange()">
+                <option value="none">— No weather effect —</option>
+                <optgroup label="☀ Fair / Mild">
+                  <option value="clear">Sunny / Partly Cloudy / Slight Breeze</option>
+                  <option value="overcast">Overcast / Light Rain / Chilly / Windy</option>
+                </optgroup>
+                <optgroup label="🌫 Warm & Hazy">
+                  <option value="hazy">Warm / Humid / Hazy</option>
+                  <option value="fog">Foggy</option>
+                  <option value="modrain">Moderate Rain</option>
+                </optgroup>
+                <optgroup label="🌡 Extreme Temperature">
+                  <option value="exheat">Extreme Heat</option>
+                  <option value="excold">Extreme Cold</option>
+                </optgroup>
+                <optgroup label="⚡ Dangerous">
+                  <option value="thunder">Thunderstorm</option>
+                  <option value="tornado">Tornado</option>
+                  <option value="blizzard">Blizzard</option>
+                </optgroup>
+                <optgroup label="☠ Severe">
+                  <option value="acid">Acid Rain</option>
+                  <option value="petrify">Petrifying Rain</option>
+                  <option value="freeze">Freezing Rain</option>
+                  <option value="hurricane">Hurricane</option>
+                </optgroup>
+                <optgroup label="🌑 Supernatural">
+                  <option value="sleepfog">Sleeping Fog</option>
+                  <option value="veilstars">Veil of Stars</option>
+                </optgroup>
+              </select>
+              <div class="bf-weather-desc" id="bf-weather-desc">No active weather effect.</div>
             </div>
-            <div class="mini-div"></div>
-            <div class="cond-label">Party</div>
-            <div class="cond-row">
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Frightened</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Grappled</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Restrained</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Stunned</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Prone</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Poisoned</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Blinded</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">Down (0hp)</span>
-              <span class="tag" onclick="toggleTag(this,'on-blue')">2 Fails</span>
+
+            <!-- OTHER EFFECT -->
+            <div class="bf-effect-box" id="bf-other-box">
+              <div class="bf-effect-header">
+                <span class="bf-effect-title" id="bf-other-title">Other Effect</span>
+                <button class="bf-toggle-btn" id="bf-other-toggle" onclick="toggleBFOther()">Off</button>
+              </div>
+              <input class="bf-other-input" type="text" id="bf-other-input"
+                placeholder="e.g. Rising acid pool, Lair Action — Gnawmaw, Cave collapse imminent…"
+                oninput="checkBFOtherActive()">
+              <textarea class="bf-details-input" id="bf-details-input"
+                placeholder="Effect details — DCs, damage, timing, rules reminder…"
+                rows="3" oninput="checkBFOtherActive()"></textarea>
             </div>
+
           </div>
         </div>
       </div>
@@ -752,14 +1507,103 @@
       </div>
     </div>
 
-    <!-- ── SETTINGS TAB ── -->
+    <!-- ── WEATHER TAB ── -->
     <div class="tab-panel" id="tab-settings">
-      <div class="coming-soon">
-        <div class="cs-icon">⚙️</div>
-        <div class="cs-title">Settings</div>
-        <div class="cs-sub">Party selector, preferences, and app configuration. Coming in the next build.</div>
-        <div class="cs-tag">In Development</div>
+
+      <div class="wx-header">
+        <div class="wx-title">🌩 Weather</div>
+        <div class="wx-sub">Set the in-world date — weather is tracked per day</div>
       </div>
+
+      <!-- DATE PICKER -->
+      <div class="wx-date-bar">
+        <span class="wx-date-lbl">📅 Date</span>
+        <select class="wx-date-sel" id="wx-month-sel" onchange="onDateChange()">
+          <option value="1">1 · Awakening</option>
+          <option value="2">2 · Devotion</option>
+          <option value="3" selected>3 · Joy</option>
+          <option value="4">4 · Kindred</option>
+          <option value="5">5 · Medial</option>
+          <option value="6">6 · Harvest</option>
+          <option value="7">7 · Resolute</option>
+          <option value="8">8 · Solace</option>
+          <option value="9">9 · Sacrifice</option>
+          <option value="10">10 · Silence</option>
+        </select>
+        <select class="wx-date-sel wx-day-sel" id="wx-day-sel" onchange="onDateChange()">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+          <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+          <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+          <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+          <option value="25">25</option><option value="26">26</option><option value="27" selected>27</option>
+          <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+        </select>
+        <span class="wx-date-lbl" style="min-width:0">I.D.</span>
+        <input class="wx-year-input" type="number" id="wx-year-input" value="1219" min="1" onchange="onDateChange()">
+      </div>
+
+      <!-- 7-DAY STRIP -->
+      <div class="wx-pre-rolls">
+        <span class="wx-pre-title">7-Day View</span>
+        <div class="wx-pre-grid" id="wx-week-strip"></div>
+      </div>
+
+      <!-- ROLL INPUT -->
+      <div class="wx-roll-bar">
+        <span class="wx-roll-lbl">Roll (2d100+1d20)</span>
+        <input class="wx-roll-input" type="number" id="wx-roll-input" placeholder="—" min="3" max="220"
+          oninput="applyRollToWeather(this.value)">
+        <button class="wx-roll-btn" onclick="randomRoll()">🎲 Roll</button>
+      </div>
+
+      <!-- DROPDOWN -->
+      <div class="wx-select-bar">
+        <span class="wx-select-lbl">Or select directly</span>
+        <select class="wx-dropdown" id="wx-dropdown" onchange="selectWeather(this.value)">
+          <option value="none">— Choose weather —</option>
+          <optgroup label="☀ Fair">
+            <option value="clear">Sunny / Partly Cloudy / Slight Breeze</option>
+            <option value="overcast">Overcast / Light Rain / Chilly / Windy</option>
+          </optgroup>
+          <optgroup label="🌫 Warm & Hazy">
+            <option value="hazy">Warm / Humid / Hazy</option>
+            <option value="fog">Foggy</option>
+            <option value="modrain">Moderate Rain</option>
+          </optgroup>
+          <optgroup label="🌡 Extreme Temperature">
+            <option value="exheat">Extreme Heat</option>
+            <option value="excold">Extreme Cold</option>
+          </optgroup>
+          <optgroup label="⚡ Dangerous">
+            <option value="thunder">Thunderstorm</option>
+            <option value="tornado">Tornado</option>
+            <option value="blizzard">Blizzard</option>
+          </optgroup>
+          <optgroup label="☠ Severe">
+            <option value="acid">Acid Rain</option>
+            <option value="petrify">Petrifying Rain</option>
+            <option value="freeze">Freezing Rain</option>
+            <option value="hurricane">Hurricane</option>
+          </optgroup>
+          <optgroup label="🌑 Supernatural">
+            <option value="sleepfog">Sleeping Fog</option>
+            <option value="veilstars">Veil of Stars</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- WEATHER CARD (dynamic) -->
+      <div id="wx-card-area"></div>
+
+      <!-- RESET WEATHER -->
+      <div style="padding: 0 14px 14px;">
+        <button class="wx-reset-btn" onclick="resetWeather()">☀ Reset to Clear Weather</button>
+      </div>
+
     </div>
 
   </div><!-- end tab-content -->
@@ -783,8 +1627,8 @@
       <span class="nav-label">Prep</span>
     </button>
     <button class="nav-btn" onclick="switchTab('settings', this)">
-      <span class="nav-icon">⚙️</span>
-      <span class="nav-label">Settings</span>
+      <span class="nav-icon">🌩</span>
+      <span class="nav-label">Weather</span>
     </button>
   </nav>
 
@@ -797,7 +1641,7 @@
   const partyData = {
     A: [
       { name: 'Anauk',  cls: 'Dwarf · Fighter · Rune Knight',
-        maxHp: 95, tempHp: 0, curHp: 95, deathSaves: { s: 0, f: 0 },
+        maxHp: 95, tempHp: 0, curHp: 95, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',       v: '17', hi: true },
           { l: 'Init',     v: '+1' },
@@ -808,7 +1652,7 @@
         note: 'CLOUD RUNE — redirect attack to another target' },
 
       { name: 'The',    cls: 'Aasimar · Rogue · Assassin',
-        maxHp: 68, tempHp: 0, curHp: 68, deathSaves: { s: 0, f: 0 },
+        maxHp: 68, tempHp: 0, curHp: 68, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',      v: '17', hi: true },
           { l: 'Init',    v: '+4' },
@@ -819,7 +1663,7 @@
         note: 'Assassinate: auto-crit on surprised target. Face never visible.' },
 
       { name: 'Evelyn', cls: 'Dhampir · Cleric/Barbarian',
-        maxHp: 52, tempHp: 0, curHp: 52, deathSaves: { s: 0, f: 0 },
+        maxHp: 52, tempHp: 0, curHp: 52, deathSaves: { s: 0, f: 0 }, conditions: [], customConditions: [{ name: 'Raging', cls: 'cond-gold', card: 'conditioned-gold' }, { name: 'Hungry', cls: 'cond-blood', card: 'conditioned-blood' }],
         stats: [
           { l: 'AC',       v: '14', hi: true },
           { l: 'Init',     v: '+2' },
@@ -830,7 +1674,7 @@
         note: 'Rage: resist B/P/S dmg, adv STR checks · ⚠ Track Concentration' },
 
       { name: 'Lyle',   cls: 'Halfling · Ranger',
-        maxHp: 58, tempHp: 0, curHp: 58, deathSaves: { s: 0, f: 0 },
+        maxHp: 58, tempHp: 0, curHp: 58, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',   v: '15', hi: true },
           { l: 'Init', v: '+2' },
@@ -840,7 +1684,7 @@
         note: 'Lucky: reroll 1s on attack/ability/save' },
 
       { name: 'Rooker', cls: 'Kenku · Rogue',
-        maxHp: 55, tempHp: 0, curHp: 55, deathSaves: { s: 0, f: 0 },
+        maxHp: 55, tempHp: 0, curHp: 55, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',      v: '15', hi: true },
           { l: 'Init',    v: '+4' },
@@ -852,7 +1696,7 @@
     ],
     B: [
       { name: 'Lorelei', cls: 'Fire Genasi · Druid',
-        maxHp: 32, tempHp: 0, curHp: 32, deathSaves: { s: 0, f: 0 },
+        maxHp: 32, tempHp: 0, curHp: 32, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',       v: '14', hi: true },
           { l: 'Init',     v: '+2' },
@@ -863,7 +1707,7 @@
         note: 'Wild Shape available. Fire resistance. Darkvision 60ft.' },
 
       { name: 'Val',     cls: 'Tiefling · Artificer',
-        maxHp: 38, tempHp: 0, curHp: 38, deathSaves: { s: 0, f: 0 },
+        maxHp: 38, tempHp: 0, curHp: 38, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',      v: '18', hi: true },
           { l: 'Init',    v: '+0' },
@@ -874,7 +1718,7 @@
         note: 'Infusions active — check for magic items on party' },
 
       { name: 'Luella',  cls: 'Changeling · Bard/Rogue',
-        maxHp: 28, tempHp: 0, curHp: 28, deathSaves: { s: 0, f: 0 },
+        maxHp: 28, tempHp: 0, curHp: 28, deathSaves: { s: 0, f: 0 }, conditions: [],
         stats: [
           { l: 'AC',      v: '14', hi: true },
           { l: 'Init',    v: '+3' },
@@ -902,6 +1746,51 @@
     return '#2a8a2a';
   }
 
+  // Condition definitions
+  const CONDITIONS = [
+    { name: 'Frightened',    cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Charmed',       cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Stunned',       cls: 'cond-purple', card: 'conditioned-purple' },
+    { name: 'Incapacitated', cls: 'cond-gray',   card: 'conditioned-gray'   },
+    { name: 'Poisoned',      cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Exhaustion',    cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Blinded',       cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Petrified',     cls: 'cond-green',  card: 'conditioned-green'  },
+    { name: 'Grappled',      cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Restrained',    cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Prone',         cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Invisible',     cls: 'cond-blue',   card: 'conditioned-blue'   },
+    { name: 'Concentrating', cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Cursed',        cls: 'cond-gold',   card: 'conditioned-gold'   },
+    { name: 'Blessed',       cls: 'cond-gold',   card: 'conditioned-gold'   },
+  ];
+
+  function getCondDef(name, pc) {
+    const custom = (pc && pc.customConditions) ? pc.customConditions.find(c => c.name === name) : null;
+    return custom || CONDITIONS.find(c => c.name === name) || { cls: '', card: '' };
+  }
+
+  function togglePCCondition(p, idx, condName) {
+    const pc = partyData[p][idx];
+    const i = pc.conditions.indexOf(condName);
+    if (i >= 0) pc.conditions.splice(i, 1);
+    else pc.conditions.push(condName);
+    const pid = p + '-' + idx;
+    const card = document.getElementById('pccard-' + pid);
+    if (!card) return;
+    card.querySelectorAll('.pc-cond-tag').forEach(tag => {
+      const def = getCondDef(tag.dataset.cond, pc);
+      tag.className = 'pc-cond-tag' + (pc.conditions.includes(tag.dataset.cond) ? ' ' + def.cls : '');
+    });
+    ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray'].forEach(c => card.classList.remove(c));
+    if (!card.classList.contains('downed')) {
+      for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
+        if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { card.classList.add(pr); break; }
+      }
+    }
+    updateSectionGlows();
+  }
+
   function renderPCs() {
     const grid = document.getElementById('pc-grid');
     const title = document.getElementById('pc-section-title');
@@ -912,11 +1801,20 @@
       const pct = Math.max(0, pc.curHp / pc.maxHp);
       const col = hpColor(pc.curHp, pc.maxHp);
       const barCol = hpBarColor(pc.curHp, pc.maxHp);
-      const isDanger = pc.curHp <= pc.maxHp * 0.25;
+      const isDanger = pc.curHp <= pc.maxHp * 0.25 && pc.curHp > 0;
+      const isDowned = pc.curHp <= 0;
       const pid = party + '-' + idx;
 
+      let condGlow = '';
+      if (!isDowned && pc.conditions && pc.conditions.length > 0) {
+        for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
+          if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { condGlow = pr; break; }
+        }
+      }
+
       const card = document.createElement('div');
-      card.className = 'pc-card' + (isDanger ? ' danger-hp' : '') + (editMode ? ' editing' : '');
+      card.id = 'pccard-' + pid;
+      card.className = 'pc-card' + (isDanger ? ' danger-hp' : '') + (isDowned ? ' downed' : '') + (condGlow ? ' ' + condGlow : '') + (editMode ? ' editing' : '');
 
       card.innerHTML = `
         <div class="pc-card-top">
@@ -924,7 +1822,6 @@
           <span class="pc-class">${pc.cls}</span>
         </div>
 
-        <!-- HP DISPLAY -->
         <div class="hp-section">
           <div class="hp-main-row">
             <div class="hp-cur-block">
@@ -953,29 +1850,24 @@
                  style="width:${Math.max(0,pct*100)}%; background:${barCol}"></div>
           </div>
 
-          <!-- DMG / HEAL INPUT ROW -->
           <div class="hp-action-row">
             <div class="hp-action-group">
               <span class="hp-action-lbl dmg-lbl">Damage</span>
               <div class="hp-action-inputs">
-                <input class="hp-amt-input" type="number" min="0" placeholder="0"
-                  id="dmg-${pid}" inputmode="numeric">
+                <input class="hp-amt-input" type="number" min="0" placeholder="0" id="dmg-${pid}" inputmode="numeric">
                 <button class="hp-apply-btn dmg-btn" onclick="applyDmg('${party}',${idx})">Apply</button>
               </div>
             </div>
-            <div class="hp-divider-v"></div>
             <div class="hp-action-group">
               <span class="hp-action-lbl heal-lbl">Healing</span>
               <div class="hp-action-inputs">
-                <input class="hp-amt-input" type="number" min="0" placeholder="0"
-                  id="heal-${pid}" inputmode="numeric">
+                <input class="hp-amt-input" type="number" min="0" placeholder="0" id="heal-${pid}" inputmode="numeric">
                 <button class="hp-apply-btn heal-btn" onclick="applyHeal('${party}',${idx})">Apply</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- STAT PILLS -->
         <div class="pc-stats">
           ${pc.stats.map((s, si) => `
             <div class="pc-stat${s.hi ? ' hi' : ''}">
@@ -988,26 +1880,47 @@
           `).join('')}
         </div>
 
+        <!-- CONDITIONS -->
+        <div class="pc-cond-row">
+          ${CONDITIONS.map(c => {
+            const isOn = pc.conditions && pc.conditions.includes(c.name);
+            return `<span class="pc-cond-tag${isOn ? ' ' + c.cls : ''}" data-cond="${c.name}"
+              onclick="togglePCCondition('${party}',${idx},'${c.name}')">${c.name}</span>`;
+          }).join('')}
+          ${(pc.customConditions || []).map(c => {
+            const isOn = pc.conditions && pc.conditions.includes(c.name);
+            return `<span class="pc-cond-tag${isOn ? ' ' + c.cls : ''}" data-cond="${c.name}"
+              onclick="togglePCCondition('${party}',${idx},'${c.name}')">${c.name}</span>`;
+          }).join('')}
+          ${(pc.conditions && pc.conditions.length > 0)
+            ? `<button class="cond-clear-btn" onclick="clearPCConditions('${party}',${idx})">✕ Clear</button>`
+            : ''}
+        </div>
+
         ${pc.note ? `<div class="pc-note${pc.note.includes('⚠') ? ' warn' : ''}">${pc.note}</div>` : ''}
 
-        <!-- DEATH SAVES -->
+        <!-- DOWNED TIPS — only visible at 0HP -->
+        <div class="downed-tips">
+          <div class="downed-tip">Narrate it — don't read the stat</div>
+          <div class="downed-tip">Does the enemy press the advantage?</div>
+          <div class="downed-tip">Ask the player for a memory or feeling</div>
+          <div class="downed-tip">Two fails — quietly remind yourself of the stakes</div>
+        </div>
+
+        <!-- DEATH SAVES — pips visible to DM only -->
         <div class="ds-row" id="ds-${pid}">
           <div class="ds-group">
-            <span class="ds-lbl success-lbl">Successes</span>
+            <span class="ds-lbl success-lbl">Saves</span>
             <div class="ds-pips">
-              ${[0,1,2].map(i => `
-                <button class="ds-pip success-pip ${i < pc.deathSaves.s ? 'filled' : ''}"
-                  onclick="toggleDS('${party}',${idx},'s',${i})">●</button>
-              `).join('')}
+              ${[0,1,2].map(i => `<button class="ds-pip success-pip ${i < pc.deathSaves.s ? 'filled' : ''}"
+                onclick="toggleDS('${party}',${idx},'s',${i})"></button>`).join('')}
             </div>
           </div>
           <div class="ds-group">
-            <span class="ds-lbl fail-lbl">Failures</span>
+            <span class="ds-lbl fail-lbl">Fails</span>
             <div class="ds-pips">
-              ${[0,1,2].map(i => `
-                <button class="ds-pip fail-pip ${i < pc.deathSaves.f ? 'filled' : ''}"
-                  onclick="toggleDS('${party}',${idx},'f',${i})">●</button>
-              `).join('')}
+              ${[0,1,2].map(i => `<button class="ds-pip fail-pip ${i < pc.deathSaves.f ? 'filled' : ''}"
+                onclick="toggleDS('${party}',${idx},'f',${i})"></button>`).join('')}
             </div>
           </div>
           <button class="ds-clear-btn" onclick="clearDS('${party}',${idx})">✕ Clear</button>
@@ -1017,7 +1930,6 @@
     });
   }
 
-  // ── APPLY DAMAGE ──
   function applyDmg(p, idx) {
     const pid = p + '-' + idx;
     const amt = parseInt(document.getElementById('dmg-' + pid).value) || 0;
@@ -1032,9 +1944,10 @@
     }
     document.getElementById('dmg-' + pid).value = '';
     updateHPDisplay(p, idx);
+    const bar = document.getElementById('hpbar-' + pid);
+    if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add('damaged'); }
   }
 
-  // ── APPLY HEALING ──
   function applyHeal(p, idx) {
     const pid = p + '-' + idx;
     const amt = parseInt(document.getElementById('heal-' + pid).value) || 0;
@@ -1043,6 +1956,8 @@
     pc.curHp = Math.min(pc.maxHp, pc.curHp + amt);
     document.getElementById('heal-' + pid).value = '';
     updateHPDisplay(p, idx);
+    const bar = document.getElementById('hpbar-' + pid);
+    if (bar) { bar.classList.remove('healed','damaged'); void bar.offsetWidth; bar.classList.add('healed'); }
   }
 
   // ── UPDATE HP DISPLAY without full re-render ──
@@ -1051,7 +1966,7 @@
     const pid = p + '-' + idx;
     const valEl = document.getElementById('hpval-' + pid);
     const barEl = document.getElementById('hpbar-' + pid);
-    const card = valEl?.closest('.pc-card');
+    const card = document.getElementById('pccard-' + pid);
     if (!valEl) return;
     const col = hpColor(pc.curHp, pc.maxHp);
     valEl.textContent = pc.curHp;
@@ -1059,11 +1974,20 @@
     barEl.style.width = Math.max(0, (pc.curHp / pc.maxHp) * 100) + '%';
     barEl.style.background = hpBarColor(pc.curHp, pc.maxHp);
     if (card) {
-      card.classList.toggle('danger-hp', pc.curHp <= pc.maxHp * 0.25);
+      const isDowned = pc.curHp <= 0;
+      card.classList.toggle('danger-hp', pc.curHp <= pc.maxHp * 0.25 && !isDowned);
+      card.classList.toggle('downed', isDowned);
+      // Re-apply condition glow — downed wins
+      ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray'].forEach(c => card.classList.remove(c));
+      if (!isDowned && pc.conditions && pc.conditions.length > 0) {
+        for (const pr of ['conditioned-purple','conditioned-green','conditioned-blue','conditioned-gold','conditioned-blood','conditioned-gray']) {
+          if (pc.conditions.some(cn => getCondDef(cn, pc).card === pr)) { card.classList.add(pr); break; }
+        }
+      }
     }
-    // update temp display
     const tempEl = document.getElementById('temphp-' + pid);
     if (tempEl) tempEl.value = pc.tempHp;
+    updateSectionGlows();
   }
 
   function liveUpdateMax(p, idx, val) {
@@ -1095,6 +2019,7 @@
       pc.curHp = pc.maxHp;
       pc.tempHp = 0;
       pc.deathSaves = { s: 0, f: 0 };
+      pc.conditions = [];
     });
     renderPCs();
   }
@@ -1154,7 +2079,11 @@
   }
   function changeRound(d) {
     round = Math.max(1, round + d);
-    document.getElementById('roundNum').textContent = round;
+    const el = document.getElementById('roundNum');
+    el.textContent = round;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
     document.getElementById('roundNote').textContent = getNote(round);
   }
 
@@ -1170,26 +2099,552 @@
   function toggle(item) {
     item.querySelector('.cb').classList.toggle('checked');
     item.querySelector('.item-text').classList.toggle('checked');
+    if (typeof updateSectionGlows === 'function') updateSectionGlows();
   }
 
   // ── CONDITION TAGS ──
+  function updateEnemyCondWrap() {
+    const wrap = document.getElementById('enemy-cond-wrap');
+    if (!wrap) return;
+    const allClasses = ['econd-purple','econd-green','econd-blue','econd-gold','econd-blood','econd-red','econd-gray'];
+    allClasses.forEach(c => wrap.classList.remove(c));
+
+    // Count active tags per color family, pick dominant
+    const counts = { purple:0, green:0, blue:0, gold:0, blood:0, red:0, gray:0 };
+    wrap.querySelectorAll('.tag.on-purple').forEach(() => counts.purple++);
+    wrap.querySelectorAll('.tag.on-green').forEach(()  => counts.green++);
+    wrap.querySelectorAll('.tag.on-blue').forEach(()   => counts.blue++);
+    wrap.querySelectorAll('.tag.on-gold').forEach(()   => counts.gold++);
+    wrap.querySelectorAll('.tag.on-blood').forEach(()  => counts.blood++);
+    wrap.querySelectorAll('.tag.on-red').forEach(()    => counts.red++);
+    wrap.querySelectorAll('.tag.on-gray').forEach(()   => counts.gray++);
+
+    // Priority: purple > green > blue > gold > blood > red > gray
+    const priority = ['purple','green','blue','gold','blood','red','gray'];
+    const dominant = priority.find(c => counts[c] > 0);
+    if (dominant) wrap.classList.add('econd-' + dominant);
+  }
+
+  function clearEnemyConditions() {
+    document.querySelectorAll('.cond-wrap .tag').forEach(t =>
+      t.classList.remove('on-red','on-blue','on-purple','on-green','on-gold','on-gray','on-blood')
+    );
+    updateEnemyCondWrap();
+    updateSectionGlows();
+  }
+
   function toggleTag(tag, cls) {
     if (tag.classList.contains(cls)) tag.classList.remove(cls);
-    else { tag.classList.remove('on-red','on-blue'); tag.classList.add(cls); }
+    else { tag.classList.remove('on-red','on-blue','on-purple','on-green','on-gold','on-gray','on-blood'); tag.classList.add(cls); }
+    updateEnemyCondWrap();
+    if (typeof updateSectionGlows === 'function') updateSectionGlows();
+  }
+
+  function clearPCConditions(p, idx) {
+    partyData[p][idx].conditions = [];
+    renderPCs();
+    updateSectionGlows();
+  }
+
+  function resetWeather() {
+    currentWeather = 'clear';
+    const wxDrop = document.getElementById('wx-dropdown');
+    const wxRoll = document.getElementById('wx-roll-input');
+    const bfSel  = document.getElementById('bf-weather-select');
+    if (wxDrop) wxDrop.value = 'clear';
+    if (wxRoll) wxRoll.value = '';
+    if (bfSel)  bfSel.value  = 'clear';
+    renderWeatherCard();
+    updateBFWeather();
   }
 
   // ── RESETS ──
   function resetChecks() {
     document.querySelectorAll('.cb.checked').forEach(e => e.classList.remove('checked'));
     document.querySelectorAll('.item-text.checked').forEach(e => e.classList.remove('checked'));
-    document.querySelectorAll('.tag').forEach(e => e.classList.remove('on-red','on-blue'));
+    document.querySelectorAll('.tag').forEach(e => e.classList.remove('on-red','on-blue','on-purple','on-green','on-gold','on-gray','on-blood'));
+    // Reset battlefield
+    bfWeatherOn = false; bfOtherOn = false;
+    const bfWT = document.getElementById('bf-weather-toggle');
+    const bfOT = document.getElementById('bf-other-toggle');
+    const bfWB = document.getElementById('bf-weather-box');
+    const bfOB = document.getElementById('bf-other-box');
+    const bfWTit = document.getElementById('bf-weather-title');
+    const bfOTit = document.getElementById('bf-other-title');
+    if (bfWT) { bfWT.textContent = 'Off'; bfWT.className = 'bf-toggle-btn'; }
+    if (bfOT) { bfOT.textContent = 'Off'; bfOT.className = 'bf-toggle-btn'; }
+    if (bfWB) bfWB.className = 'bf-effect-box';
+    if (bfOB) bfOB.className = 'bf-effect-box';
+    if (bfWTit) bfWTit.className = 'bf-effect-title';
+    if (bfOTit) bfOTit.className = 'bf-effect-title';
+    const bfOI = document.getElementById('bf-other-input');
+    const bfDI = document.getElementById('bf-details-input');
+    if (bfOI) bfOI.value = '';
+    if (bfDI) bfDI.value = '';
+    // Clear PC conditions
+    partyData[party].forEach(pc => { pc.conditions = []; });
+    renderPCs();
+    updateBFSectionGlow();
+    updateSectionGlows();
   }
+
   function resetRound() {
     round = 1;
     document.getElementById('roundNum').textContent = 1;
     document.getElementById('roundNote').textContent = 'Opening';
   }
-  function resetAll() { resetChecks(); resetRound(); }
+  function resetAll() {
+    resetChecks();
+    resetRound();
+    // Clear weather entirely
+    currentWeather = 'none';
+    const wxDrop = document.getElementById('wx-dropdown');
+    const wxRoll = document.getElementById('wx-roll-input');
+    const bfSel = document.getElementById('bf-weather-select');
+    if (wxDrop) wxDrop.value = 'none';
+    if (wxRoll) wxRoll.value = '';
+    if (bfSel) bfSel.value = 'none';
+    renderWeatherCard();
+    updateBFWeather();
+  }
+
+  // ══════════════════════════════
+  // WEATHER DATA
+  // ══════════════════════════════
+  const WEATHER = {
+    none: {
+      name: 'No Weather', icon: '—', severity: 'none', sevLabel: 'Clear',
+      desc: 'No active weather conditions.',
+      effects: [], combatEffects: []
+    },
+    clear: {
+      name: 'Sunny / Partly Cloudy / Slight Breeze', icon: '☀️', severity: 'none', sevLabel: 'Fair',
+      desc: 'Clear skies, pleasant conditions. No mechanical effects.',
+      effects: [], combatEffects: []
+    },
+    overcast: {
+      name: 'Overcast / Light Rain / Chilly / Windy', icon: '🌥️', severity: 'mild', sevLabel: 'Mild',
+      desc: 'Grey skies, light precipitation, cool temperatures. No mechanical effects.',
+      effects: [], combatEffects: []
+    },
+    hazy: {
+      name: 'Warm / Humid / Hazy', icon: '🌫️', severity: 'mild', sevLabel: 'Mild',
+      desc: 'Warm, heavy air. Visibility slightly reduced but no mechanical effect.',
+      effects: [], combatEffects: []
+    },
+    fog: {
+      name: 'Foggy', icon: '🌫️', severity: 'mild', sevLabel: 'Mild',
+      desc: 'Roll 1d4: on 1–2 region is lightly obscured; on 3–4 region is heavily obscured.',
+      effects: ['Roll 1d4 — 1–2: Lightly Obscured / 3–4: Heavily Obscured'],
+      combatEffects: ['Obscurement may affect ranged attacks and perception checks']
+    },
+    modrain: {
+      name: 'Moderate Rain', icon: '🌧️', severity: 'mild', sevLabel: 'Mild',
+      desc: 'Heavy rain — creatures outside without overhead cover get wet. No mechanical effect.',
+      effects: [], combatEffects: []
+    },
+    exheat: {
+      name: 'Extreme Heat', icon: '🌡️', severity: 'moderate', sevLabel: 'Moderate',
+      desc: 'Dangerous heat. While outside, take 1 fire damage per minute of exposure. Prolonged exposure (1hr) gains 1 level of Exhaustion.',
+      effects: ['1 fire damage per minute outside', '1hr exposure = +1 Exhaustion (stackable)'],
+      combatEffects: ['1 fire damage per round if combat is outdoors', 'Extended fights outdoors risk Exhaustion']
+    },
+    excold: {
+      name: 'Extreme Cold', icon: '🌡️', severity: 'moderate', sevLabel: 'Moderate',
+      desc: 'Dangerous cold. While outside, take 1 cold damage per minute of exposure. Prolonged exposure (1hr) gains 1 level of Exhaustion.',
+      effects: ['1 cold damage per minute outside', '1hr exposure = +1 Exhaustion (stackable)'],
+      combatEffects: ['1 cold damage per round if combat is outdoors', 'Extended fights outdoors risk Exhaustion']
+    },
+    thunder: {
+      name: 'Thunderstorm', icon: '⛈️', severity: 'moderate', sevLabel: 'Dangerous',
+      desc: 'Rain makes you wet outside without cover. Every minute roll 1d20 — on a 20, struck by lightning. Advantage if wearing metal armor; disadvantage if sheltering near tall conductive objects.',
+      effects: ['1d20 each minute — 20: struck by lightning', 'Metal armor = roll with Advantage', 'Near tall/conductive objects = Disadvantage'],
+      combatEffects: ['Roll 1d20 at start of each round outdoors — 20 = lightning strike', 'Metal armor wearers: roll Advantage version', 'Near tall structures: Disadvantage version']
+    },
+    tornado: {
+      name: 'Tornado', icon: '🌪️', severity: 'moderate', sevLabel: 'Dangerous',
+      desc: 'Treat as Thunderstorm. Each minute in range, DC 14 STR save or be hurled into the air. Roll 1d4 × 10 feet — take that as fall damage and land that many feet away.',
+      effects: ['Thunderstorm conditions apply', 'DC 14 STR save each minute or be flung', 'Roll 1d4×10 = feet flung + fall damage'],
+      combatEffects: ['DC 14 STR save each round or be flung 1d4×10 ft', 'Thunderstorm lightning rules also apply', 'Terrain is difficult']
+    },
+    blizzard: {
+      name: 'Blizzard', icon: '🌨️', severity: 'moderate', sevLabel: 'Dangerous',
+      desc: 'Roll 1d4 each hour: 1–2 = lightly obscured, 3–4 = heavily obscured + difficult terrain. While outside unprotected, 1d12 cold damage per hour. Winter Clothes negate damage.',
+      effects: ['1d4/hr: 1–2 Lightly / 3–4 Heavily Obscured + Difficult Terrain', '1d12 cold damage per hour unprotected outside', 'Winter Clothes negate damage'],
+      combatEffects: ['Heavily obscured = heavily blinded condition', 'All outdoor terrain is difficult', '1d12 cold per hour (extended combat risk)']
+    },
+    acid: {
+      name: 'Acid Rain', icon: '☠️', severity: 'severe', sevLabel: 'Severe',
+      desc: 'While unprotected from overhead cover, take 1d6 acid damage per minute. Prolonged exposure (1hr) gains 1 level of Exhaustion (stackable each hour).',
+      effects: ['1d6 acid damage per minute unprotected', '1hr exposure = +1 Exhaustion (stackable)'],
+      combatEffects: ['1d6 acid damage per round for any creature without overhead cover', 'Extended outdoor combat causes Exhaustion stacking']
+    },
+    petrify: {
+      name: 'Petrifying Rain', icon: '🪨', severity: 'severe', sevLabel: 'Severe',
+      desc: 'While unprotected, make DC 12 CON save each minute or become Petrified. Prolonged exposure (1hr) gains 1 level of Exhaustion (stackable each hour).',
+      effects: ['DC 12 CON save each minute unprotected or Petrified', '1hr exposure = +1 Exhaustion (stackable)'],
+      combatEffects: ['DC 12 CON save each round outdoors or become Petrified', 'Petrified = incapacitated, fails STR/DEX saves, attacks have Advantage', 'Extended combat = Exhaustion risk']
+    },
+    freeze: {
+      name: 'Freezing Rain', icon: '🧊', severity: 'severe', sevLabel: 'Severe',
+      desc: 'All outside surfaces are difficult terrain. While unprotected, 1d4 cold damage per minute. Prolonged exposure (1hr) gains 1 level of Exhaustion (stackable each hour).',
+      effects: ['All outdoor surfaces: Difficult Terrain', '1d4 cold damage per minute unprotected', '1hr exposure = +1 Exhaustion (stackable)'],
+      combatEffects: ['All outdoor terrain is difficult', '1d4 cold damage per round unprotected', 'Exhaustion risk on extended fights']
+    },
+    hurricane: {
+      name: 'Hurricane', icon: '🌀', severity: 'severe', sevLabel: 'Severe',
+      desc: 'Coastal locations only. All outside terrain is difficult terrain. During Wind Surges, DC 16 DEX save or take damage from flying debris. Prolonged exposure (1hr) gains 1 level of Exhaustion.',
+      effects: ['Coastal only', 'All outdoor terrain: Difficult Terrain', 'Wind Surges: DC 16 DEX save or debris damage', '1hr exposure = +1 Exhaustion'],
+      combatEffects: ['All outdoor terrain is difficult', 'Wind Surges (DM call): DC 16 DEX or debris damage', 'Exhaustion risk on extended fights']
+    },
+    sleepfog: {
+      name: 'Sleeping Fog', icon: '💤', severity: 'super', sevLabel: 'Supernatural',
+      desc: 'Roll 1d4: 1–2 lightly obscured, 3–4 heavily obscured. Outside unprotected: DC 12 CON save each minute or fall asleep. Taking 1+ damage wakes the creature. Save re-rollable after 1 minute.',
+      effects: ['1d4: 1–2 Lightly / 3–4 Heavily Obscured', 'DC 12 CON save each minute or fall Asleep', '1+ damage wakes sleeping creatures'],
+      combatEffects: ['DC 12 CON save each round outdoors or fall Asleep', 'Asleep = Unconscious condition', 'Any damage wakes them — but they waste their turn', 'Heavy obscurement may apply']
+    },
+    veilstars: {
+      name: 'Veil of Stars', icon: '✨', severity: 'super', sevLabel: 'Supernatural',
+      desc: 'Cannot penetrate buildings. Outside appears as normal sunlight, but sky becomes a dark void filled with slowly moving glowing stars. Touching a star makes it flare and vanish. DC 10 DEX save each minute or 1d4 force damage as a star impacts you. 1hr exposure = +1 Exhaustion.',
+      effects: ['Cannot penetrate buildings', 'DC 10 DEX save each minute or 1d4 force damage', '1hr exposure = +1 Exhaustion', 'Stars can be touched — flare and disappear'],
+      combatEffects: ['DC 10 DEX save each round outdoors or 1d4 force damage from errant star', 'Unsettling — DM discretion on morale/concentration effects', 'Exhaustion risk on extended fights']
+    }
+  };
+
+  // Pre-roll planner data: date-based using Caelos calendar
+  const CAELOS_MONTHS = [
+    'Awakening','Devotion','Joy','Kindred','Medial',
+    'Harvest','Resolute','Solace','Sacrifice','Silence'
+  ];
+  // Seasonal temp bias: months 1-2 spring, 3-5 summer, 6-7 autumn, 8-10 winter
+  // For extreme temp (166-180): summer=heat, winter=cold, spring/autumn=either
+  function getTempSeason(month) {
+    if (month >= 3 && month <= 5) return 'heat';
+    if (month >= 8 && month <= 10) return 'cold';
+    return Math.random() > 0.5 ? 'heat' : 'cold';
+  }
+
+  // Load saved weather schedule
+  let weatherSchedule = JSON.parse(sessionStorage.getItem('wxSchedule') || '{}');
+  // Current viewed date
+  let wxMonth = 3; // default: Joy (Party A's current month)
+  let wxDay = 27;
+  let wxYear = 1219;
+
+  function saveSchedule() {
+    try { sessionStorage.setItem('wxSchedule', JSON.stringify(weatherSchedule)); } catch(e) {}
+  }
+
+  function wxDateKey(y, m, d) { return `${y}-${m}-${d}`; }
+
+  function rollToWeather(roll, month) {
+    if (roll <= 10)  return ['acid','petrify','freeze','hurricane'][Math.floor(Math.random()*4)];
+    if (roll <= 40)  return ['blizzard','thunder','tornado'][Math.floor(Math.random()*3)];
+    if (roll <= 80)  return ['overcast','fog'][Math.floor(Math.random()*2)];
+    if (roll <= 130) return 'clear';
+    if (roll <= 165) return ['hazy','fog','modrain'][Math.floor(Math.random()*3)];
+    if (roll <= 180) return getTempSeason(month) === 'heat' ? 'exheat' : 'excold';
+    return Math.random() > 0.5 ? 'sleepfog' : 'veilstars';
+  }
+
+  function renderDatePicker() {
+    const mp = document.getElementById('wx-month-sel');
+    const dp = document.getElementById('wx-day-sel');
+    const yp = document.getElementById('wx-year-input');
+    if (!mp || !dp || !yp) return;
+    mp.value = wxMonth;
+    dp.value = wxDay;
+    yp.value = wxYear;
+  }
+
+  function onDateChange() {
+    const m = parseInt(document.getElementById('wx-month-sel').value);
+    const d = parseInt(document.getElementById('wx-day-sel').value);
+    const y = parseInt(document.getElementById('wx-year-input').value) || 1219;
+    if (m >= 1 && m <= 10 && d >= 1 && d <= 30 && y > 0) {
+      wxMonth = m; wxDay = d; wxYear = y;
+      renderWeekStrip();
+      loadDateWeather();
+    }
+  }
+
+  function renderWeekStrip() {
+    const strip = document.getElementById('wx-week-strip');
+    if (!strip) return;
+    // Show 7 days centered on current day
+    let days = [];
+    for (let i = -3; i <= 3; i++) {
+      let d = wxDay + i;
+      let m = wxMonth;
+      let y = wxYear;
+      if (d < 1) { m--; if (m < 1) { m = 10; y--; } d = 30 + d; }
+      if (d > 30) { d = d - 30; m++; if (m > 10) { m = 1; y++; } }
+      const key = wxDateKey(y, m, d);
+      const entry = weatherSchedule[key];
+      const w = entry ? WEATHER[entry.weather] : null;
+      const isToday = (d === wxDay && m === wxMonth && y === wxYear);
+      days.push(`<div class="wx-pre-cell ${isToday ? 'active-day' : ''}" onclick="jumpToDate(${y},${m},${d})">
+        <div class="wx-pre-day">${CAELOS_MONTHS[m-1].slice(0,3)} ${d}</div>
+        <div class="wx-pre-val">${entry ? entry.roll : '—'}</div>
+        <div class="wx-pre-icon">${w ? w.icon : '·'}</div>
+      </div>`);
+    }
+    strip.innerHTML = days.join('');
+  }
+
+  function jumpToDate(y, m, d) {
+    wxYear = y; wxMonth = m; wxDay = d;
+    renderDatePicker();
+    renderWeekStrip();
+    loadDateWeather();
+  }
+
+  function loadDateWeather() {
+    const key = wxDateKey(wxYear, wxMonth, wxDay);
+    const entry = weatherSchedule[key];
+    if (entry) {
+      currentWeather = entry.weather;
+      const rollInput = document.getElementById('wx-roll-input');
+      const dropdown = document.getElementById('wx-dropdown');
+      if (rollInput) rollInput.value = entry.roll || '';
+      if (dropdown) dropdown.value = entry.weather;
+      renderWeatherCard();
+      syncBFWeather();
+    } else {
+      currentWeather = 'none';
+      const dropdown = document.getElementById('wx-dropdown');
+      if (dropdown) dropdown.value = 'none';
+      const rollInput = document.getElementById('wx-roll-input');
+      if (rollInput) rollInput.value = '';
+      renderWeatherCard();
+    }
+  }
+
+  function applyRollToWeather(val) {
+    const roll = parseInt(val);
+    if (isNaN(roll) || roll < 3 || roll > 220) return;
+    const key = rollToWeather(roll, wxMonth);
+    const dateKey = wxDateKey(wxYear, wxMonth, wxDay);
+    weatherSchedule[dateKey] = { roll, weather: key };
+    saveSchedule();
+    currentWeather = key;
+    document.getElementById('wx-dropdown').value = key;
+    renderWeatherCard();
+    renderWeekStrip();
+    syncBFWeather();
+  }
+
+  function randomRoll() {
+    const roll = Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*20)+1;
+    document.getElementById('wx-roll-input').value = roll;
+    applyRollToWeather(roll);
+  }
+
+  function selectWeather(key) {
+    currentWeather = key || 'none';
+    const dateKey = wxDateKey(wxYear, wxMonth, wxDay);
+    const rollInput = document.getElementById('wx-roll-input');
+    const existingRoll = weatherSchedule[dateKey]?.roll || null;
+    weatherSchedule[dateKey] = { roll: existingRoll, weather: currentWeather };
+    saveSchedule();
+    renderWeatherCard();
+    renderWeekStrip();
+    syncBFWeather();
+  }
+
+  function syncBFWeather() {
+    const bfSel = document.getElementById('bf-weather-select');
+    if (bfSel) {
+      bfSel.value = currentWeather;
+      updateBFWeather(); // this now auto-toggles ON/OFF based on weather type
+    }
+  }
+
+  function renderWeatherCard() {
+    const area = document.getElementById('wx-card-area');
+    if (!area) return;
+    const w = WEATHER[currentWeather];
+    if (!w || currentWeather === 'none') {
+      area.innerHTML = `<div class="wx-none-card">
+        <div class="wx-none-icon">🌤️</div>
+        <div class="wx-none-text">No weather selected. Use the dropdown or enter a roll result above.</div>
+      </div>`;
+      return;
+    }
+    const hasCombat = w.combatEffects && w.combatEffects.length > 0;
+    const sevClass = `wx-sev-${w.severity}`;
+    area.innerHTML = `
+      <div class="wx-card" style="background:var(--surface)">
+        <div class="wx-card-head" style="background:var(--raised)">
+          <span class="wx-card-icon">${w.icon}</span>
+          <span class="wx-card-name" style="color:var(--gold)">${w.name}</span>
+          <span class="wx-severity ${sevClass}">${w.sevLabel}</span>
+        </div>
+        <div class="wx-card-body">
+          <div class="wx-desc">${w.desc}</div>
+          ${hasCombat ? `
+          <div class="wx-effects">
+            <span class="wx-effects-lbl">⚔ Combat Effects</span>
+            ${w.combatEffects.map(e => `<div class="wx-effect-item">• ${e}</div>`).join('')}
+          </div>
+          <button class="wx-push-btn" id="wx-push-btn" onclick="pushWeatherToBattlefield()">
+            ⚔ Push to Battlefield Effects
+          </button>` : ''}
+        </div>
+      </div>`;
+    // Update push button state if already pushed
+    updatePushBtn();
+  }
+
+  function updatePushBtn() {
+    const btn = document.getElementById('wx-push-btn');
+    if (!btn) return;
+    const bfSel = document.getElementById('bf-weather-select');
+    const bfToggle = document.getElementById('bf-weather-toggle');
+    if (bfSel && bfSel.value === currentWeather && bfToggle && bfToggle.classList.contains('on')) {
+      btn.textContent = '✔ Active in Battlefield Effects';
+      btn.classList.add('pushed');
+    } else {
+      btn.textContent = '⚔ Push to Battlefield Effects';
+      btn.classList.remove('pushed');
+    }
+  }
+
+  function onBFWeatherChange() {
+    const bfSel = document.getElementById('bf-weather-select');
+    if (!bfSel) return;
+    currentWeather = bfSel.value;
+    // Sync back to weather tab dropdown
+    const wxDrop = document.getElementById('wx-dropdown');
+    if (wxDrop) wxDrop.value = currentWeather;
+    updateBFWeather();
+    renderWeatherCard();
+  }
+
+  function pushWeatherToBattlefield() {
+    syncBFWeather();
+    updatePushBtn();
+    const combatBtn = document.querySelector('.nav-btn');
+    if (combatBtn) switchTab('combat', combatBtn);
+    const bfBody = document.getElementById('bf-body');
+    const bfHead = document.querySelector('#bf-section .c-head');
+    if (bfBody && !bfBody.classList.contains('open')) toggleSec(bfHead);
+  }
+
+  // ══════════════════════════════
+  // BATTLEFIELD EFFECTS
+  // ══════════════════════════════
+  let bfWeatherOn = false;
+  let bfOtherOn = false;
+
+  function setBFWeatherToggle(on) {
+    bfWeatherOn = on;
+    const toggle = document.getElementById('bf-weather-toggle');
+    const box = document.getElementById('bf-weather-box');
+    const title = document.getElementById('bf-weather-title');
+    if (toggle) { toggle.textContent = on ? 'On' : 'Off'; toggle.className = 'bf-toggle-btn' + (on ? ' on' : ''); }
+    if (box) box.className = 'bf-effect-box' + (on ? ' active-effect' : '');
+    if (title) title.className = 'bf-effect-title' + (on ? ' active-lbl' : '');
+    updateBFSectionGlow();
+  }
+
+  function updateBFWeather() {
+    const sel = document.getElementById('bf-weather-select');
+    const desc = document.getElementById('bf-weather-desc');
+    if (!sel || !desc) return;
+    const key = sel.value;
+    const w = WEATHER[key];
+
+    // Weather that has zero effects of any kind — leave toggle off
+    const noEffectWeather = new Set(['none','clear','overcast','hazy','modrain']);
+    const hasAnyEffect = w && !noEffectWeather.has(key);
+
+    if (!w || key === 'none') {
+      desc.textContent = 'No active weather effect.';
+      desc.className = 'bf-weather-desc';
+      sel.className = 'bf-weather-select';
+      setBFWeatherToggle(false);
+      return;
+    }
+
+    const hasCombat = w.combatEffects && w.combatEffects.length > 0;
+    if (hasCombat) {
+      desc.innerHTML = w.combatEffects.map(e => `• ${e}`).join('<br>');
+      desc.className = 'bf-weather-desc has-effect';
+      sel.className = 'bf-weather-select active-weather';
+    } else if (w.effects && w.effects.length > 0) {
+      desc.innerHTML = w.effects.map(e => `• ${e}`).join('<br>');
+      desc.className = 'bf-weather-desc has-effect';
+      sel.className = 'bf-weather-select active-weather';
+    } else {
+      desc.textContent = `${w.name} — no direct combat effects.`;
+      desc.className = 'bf-weather-desc';
+      sel.className = 'bf-weather-select';
+    }
+
+    // Auto-toggle ON for any weather that has effects
+    setBFWeatherToggle(hasAnyEffect);
+  }
+
+  function toggleBFWeather() {
+    setBFWeatherToggle(!bfWeatherOn);
+  }
+
+  function toggleBFOther() {
+    bfOtherOn = !bfOtherOn;
+    const toggle = document.getElementById('bf-other-toggle');
+    const box = document.getElementById('bf-other-box');
+    const title = document.getElementById('bf-other-title');
+    toggle.textContent = bfOtherOn ? 'On' : 'Off';
+    toggle.className = 'bf-toggle-btn' + (bfOtherOn ? ' on' : '');
+    box.className = 'bf-effect-box' + (bfOtherOn ? ' active-effect' : '');
+    title.className = 'bf-effect-title' + (bfOtherOn ? ' active-lbl' : '');
+    updateBFSectionGlow();
+  }
+
+  function checkBFOtherActive() {
+    const input = document.getElementById('bf-other-input');
+    const details = document.getElementById('bf-details-input');
+    const hasContent = (input && input.value.trim()) || (details && details.value.trim());
+    // Auto-enable toggle if content typed
+    if (hasContent && !bfOtherOn) toggleBFOther();
+    updateBFSectionGlow();
+  }
+
+  function updateBFSectionGlow() {
+    const sec = document.getElementById('bf-section');
+    if (!sec) return;
+    const anyActive = bfWeatherOn || bfOtherOn;
+    sec.classList.toggle('battlefield-active', anyActive);
+    sec.classList.toggle('has-active', anyActive);
+  }
+
+  // ══════════════════════════════
+  // SECTION GLOW — watch for any checked items
+  // ══════════════════════════════
+  function updateSectionGlows() {
+    document.querySelectorAll('.c-section').forEach(sec => {
+      if (sec.id === 'bf-section') return;
+      const hasChecked = sec.querySelector('.cb.checked') !== null;
+      const hasActiveTag = sec.querySelector('.tag.on-red, .tag.on-blue, .tag.on-purple, .tag.on-green, .tag.on-gold') !== null;
+      sec.classList.toggle('has-active', hasChecked || hasActiveTag);
+    });
+    // PC section glow — any PC at critical HP or has death saves
+    const pcSec = document.getElementById('pc-section');
+    if (pcSec) {
+      const hasCritical = partyData[party].some(pc =>
+        pc.curHp <= pc.maxHp * 0.25 || pc.deathSaves.s > 0 || pc.deathSaves.f > 0
+      );
+      pcSec.classList.toggle('has-active', hasCritical);
+    }
+  }
+
+  let currentWeather = 'none';
+
+  // Init weather tab
+  renderDatePicker();
+  renderWeekStrip();
+  renderWeatherCard();
 </script>
 </body>
 </html>
