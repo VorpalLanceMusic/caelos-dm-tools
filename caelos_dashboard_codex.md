@@ -136,7 +136,7 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 - **Seasonal bias:** Joy/Kindred/Medial=heat · Solace/Sacrifice/Silence=cold · shoulders=random
 
 ### Weather Roll Table (2d100+1d20)
-- 1–10: Acid Rain / Petrifying Rain / Freezing Rain / Hurricane (1d4)
+- 1–10: Acid Rain / Petrifying Rain (Supernatural) / Freezing Rain / Hurricane (1d4)
 - 11–40: Blizzard / Thunderstorm / Tornado (1d3)
 - 41–80: Overcast / Foggy (1d2)
 - 81–130: Clear/Sunny
@@ -168,18 +168,18 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 | HP bar | `hp-scan` 3s infinite | Scanline sweep |
 | Weather card — Clear | `wx-anim-clear` 5s | Warm gold breathe, slow and peaceful |
 | Weather card — Overcast | `wx-anim-overcast` 6s | Cool blue-gray listless pulse |
-| Weather card — Moderate Rain | `wx-anim-modrain` 4s | Same as overcast, faster |
+| Weather card — Moderate Rain | `wx-anim-modrain` 3s | Vivid deep blue downward drip pulse, distinct from overcast |
 | Weather card — Hazy | `wx-anim-hazy` 7s | Warm amber shimmer drift, murky |
 | Weather card — Fog | `wx-anim-fog` 8s | White-gray drift, saturate fades in/out |
 | Weather card — Extreme Heat | `wx-anim-exheat` 2.8s | Aggressive amber-red throb, uncomfortable |
 | Weather card — Extreme Cold | `wx-anim-excold` 3.2s | Icy blue crystalline flicker, brittle |
 | Weather card — Thunderstorm | `wx-anim-thunder` 4.5s | 89% quiet, then sharp electric white crack + afterglow |
-| Weather card — Tornado | `wx-anim-tornado` 1.8s linear | Clockwise box-shadow rotation sweep |
+| Weather card — Tornado | `wx-anim-tornado` 2.6s | Erratic lurching float ±5px, uneven keyframes, clockwise border sweep |
 | Weather card — Blizzard | `wx-anim-blizzard` 2.2s | Cold strobe + micro translateX shudder |
 | Weather card — Acid Rain | `wx-anim-acid` 2.5s | Sickly green hue-rotate corrosive pulse |
 | Weather card — Petrifying Rain | `wx-anim-petrify` 6s | Slow stone-gray creeping desaturation |
 | Weather card — Freezing Rain | `wx-anim-freeze` 3.8s | Two sharp brittle ice spikes at irregular intervals |
-| Weather card — Hurricane | `wx-anim-hurricane` 1.2s linear | Rotating light source + card shudder translateX/Y |
+| Weather card — Hurricane | `wx-anim-hurricane` 1.8s linear | Gentle vertical float ±3px, rotating border light source |
 | Weather card — Sleeping Fog | `wx-anim-sleepfog` 9s | Eerie slow purple-white drift, dreamy and wrong |
 | Weather card — Veil of Stars | `wx-anim-veilstars` 10s | Cosmic hue-rotate drift, shifting corner light sources |
 | HP damage | `hp-damage-flash` 0.4s | Dim + desaturate |
