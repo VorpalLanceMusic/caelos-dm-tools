@@ -177,7 +177,7 @@ Fonts: Cinzel (headers) + Crimson Text (body). Milestone leveling — no XP anyw
 | Weather card — Tornado | `wx-anim-tornado` 2.6s | Erratic lurching float ±5px, uneven keyframes, clockwise border sweep |
 | Weather card — Blizzard | `wx-anim-blizzard` 2.2s | Cold strobe + micro translateX shudder |
 | Weather card — Acid Rain | `wx-anim-acid` 2.5s | Sickly green hue-rotate corrosive pulse |
-| Weather card — Petrifying Rain | `wx-anim-petrify` 6s | Slow stone-gray creeping desaturation |
+| Weather card — Petrifying Rain | `wx-anim-petrify` 6s | Slow stone-gray creeping desaturation — severity: Supernatural (purple badge) |
 | Weather card — Freezing Rain | `wx-anim-freeze` 3.8s | Two sharp brittle ice spikes at irregular intervals |
 | Weather card — Hurricane | `wx-anim-hurricane` 1.8s linear | Gentle vertical float ±3px, rotating border light source |
 | Weather card — Sleeping Fog | `wx-anim-sleepfog` 9s | Eerie slow purple-white drift, dreamy and wrong |
@@ -225,7 +225,30 @@ pushWeatherToBattlefield()— push + switch to combat tab + open BF section
 
 ---
 
-## PENDING / NOT YET BUILT
+## TEXTURE SYSTEM
+
+All patterns are CSS-only via `background-image` layering. No images. All rgba, never competes with text or animations. Current opacity range: 6–14%.
+
+| Surface | Pattern Type | Color | Notes |
+|---------|-------------|-------|-------|
+| `.app::before` | Dual offset dot grid | white | Fixed pseudo-element, `z-index:0`, `pointer-events:none` — does NOT touch layout |
+| `.app-header` | 135° diagonal etch | white | Layered over existing blood→dark gradient via separate `background-image` |
+| `.bottom-nav` | Tight 8px chainmail dot grid | white | |
+| `.c-head` | 120° brushed metal hairlines | white | Different angle from header = distinct material feel |
+| `.c-body` | Gold crosshatch (0° + 90°) | gold | Aged parchment — two gradient layers |
+| `.pc-card` | Corner radial depth + 45° diagonal grain | white | Top-left lighter, bottom-right darker = carved stone block |
+| `.hp-action-row` | Horizontal ruled lines 12px | white | Ledger / surgeon's chart feel |
+| `.cond-wrap` | 12px gold dot grid | gold | Old tactical map |
+| `#enemy-cond-section .c-body` | 150° red hatch + 0° gold rules | red + gold | Dangerous territory read |
+| `.party-sec-head` | 135° gold diagonal | gold | |
+| `.reset-bar` | Tight 10px square grid (0° + 90°) | white | Forge floor grating |
+| `#tab-weather` | Three offset star-field dot layers | gold + white | Prime-number sizes (47/23/71px) so pattern never repeats predictably |
+| `.wx-card-head` | 90° vertical column lines | white | Weather station readout feel |
+| `.wx-card-body` | 160° diagonal grain | white | |
+| `.wx-effects` | 0° horizontal rules 8px | blood red | Reinforces blood left-border |
+| `.wx-pre-cell` | 90° vertical hairlines | white | |
+
+**Critical:** `.app` must have `position: relative` for `::before` to work. Body/html get NO background-image — layout lives there and must stay clean.
 
 - **Bestiary tab** — HIGH PRIORITY (referenced in codex)
 - **Encounter tab** — MEDIUM

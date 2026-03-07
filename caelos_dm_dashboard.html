@@ -32,12 +32,194 @@
     overflow: hidden;
   }
 
+  /* ══════════════════════════════════════════════
+     TEXTURE SYSTEM
+     All patterns use rgba at 6-14% opacity.
+     Never competes with text or animations.
+  ══════════════════════════════════════════════ */
+
+  /* App body background — deep stone grain via pseudo-element so layout is untouched */
+  .app::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+      radial-gradient(circle, rgba(255,255,255,0.024) 1px, transparent 1px);
+    background-size: 24px 24px, 13px 13px;
+    background-position: 0 0, 7px 7px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* App header — dark iron plate diagonal etch */
+  .app-header {
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        rgba(255,255,255,0.036) 0px, rgba(255,255,255,0.036) 1px,
+        transparent 1px, transparent 14px
+      );
+  }
+
+  /* Bottom nav — tight chainmail dot grid */
+  .bottom-nav {
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+
+  /* Section headers (c-head) — brushed metal hairline diagonals */
+  .c-head {
+    background-image:
+      repeating-linear-gradient(
+        120deg,
+        rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px,
+        transparent 1px, transparent 18px
+      );
+  }
+
+  /* Section bodies (c-body) — aged parchment crosshatch */
+  .c-body {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(232,200,122,0.044) 0px, rgba(232,200,122,0.044) 1px,
+        transparent 1px, transparent 20px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(232,200,122,0.03) 0px, rgba(232,200,122,0.03) 1px,
+        transparent 1px, transparent 20px
+      );
+  }
+
+  /* PC cards — corner-weighted stone block depth */
+  .pc-card {
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.3) 0%, transparent 50%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.016) 0px, rgba(255,255,255,0.016) 1px,
+        transparent 1px, transparent 22px
+      );
+  }
+
+  /* HP action row — faint horizontal rule lines, like ruled paper */
+  .hp-action-row {
+    background-image:
+      repeating-linear-gradient(
+        180deg,
+        rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+        transparent 1px, transparent 12px
+      );
+  }
+
+  /* Condition wrap — old tactical map dot grid */
+  .cond-wrap {
+    background-image:
+      radial-gradient(circle, rgba(232,200,122,0.06) 1px, transparent 1px);
+    background-size: 12px 12px;
+  }
+
+  /* Enemy conditions block — diagonal warning hatch */
+  #enemy-cond-section .c-body {
+    background-image:
+      repeating-linear-gradient(
+        150deg,
+        rgba(155,26,26,0.08) 0px, rgba(155,26,26,0.08) 1px,
+        transparent 1px, transparent 16px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(232,200,122,0.03) 0px, rgba(232,200,122,0.03) 1px,
+        transparent 1px, transparent 20px
+      );
+  }
+
+  /* Party section headers — crosshatch over raised */
+  .party-sec-head {
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        rgba(232,200,122,0.04) 0px, rgba(232,200,122,0.04) 1px,
+        transparent 1px, transparent 16px
+      );
+  }
+
+  /* Reset bar — forge floor grating: tight square grid */
+  .reset-bar {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+        transparent 1px, transparent 10px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+        transparent 1px, transparent 10px
+      );
+  }
+
+  /* Weather tab body — star-field scatter dots, like a sky chart */
+  #tab-weather {
+    background-image:
+      radial-gradient(circle, rgba(232,200,122,0.12) 1px, transparent 1px),
+      radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+      radial-gradient(circle, rgba(200,180,100,0.07) 1px, transparent 1px);
+    background-size: 47px 47px, 23px 31px, 71px 53px;
+    background-position: 0 0, 11px 17px, 33px 7px;
+  }
+
+  /* Weather card head — vertical column lines */
+  .wx-card-head {
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.036) 0px, rgba(255,255,255,0.036) 1px,
+        transparent 1px, transparent 20px
+      );
+  }
+
+  /* Weather card body — diagonal grain */
+  .wx-card-body {
+    background-image:
+      repeating-linear-gradient(
+        160deg,
+        rgba(255,255,255,0.024) 0px, rgba(255,255,255,0.024) 1px,
+        transparent 1px, transparent 28px
+      );
+  }
+
+  /* Weather effects block — fine mesh tactical feel */
+  .wx-effects {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(155,26,26,0.12) 0px, rgba(155,26,26,0.12) 1px,
+        transparent 1px, transparent 8px
+      );
+  }
+
+  /* Week strip cells — vertical rule lines */
+  .wx-pre-cell {
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+        transparent 1px, transparent 10px
+      );
+  }
+
   /* ── LAYOUT ── */
   .app {
     display: flex;
     flex-direction: column;
     height: 100vh;
     height: 100dvh;
+    position: relative;
   }
 
   /* ── GLOBAL HEADER ── */
