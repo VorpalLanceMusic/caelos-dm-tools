@@ -3231,6 +3231,597 @@
     from { transform: scale(0.3); opacity: 0; }
     to   { transform: scale(1);   opacity: 1; }
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     GRIMOIRE TAB
+     Animation vocabulary: slow breathing on ambient/persistent,
+     sharp cubic-bezier on tap/reveal, scan sweeps on surfaces,
+     section-unfurl on appear. Same DNA as rest of dashboard.
+  ══════════════════════════════════════════════════════════════ */
+
+  /* ── GRIMOIRE KEYFRAMES ── */
+
+  /* Ambient gold heartbeat — title and detail header */
+  @keyframes grimoire-title-breathe {
+    0%,100% { text-shadow: 0 0 14px rgba(232,200,122,0.28), 0 0 35px rgba(232,200,122,0.09); }
+    50%      { text-shadow: 0 0 24px rgba(232,200,122,0.58), 0 0 55px rgba(232,200,122,0.2); }
+  }
+  /* Search bar idle scan — horizontal light sweep across the input */
+  @keyframes grimoire-search-scan {
+    0%   { background-position: -200% center; }
+    100% { background-position: 400% center; }
+  }
+  /* Entry row appear — same unfurl as section-unfurl but offset-staggered via nth-child */
+  @keyframes grimoire-row-in {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  /* Detail panel slide-in — sharper than the old version, matching modal-slide-up energy */
+  @keyframes grimoire-detail-in {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  /* DM note left-border flicker — same rhythm as danger-flicker */
+  @keyframes grimoire-dm-flicker {
+    0%,100% { border-left-color: rgba(224,104,104,0.45); box-shadow: inset 2px 0 6px rgba(224,104,104,0.04); }
+    50%      { border-left-color: rgba(224,104,104,0.85); box-shadow: inset 2px 0 10px rgba(224,104,104,0.12); }
+  }
+  /* DM tag pulse — matches gtag-dm-pulse exactly */
+  @keyframes gtag-dm-pulse {
+    0%,100% { box-shadow: 0 0 0 transparent; border-color: rgba(224,104,104,0.4); }
+    50%      { box-shadow: 0 0 6px rgba(224,104,104,0.3); border-color: rgba(224,104,104,0.8); }
+  }
+  /* Danger tag ember flicker — matches danger-flicker */
+  @keyframes grimoire-danger-flicker {
+    0%,100% { border-color: rgba(255,122,47,0.4); box-shadow: 0 0 0 transparent; }
+    50%      { border-color: rgba(255,122,47,0.85); box-shadow: 0 0 6px rgba(255,122,47,0.25); }
+  }
+  /* Detail header shimmer — horizontal light trace like btn-shimmer */
+  @keyframes grimoire-header-sweep {
+    0%   { background-position: -100% 0; }
+    60%  { background-position: 200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  /* Section title underline breathe — accent color pulses on the border */
+  @keyframes grimoire-sec-title-breathe {
+    0%,100% { opacity: 0.55; }
+    50%      { opacity: 1; }
+  }
+  /* Search result stagger-in */
+  @keyframes grimoire-result-in {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Back button arrow bounce on active */
+  @keyframes grimoire-back-tap {
+    0%   { transform: translateX(0); }
+    40%  { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
+
+  /* ── CONTAINER ── */
+  .grimoire-container {
+    padding: 0 0 80px;
+  }
+
+  /* ── SEARCH BAR ── */
+  .grimoire-search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: #0d0d18;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.006) 2px, transparent 14px),
+      repeating-linear-gradient(90deg,
+        rgba(255,255,255,0.005) 0px, rgba(255,255,255,0.005) 1px,
+        transparent 1px, transparent 40px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px 8px;
+  }
+  .grimoire-search-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .grimoire-search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 15px;
+    opacity: 0.45;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .grimoire-search-input:focus ~ .grimoire-search-icon,
+  .grimoire-search-inner:focus-within .grimoire-search-icon {
+    opacity: 0.75;
+  }
+  .grimoire-search-input {
+    width: 100%;
+    background-color: var(--raised);
+    background-image:
+      repeating-linear-gradient(180deg,
+        rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px,
+        transparent 1px, transparent 6px);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    padding: 10px 36px 10px 36px;
+    outline: none;
+    transition: border-color 0.22s, box-shadow 0.22s;
+  }
+  .grimoire-search-input:focus {
+    border-color: rgba(232,200,122,0.45);
+    box-shadow: 0 0 12px rgba(232,200,122,0.12), inset 0 0 6px rgba(232,200,122,0.04);
+  }
+  .grimoire-search-input::placeholder { color: var(--sub); font-style: italic; }
+  .grimoire-search-clear {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--sub);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, transform 0.15s;
+  }
+  .grimoire-search-clear:active {
+    color: var(--text);
+    transform: scale(0.85);
+    animation: btn-thud 0.2s ease-out;
+  }
+  .grimoire-result-count {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    color: var(--sub);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-top: 5px;
+    min-height: 14px;
+    transition: opacity 0.2s;
+  }
+
+  /* ── TAG FILTER CHIPS ── */
+  .grimoire-tag-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .gtag-chip {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 10px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gtag-chip:active { transform: scale(0.91); }
+  /* Unselected — muted version of each color */
+  .gtag-chip.chip-pa     { color: rgba(104,168,216,0.55); border-color: rgba(104,168,216,0.2); background: rgba(104,168,216,0.05); }
+  .gtag-chip.chip-pb     { color: rgba(104,216,168,0.55); border-color: rgba(104,216,168,0.2); background: rgba(104,216,168,0.05); }
+  .gtag-chip.chip-both   { color: rgba(232,200,122,0.55); border-color: rgba(232,200,122,0.2); background: rgba(232,200,122,0.05); }
+  .gtag-chip.chip-dm     { color: rgba(224,104,104,0.55); border-color: rgba(224,104,104,0.2); background: rgba(224,104,104,0.05); }
+  .gtag-chip.chip-danger { color: rgba(255,122,47,0.55);  border-color: rgba(255,122,47,0.2);  background: rgba(255,122,47,0.05); }
+  .gtag-chip.chip-dead   { color: rgba(106,104,96,0.6);   border-color: rgba(106,104,96,0.2);  background: rgba(106,104,96,0.05); }
+  /* Selected — full color, bright border, glow */
+  .gtag-chip.chip-pa.active     { color: #68a8d8; border-color: rgba(104,168,216,0.75); background: rgba(104,168,216,0.14); box-shadow: 0 0 8px rgba(104,168,216,0.2); }
+  .gtag-chip.chip-pb.active     { color: #68d8a8; border-color: rgba(104,216,168,0.75); background: rgba(104,216,168,0.14); box-shadow: 0 0 8px rgba(104,216,168,0.2); }
+  .gtag-chip.chip-both.active   { color: #e8c87a; border-color: rgba(232,200,122,0.75); background: rgba(232,200,122,0.14); box-shadow: 0 0 8px rgba(232,200,122,0.2); }
+  .gtag-chip.chip-dm.active     { color: #e06868; border-color: rgba(224,104,104,0.75); background: rgba(224,104,104,0.14); box-shadow: 0 0 8px rgba(224,104,104,0.2); animation: gtag-dm-pulse 3s ease-in-out infinite; }
+  .gtag-chip.chip-danger.active { color: #ff7a2f; border-color: rgba(255,122,47,0.75);  background: rgba(255,122,47,0.14);  box-shadow: 0 0 8px rgba(255,122,47,0.2); animation: grimoire-danger-flicker 2.8s ease-in-out infinite; }
+  .gtag-chip.chip-dead.active   { color: var(--sub); border-color: rgba(100,100,100,0.5); background: rgba(100,100,100,0.1); }
+
+  /* ── SEARCH RESULTS ── */
+  .grimoire-results {
+    padding: 4px 0 8px;
+  }
+  .grimoire-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+    animation: grimoire-result-in 0.2s ease both;
+  }
+  /* Stagger first 8 results */
+  .grimoire-result-item:nth-child(1) { animation-delay: 0.00s; }
+  .grimoire-result-item:nth-child(2) { animation-delay: 0.03s; }
+  .grimoire-result-item:nth-child(3) { animation-delay: 0.06s; }
+  .grimoire-result-item:nth-child(4) { animation-delay: 0.09s; }
+  .grimoire-result-item:nth-child(5) { animation-delay: 0.12s; }
+  .grimoire-result-item:nth-child(6) { animation-delay: 0.15s; }
+  .grimoire-result-item:nth-child(7) { animation-delay: 0.17s; }
+  .grimoire-result-item:nth-child(8) { animation-delay: 0.19s; }
+  .grimoire-result-item:active { background: var(--raised); }
+  .grimoire-result-item:active::after { opacity: 1; transform: translateX(3px); }
+  .grimoire-result-item::after {
+    content: '›';
+    position: absolute;
+    right: 14px;
+    color: var(--sub);
+    font-size: 18px;
+    opacity: 0.5;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .grimoire-result-cat {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    border: 1px solid;
+  }
+  .grimoire-result-cat.cat-npc       { color: #d8d868; border-color: rgba(216,216,104,0.35); background: rgba(216,216,104,0.08); }
+  .grimoire-result-cat.cat-location  { color: #68d8a8; border-color: rgba(104,216,168,0.35); background: rgba(104,216,168,0.08); }
+  .grimoire-result-cat.cat-creature  { color: #e06868; border-color: rgba(224,104,104,0.35); background: rgba(224,104,104,0.08); }
+  .grimoire-result-cat.cat-faction   { color: #e0a868; border-color: rgba(224,168,104,0.35); background: rgba(224,168,104,0.08); }
+  .grimoire-result-cat.cat-lore      { color: #c068e0; border-color: rgba(192,104,224,0.35); background: rgba(192,104,224,0.08); }
+  .grimoire-result-cat.cat-thread    { color: #ff7a2f; border-color: rgba(255,122,47,0.35); background: rgba(255,122,47,0.08); }
+  .grimoire-result-cat.cat-world     { color: #68a8d8; border-color: rgba(104,168,216,0.35); background: rgba(104,168,216,0.08); }
+  .grimoire-result-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .grimoire-result-name mark {
+    background: rgba(232,200,122,0.22);
+    color: var(--gold);
+    border-radius: 2px;
+    padding: 0 2px;
+    text-shadow: 0 0 8px rgba(232,200,122,0.3);
+  }
+  .grimoire-result-sub {
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  /* ── ENTRY LIST ROWS ── */
+  .grimoire-entry-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    gap: 10px;
+    position: relative;
+    transition: background 0.12s;
+    animation: grimoire-row-in 0.18s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  /* Stagger rows within each open section */
+  .grimoire-entry-row:nth-child(1)  { animation-delay: 0.02s; }
+  .grimoire-entry-row:nth-child(2)  { animation-delay: 0.05s; }
+  .grimoire-entry-row:nth-child(3)  { animation-delay: 0.08s; }
+  .grimoire-entry-row:nth-child(4)  { animation-delay: 0.11s; }
+  .grimoire-entry-row:nth-child(5)  { animation-delay: 0.14s; }
+  .grimoire-entry-row:nth-child(6)  { animation-delay: 0.17s; }
+  .grimoire-entry-row:nth-child(7)  { animation-delay: 0.20s; }
+  .grimoire-entry-row:nth-child(8)  { animation-delay: 0.22s; }
+  .grimoire-entry-row:nth-child(n+9){ animation-delay: 0.24s; }
+  .grimoire-entry-row:last-child { border-bottom: none; }
+  .grimoire-entry-row:active { background: rgba(255,255,255,0.045); }
+  .grimoire-entry-row:active .grimoire-entry-icon {
+    animation: nav-tap 0.22s ease-out;
+  }
+  .grimoire-entry-row:active::after { opacity: 1; transform: translateX(3px); }
+  .grimoire-entry-row::after {
+    content: '›';
+    position: absolute;
+    right: 14px;
+    color: var(--sub);
+    font-size: 18px;
+    opacity: 0.4;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .grimoire-entry-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+    transition: transform 0.15s;
+  }
+  .grimoire-entry-info { flex: 1; min-width: 0; }
+  .grimoire-entry-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s;
+  }
+  .grimoire-entry-row:active .grimoire-entry-name { color: var(--gold); }
+  .grimoire-entry-sub {
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .grimoire-entry-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── TAGS ── */
+  .grimoire-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border: 1px solid;
+  }
+  .gtag-pa     { color: #68a8d8; border-color: rgba(104,168,216,0.4); background: rgba(104,168,216,0.1); }
+  .gtag-pb     { color: #68d8a8; border-color: rgba(104,216,168,0.4); background: rgba(104,216,168,0.1); }
+  .gtag-both   { color: #e8c87a; border-color: rgba(232,200,122,0.4); background: rgba(232,200,122,0.1); }
+  .gtag-dm     { color: #e06868; border-color: rgba(224,104,104,0.4); background: rgba(224,104,104,0.1); animation: gtag-dm-pulse 3s ease-in-out infinite; }
+  .gtag-alive  { color: #68d868; border-color: rgba(104,216,104,0.35); background: rgba(104,216,104,0.08); }
+  .gtag-dead   { color: var(--sub); border-color: rgba(100,100,100,0.3); background: rgba(100,100,100,0.07); }
+  .gtag-danger { color: #ff7a2f; border-color: rgba(255,122,47,0.4); background: rgba(255,122,47,0.1);
+                 animation: grimoire-danger-flicker 2.8s ease-in-out infinite; }
+
+  /* ── DETAIL VIEW ── */
+  .grimoire-detail {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    min-height: 100%;
+    background: var(--bg);
+    z-index: 30;
+    animation: grimoire-detail-in 0.24s cubic-bezier(0.22,1,0.36,1);
+    padding-bottom: 80px;
+  }
+  .grimoire-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--surface);
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0.018) 0px, transparent 2px),
+      linear-gradient(90deg, rgba(232,200,122,0.04) 0%, transparent 40%);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--gold);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 13px 16px;
+    width: 100%;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    transition: background-color 0.15s;
+  }
+  .grimoire-back-btn:active { background-color: var(--raised); }
+  .grimoire-back-btn:active span:first-child { animation: grimoire-back-tap 0.25s ease-out; }
+
+  /* ── DETAIL CARD ── */
+  .grimoire-detail-card {
+    margin: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    background-image:
+      /* Subtle parchment grain — old stone wall interior, same family as c-body */
+      repeating-linear-gradient(160deg,
+        rgba(255,255,255,0.006) 0px, rgba(255,255,255,0.006) 1px,
+        transparent 1px, transparent 44px),
+      repeating-linear-gradient(70deg,
+        rgba(255,255,255,0.004) 0px, rgba(255,255,255,0.004) 1px,
+        transparent 1px, transparent 32px);
+    animation: section-unfurl 0.2s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .grimoire-detail-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    background-color: rgba(232,200,122,0.03);
+    background-image:
+      /* Shimmer sweep — same family as btn-shimmer but slower, more architectural */
+      linear-gradient(105deg,
+        transparent 30%,
+        rgba(232,200,122,0.06) 45%,
+        rgba(232,200,122,0.12) 50%,
+        rgba(232,200,122,0.06) 55%,
+        transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 50%);
+    background-size: 300% 100%, 100% 100%;
+    animation: grimoire-header-sweep 6s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .grimoire-detail-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.8px;
+    animation: grimoire-title-breathe 6s ease-in-out infinite;
+    margin-bottom: 4px;
+  }
+  .grimoire-detail-subtitle {
+    font-size: 13px;
+    color: var(--sub);
+    font-style: italic;
+  }
+  .grimoire-detail-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .grimoire-detail-body {
+    padding: 14px 16px;
+  }
+
+  /* ── DETAIL SECTIONS ── */
+  .grimoire-section {
+    margin-bottom: 14px;
+    animation: section-unfurl 0.2s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  .grimoire-section:nth-child(1) { animation-delay: 0.06s; }
+  .grimoire-section:nth-child(2) { animation-delay: 0.10s; }
+  .grimoire-section:nth-child(3) { animation-delay: 0.14s; }
+  .grimoire-section:nth-child(4) { animation-delay: 0.18s; }
+  .grimoire-section:nth-child(5) { animation-delay: 0.21s; }
+  .grimoire-section:last-child { margin-bottom: 0; }
+
+  .grimoire-section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    animation: grimoire-sec-title-breathe 5s ease-in-out infinite;
+  }
+  .grimoire-section-title.st-gold   { color: rgba(232,200,122,0.85); }
+  .grimoire-section-title.st-red    { color: rgba(224,104,104,0.85); }
+  .grimoire-section-title.st-teal   { color: rgba(104,216,168,0.85); }
+  .grimoire-section-title.st-blue   { color: rgba(104,168,216,0.85); }
+  .grimoire-section-title.st-purple { color: rgba(192,104,224,0.85); }
+  .grimoire-section-title.st-orange { color: rgba(224,168,104,0.85); }
+  .grimoire-section-title.st-ember  { color: rgba(255,122,47,0.85); }
+
+  .grimoire-section-body {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .grimoire-section-body p { margin-bottom: 7px; }
+  .grimoire-section-body p:last-child { margin-bottom: 0; }
+
+  /* DM note — red left-border flicker like danger-flicker */
+  .grimoire-section-body .dm-note {
+    background: rgba(224,104,104,0.07);
+    border-left: 2px solid rgba(224,104,104,0.5);
+    border-radius: 0 5px 5px 0;
+    padding: 7px 10px;
+    font-style: italic;
+    color: rgba(224,180,180,0.85);
+    margin-top: 6px;
+    font-size: 13px;
+    animation: grimoire-dm-flicker 2.8s ease-in-out infinite;
+  }
+  .grimoire-section-body .dm-note::before {
+    content: '🔴 DM ONLY — ';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: rgba(224,104,104,0.9);
+  }
+
+  /* PA note */
+  .grimoire-section-body .pa-note {
+    background: rgba(104,168,216,0.07);
+    border-left: 2px solid rgba(104,168,216,0.4);
+    border-radius: 0 5px 5px 0;
+    padding: 6px 10px;
+    font-style: italic;
+    color: rgba(160,200,230,0.85);
+    margin-top: 5px;
+    font-size: 13px;
+  }
+  .grimoire-section-body .pa-note::before { content: 'PA: '; font-weight: 700; font-style: normal; }
+
+  /* PB note */
+  .grimoire-section-body .pb-note {
+    background: rgba(104,216,168,0.07);
+    border-left: 2px solid rgba(104,216,168,0.4);
+    border-radius: 0 5px 5px 0;
+    padding: 6px 10px;
+    font-style: italic;
+    color: rgba(160,230,200,0.85);
+    margin-top: 5px;
+    font-size: 13px;
+  }
+  .grimoire-section-body .pb-note::before { content: 'PB: '; font-weight: 700; font-style: normal; }
+
+  /* Planned note */
+  .grimoire-section-body .planned-note {
+    background: rgba(255,122,47,0.07);
+    border-left: 2px solid rgba(255,122,47,0.4);
+    border-radius: 0 5px 5px 0;
+    padding: 6px 10px;
+    font-style: italic;
+    color: rgba(255,180,140,0.85);
+    margin-top: 5px;
+    font-size: 13px;
+  }
+  .grimoire-section-body .planned-note::before { content: '📌 PLANNED — '; font-weight: 700; font-style: normal; font-size: 11px; }
+
+  .grimoire-kv-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+    margin-bottom: 8px;
+  }
+  .grimoire-kv-key {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--sub);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .grimoire-kv-val {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── NO RESULTS ── */
+  .grimoire-no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--sub);
+    font-style: italic;
+    font-size: 14px;
+    animation: section-unfurl 0.3s ease;
+  }
+  .grimoire-no-results .gnr-icon {
+    font-size: 36px;
+    opacity: 0.3;
+    margin-bottom: 10px;
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -3534,15 +4125,131 @@
         <div class="detail-inner" id="detailInner"></div>
       </div>
     </div>
-    <!-- ── ENCOUNTER TAB ── -->
+    <!-- ── GRIMOIRE TAB ── -->
     <div class="tab-panel" id="tab-encounter">
-      <div class="coming-soon">
-        <div class="rhapsody-coming-soon"><img src="data:image/jpeg;base64,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" alt="Rhapsody"></div>
-        <div class="cs-icon">🎲</div>
-        <div class="cs-title">Encounter</div>
-        <div class="cs-sub">CR budget calculator, initiative tracker, and encounter builder. Coming in the next build.</div>
-        <div class="cs-tag">In Development</div>
-      </div>
+      <div class="grimoire-container">
+
+        <!-- SEARCH BAR -->
+        <div class="grimoire-search-wrap">
+          <div class="grimoire-search-inner">
+            <span class="grimoire-search-icon">🔍</span>
+            <input
+              type="text"
+              id="grimoireSearch"
+              class="grimoire-search-input"
+              placeholder="Search the Grimoire…"
+              oninput="grimoireSearch(this.value)"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+            <button class="grimoire-search-clear" id="grimoireSearchClear" onclick="grimoire_clearSearch()" style="display:none">✕</button>
+          </div>
+          <div class="grimoire-result-count" id="grimoireResultCount"></div>
+          <div class="grimoire-tag-filters">
+            <span class="gtag-chip chip-pa"     onclick="grimoire_toggleChip(this,'pa')">PA</span>
+            <span class="gtag-chip chip-pb"     onclick="grimoire_toggleChip(this,'pb')">PB</span>
+            <span class="gtag-chip chip-both"   onclick="grimoire_toggleChip(this,'both')">Both</span>
+            <span class="gtag-chip chip-dm"     onclick="grimoire_toggleChip(this,'dm')">DM</span>
+            <span class="gtag-chip chip-danger" onclick="grimoire_toggleChip(this,'danger')">Danger</span>
+            <span class="gtag-chip chip-dead"   onclick="grimoire_toggleChip(this,'dead')">Dead</span>
+          </div>
+        </div>
+
+        <!-- SEARCH RESULTS CONTAINER (hidden when no query) -->
+        <div id="grimoireResults" class="grimoire-results" style="display:none"></div>
+
+        <!-- CATEGORIES (shown when no search query) -->
+        <div id="grimoireCategories">
+
+          <!-- NPCs -->
+          <div class="c-section s-wrap-gold">
+            <div class="c-head s-gold" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">👤</span><span class="c-title">NPCs</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-npcs-body">
+              <div id="grimoire-npcs-list"></div>
+            </div>
+          </div>
+
+          <!-- LOCATIONS -->
+          <div class="c-section s-wrap-teal">
+            <div class="c-head s-teal" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">🗺️</span><span class="c-title">Locations</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-locations-body">
+              <div id="grimoire-locations-list"></div>
+            </div>
+          </div>
+
+          <!-- CREATURES -->
+          <div class="c-section s-wrap-red">
+            <div class="c-head s-red" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">🐉</span><span class="c-title">Creatures</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-creatures-body">
+              <div id="grimoire-creatures-list"></div>
+            </div>
+          </div>
+
+          <!-- FACTIONS -->
+          <div class="c-section s-wrap-orange">
+            <div class="c-head s-orange" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">⚔️</span><span class="c-title">Factions</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-factions-body">
+              <div id="grimoire-factions-list"></div>
+            </div>
+          </div>
+
+          <!-- LORE & HISTORY -->
+          <div class="c-section s-wrap-purple">
+            <div class="c-head s-purple" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">📜</span><span class="c-title">Lore &amp; History</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-lore-body">
+              <div id="grimoire-lore-list"></div>
+            </div>
+          </div>
+
+          <!-- ACTIVE THREADS -->
+          <div class="c-section s-wrap-ember">
+            <div class="c-head s-ember" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">🧵</span><span class="c-title">Active Threads</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-threads-body">
+              <div id="grimoire-threads-list"></div>
+            </div>
+          </div>
+
+          <!-- WORLD INFO -->
+          <div class="c-section s-wrap-blue">
+            <div class="c-head s-blue" onclick="toggleSec(this)">
+              <div class="c-left"><span class="c-icon">🌍</span><span class="c-title">World Info</span></div>
+              <span class="chevron">▶</span>
+            </div>
+            <div class="c-body" id="grimoire-world-body">
+              <div id="grimoire-world-list"></div>
+            </div>
+          </div>
+
+        </div><!-- end grimoire-categories -->
+
+        <!-- ENTRY DETAIL VIEW (shown when an entry is tapped) -->
+        <div id="grimoireDetail" class="grimoire-detail" style="display:none">
+          <button class="grimoire-back-btn" onclick="grimoire_closeDetail()">
+            <span>←</span> <span>Back</span>
+          </button>
+          <div id="grimoireDetailInner"></div>
+        </div>
+
+      </div><!-- end grimoire-container -->
     </div>
 
     <!-- ── PREP TAB ── -->
@@ -3750,8 +4457,8 @@
       <span class="nav-label">Bestiary</span>
     </button>
     <button class="nav-btn" onclick="switchTab('encounter', this)">
-      <span class="nav-icon">🎲</span>
-      <span class="nav-label">Encounter</span>
+      <span class="nav-icon">📖</span>
+      <span class="nav-label">Grimoire</span>
     </button>
     <button class="nav-btn" onclick="switchTab('prep', this)">
       <span class="nav-icon">📋</span>
@@ -7322,7 +8029,821 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
   switchTab = function(name, btn) {
     _origSwitchTab(name, btn);
     if (name === 'prep') initPrep();
+    if (name === 'encounter') grimoire_init();
   };
+
+  // ══════════════════════════════════════════════════════════════════
+  //  GRIMOIRE DATA — All entries keyed from Caelos Codex v5e
+  //  Structure: { id, name, category, icon, subtitle, tags[], sections[] }
+  //  section: { title, colorClass, content (HTML string) }
+  // ══════════════════════════════════════════════════════════════════
+
+  const GRIMOIRE_DATA = [
+
+    // ─────────────────────────────────── NPCs ──────────────────────────────────
+
+    { id:'npc_vaelmond', name:'Vaelmond Gold', category:'npc', icon:'🧙', subtitle:'Ancient Wizard — Independent',
+      tags:['gtag-pa','gtag-dm'],
+      tagLabels:['PA','DM'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Ancient independent wizard. Stopped The Apotheosis — accidentally created Reapers in the process. Cursed: risks transforming into a Reaper himself. Goal: atone. Selfish tendencies, sometimes doesn\'t consider impact on others. Branded PA with shifting tattoos without consent.' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">His curse, his mission, the tattoos. Umbral One\'s Reaper-smuggling plan is unknown to PA. Other Scarred Craters worldwide unknown. Vaelmond told PA about The Apotheosis directly — no written history of this event exists.</div>' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Only two living witnesses to The Apotheosis: Vaelmond and Aerresti. Frenemy/romantic history with Aerresti. Aschol would consider him a resource to capture for H.A.M.M.E.R. — Vaelmond is at risk of forced Reaper transformation.</div>' }
+      ]
+    },
+
+    { id:'npc_aerresti', name:'Aerresti', category:'npc', icon:'✨', subtitle:'Ancient Sorceress — Scarred Crater',
+      tags:['gtag-pb'],
+      tagLabels:['PB Target'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Ancient sorceress. Lives at Scarred Crater. Frenemy/romantic history with Vaelmond. Has been deliberately cultivating PB — sent magical fennec fox, designed meteor/key/journal system. IS the teenage sorceress from PB\'s journal.' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">Saw her photo with Vaelmond, know she lives at Scarred Crater, never met.</div>' },
+        { title:'What PB Knows', color:'st-teal', body:'<div class="pb-note">Completely unaware she is the journal author.</div>' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Vaguely aware of PA through Vaelmond. PLANNED: Sends meteor with note at PB Act 1 finale — "We need to talk. Meet me at the Scarred Crater."</div>' }
+      ]
+    },
+
+    { id:'npc_victor', name:'Victor Caeldus', category:'npc', icon:'🧛', subtitle:'Vampire Lord — Bloodborne Collective',
+      tags:['gtag-pa','gtag-dm'],
+      tagLabels:['PA','DM Secret'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Vampire Lord. Bloodborne Collective leader. Sired Evelyn. Traveling to Zyrius seeking allies to retake Fadecliff. Evelyn and The know him well. Anauk investigated his GSP sabotage.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">SECRET: Has observed Egression Zone expanding toward Fadecliff for centuries — told absolutely no one. Ordered GSP sabotage in Cirros — dismissed Anauk\'s findings with hollow promise. GSP success makes Fadecliff coal irrelevant — he knows.</div>' }
+      ]
+    },
+
+    { id:'npc_umbral', name:'The Umbral One / Konah', category:'npc', icon:'🌑', subtitle:'Exiled God — Nullwood',
+      tags:['gtag-danger','gtag-dm'],
+      tagLabels:['Exiled God','DM'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Exiled member of The Kindred. Attempted to poison Father Mogh — required inside Conclave help (servant NEVER identified, still possibly present as immortal). Now twisted eldritch horror in the Nullwood. Scheming to smuggle Reaper into Conclave.' },
+        { title:'Active Operations', color:'st-red', body:'Has a follower operating INSIDE the House of the Kindred — performed psionic manipulation on Rooker there. Cultivating assets under cover of a divine institution. Scope of infiltration unknown.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PLANNED: Umbral One smuggles Reaper into Conclave. Gods request PA\'s help. Party meets Kindred face to face. Vaelmond confronts Mogh. Evelyn meets Ocea. Unnamed Conclave servant exposed. Tar corruption (Nullwood bulbs) is a running thread — ~10 bulbs exist, 5-6 found near roads.</div>' }
+      ]
+    },
+
+    { id:'npc_aschol', name:'Pompaeus Aschol', category:'npc', icon:'🎩', subtitle:'President of Lethbridge — Narcissist',
+      tags:['gtag-dm','gtag-danger'],
+      tagLabels:['DM Secret','PA Next'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Human. President of Lethbridge, 38, incumbent 24 years. Narcissistic elitist. Treats Undercity workers as slaves. Seeking re-election — nearly coin flip vs. Truly per recent polls.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">SECRET: Sole authorized commander of H.A.M.M.E.R. Has been weaponizing it to create weather anomalies across Calmaar. Down to 1 captive Reaper — supply critically low. Actively trying to force a wizard to transform into a Reaper for new fuel. Desperate and escalating. The Reaper PA is hunting IS the last one powering H.A.M.M.E.R.</div>' }
+      ]
+    },
+
+    { id:'npc_nyra', name:'Nyra Le Fae', category:'npc', icon:'🍺', subtitle:'Tavern Owner — Lethbridge Undercity',
+      tags:['gtag-pa'],
+      tagLabels:['PA Contact'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Half-elf F. Owner/operator, The Steady Drip Inn and Tavern, Lethbridge Undercity. Short wavy dark brown hair, olive-green skin, pointed ears, forehead gem, black choker, heavy tattoo sleeve (left). Expression permanently set to "I already know and I find it mildly entertaining." Confident, knowing, deeply embedded in Undercity life.' },
+        { title:'Operations', color:'st-teal', body:'Named the tavern herself. Runs a secret speakeasy BENEATH the tavern — late-night stand-up comedy roasting Dome elites. Primary stress relief and community resistance for Undercity workers. Has fingers in an unknown number of pies throughout Lethbridge. Likely knows more about H.A.M.M.E.R./Aschol\'s operations than she lets on. Undercity Union — Lethbridge Union Chief.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">KEY CONTACT for PA — non-humans can\'t move freely in the Dome, Airship Hangar is in her backyard, and she reads people for sport. She\'ll see PA coming and decide if they\'re worth her investment. Speakeasy = intelligence network.</div>' }
+      ]
+    },
+
+    { id:'npc_ariavin', name:'Ariavin', category:'npc', icon:'🕴', subtitle:'Lethbridge Businessman — Luella\'s Father',
+      tags:['gtag-pb','gtag-danger'],
+      tagLabels:['PB Threat','Danger'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Human M. Late 50s. Wealthy powerful businessman in Lethbridge. Stern, cold, manipulative. Silver-swept hair, short silver beard, angular face, gold-rimmed spectacles, dark navy coat with gold trim, steel-colored eyes. Trained Luella/Zyali as infiltrator, now hunting her. Knows she\'s a changeling. Has execution warrant for Luella (legal in Lethbridge, illegal under Calmaar law).' },
+        { title:'Current Actions', color:'st-orange', body:'Changeling spy sent to Scald — caught/destroyed (21st Joy Whelk). Will send another. Sending troops for illegal extradition. Has manipulated military connections to establish security checkpoints around major Calmaar population centers. Lantash aware but overwhelmed.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PLANNED: Falls unconscious during PB Act 1 finale — reasons TBD, possibly connected to PA in Lethbridge. Luella\'s loyalty ring activates when this happens.</div>' }
+      ]
+    },
+
+    { id:'npc_embrit', name:'Embrit Mauv', category:'npc', icon:'🔨', subtitle:'Master Myth-Smith — Cirros',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Dwarf F, 4\'3". Owner/Manager, Mauv\'s Smithery, Cirros. One teal eye, one fake eye (smithery accident — NEVER bring it up). Ashy red hair. World-renowned metallurgical genius specializing in mythril. Big sweetheart. Guild Alliance aligned but prefers independence.' },
+        { title:'Relationships', color:'st-teal', body:'Anauk\'s girlfriend (growing serious, complicated by walkabout). Was at Artisan Festival — fought steam mephits alongside PA. Sold mythril boomerang in classifieds (Rooker bought it). Knows about Anauk\'s Giant Rune book but NOT that it was stolen. Offered to mentor Val.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Val has a comical one-sided rivalry with Embrit that is rapidly crumbling against her genuine warmth.</div>' }
+      ]
+    },
+
+    { id:'npc_zlaavbac', name:'Zlaavbac Grosguur', category:'npc', icon:'💪', subtitle:'Arena Master — Brimstone Gate (Injured)',
+      tags:['gtag-pb'],
+      tagLabels:['PB'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Half-orc F, transgender (born male). Nearly 9ft tall, incredibly muscular, blood-red eyes, deep green skin, long blue hair. Usually wears Dire Wolverine fur pelt — tells that story constantly. Arena Master of Brimstone Gate. Believes in glory through battle. Currently recovering from severe injuries after triggering controlled rockslide to seal Hellmouth during breach.' },
+        { title:'Relationships', color:'st-teal', body:'Val\'s childhood friend. Present during Val\'s transition. Unaware of Val\'s unspoken complicated feelings — sees her as trusted friend. Knows Val\'s entire family personally.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Her entire identity was tied to the arena — its destruction is a significant character wound. What does the Arena Master do when there\'s no arena? Tension with General Darya: her glory philosophy vs. his pragmatic view of casualties.</div>' }
+      ]
+    },
+
+    { id:'npc_val_devil', name:"Val's Devil Father", category:'npc', icon:'😈', subtitle:'Unnamed Devil — Infernal Realm',
+      tags:['gtag-dm','gtag-danger'],
+      tagLabels:['DM Priority','Danger'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Unnamed devil. Biological father of Val. Brokered the deal with Winnie Flint (née Howell) — traded Cornelius\'s release from the Infernal Realm for Winnie\'s impregnation. Winnie did not fully understand the terms of the deal. No intimacy occurred — the pregnancy was a condition of the contract. Has been patient and watching since Val\'s birth. Considers Val an asset.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PRIORITY CHARACTER — needs fleshing out: name, appearance, personality, motivation, what they ultimately want with Val, whether they\'ve made contact or are still waiting. Do NOT introduce prematurely — confirm with DM before any in-game appearance.</div>' }
+      ]
+    },
+
+    { id:'npc_winnie', name:'Winnie Flint (née Howell)', category:'npc', icon:'🥐', subtitle:'Baker — Brimstone Gate',
+      tags:['gtag-pb'],
+      tagLabels:['PB'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Human F, 56. Val\'s legal mother. Baker at Brimstone Gate — town gossip hub. Friendly, reserved, intelligent, proper, explosive temper when pushed. Silvering blonde hair, pale skin, warm brown eyes. Came from wealthier Howell family background. Taught Val to work with her hands.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">BACKSTORY (SECRET): Cornelius was dragged through the Hellmouth into the Infernal Realm. Military listed him MIA. Winnie snuck into the Hellmouth alone — made a devil\'s bargain she didn\'t fully understand, result was her impregnation. Gut feeling nagged her until Val\'s birth confirmed it. Massive fight with Cornelius — they rebuilt their marriage around mutual silence. Wil has no idea. Winnie\'s "mysterious old contacts" may have infernal connections.</div>' }
+      ]
+    },
+
+    { id:'npc_cornelius', name:'Cornelius Flint', category:'npc', icon:'🪖', subtitle:'Hellmouth Guard Sergeant — Brimstone Gate',
+      tags:['gtag-pb'],
+      tagLabels:['PB'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Human M, 55. Val\'s legal father, Wil\'s biological father. Silvering dark brown hair, lean, short beard, numerous scars. Loyal, dutiful, stubborn. Secret gambler. Tries his best by Val but doesn\'t understand her. Quietly embarrassed by having a tiefling daughter while fighting infernals — never says it out loud.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Was captured by an infernal and dragged through the Hellmouth into the Infernal Realm. Listed MIA. Rescued when Winnie made a devil\'s bargain. Was told the full truth when Val was born. Chose to stay and raise her as his own. Knowing and staying anyway is one of the more quietly heroic things about him. STATUS DURING BREACH: TBD.</div>' }
+      ]
+    },
+
+    { id:'npc_winston', name:'Winston Mercer', category:'npc', icon:'💰', subtitle:'Wealthy Hermit Benefactor',
+      tags:['gtag-pa'],
+      tagLabels:['PA'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Wealthy hermit benefactor. Father of Gabriella (secret). Ex-husband of Genevieve. Organizing Egression Zone expedition — needs airship from Lethbridge. Has accidental Vaelmond tattoo.' },
+        { title:'Current Status', color:'st-teal', body:'Highly recommending Erin Lawler to PA for Lethbridge mission — wants to speak with party first. Had massive emotional breakdown when Anauk casually mentioned Genevieve\'s reports existed.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Knows full backstory, Genevieve\'s reports, that she\'s alive but transformed. Snail Mail\'s Ethereal Mailbox (pearlescent snail shell, 10min summon) is showing signs of Mail Abyss seepage.</div>' }
+      ]
+    },
+
+    { id:'npc_genevieve', name:'Genevieve Prospero', category:'npc', icon:'🤖', subtitle:'Bone Warden Lieutenant — Egression Zone',
+      tags:['gtag-pa'],
+      tagLabels:['Transformed','PA'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Winston\'s ex-wife. Former expedition captain. Now transformed — Bone Warden\'s top lieutenant in Egression Zone. Retains some humanity due to intellect + possible residual connection to Gabriella\'s birth curse. Has steampunk mechanical implants.' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">PA identified her by eyes/form/implants on a rolled nat 20. No time to interact before Bone Warden attacked. Last coherent words in final report: "Forgive me."</div>' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Gabriella\'s birth curse may be the residual anchor keeping Genevieve\'s humanity intact. Mechanically an alpha-variant Egression Beast — but describe her differently. Hesitation before attacks, specific targeting patterns. She is not fully gone.</div>' }
+      ]
+    },
+
+    { id:'npc_rooker', name:'Rooker', category:'npc', icon:'🐦', subtitle:'Kenku Rogue — Party A',
+      tags:['gtag-pa','gtag-dm'],
+      tagLabels:['PA','DM Secret'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Kenku M. Rogue/Swashbuckler. Crow-headed, dark blue-black feathers, red head wrap with feathers, red scarf, leather pirate coat. Orphan raised by Crimson Crusaders. Crewed the Bourbonbarge. Wants acceptance and found family. Bought mythril boomerang from Embrit\'s classifieds.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Can mimic speech of the dead even after death — ability unlocked at House of the Kindred by a follower of the Umbral One via partially-consensual psionic manipulation. Rooker agreed to have an ability unlocked; did NOT consent to someone moving through their mind to do it. Doesn\'t know what the follower saw, took, or left behind. Still discovering full scope. The ability is dangerous in ways Rooker doesn\'t fully understand — mimicking the dead\'s voices could cause devastating psychological effects on listeners. May be an unwitting Umbral One asset.</div>' }
+      ]
+    },
+
+    { id:'npc_lorelei', name:'Lorelei', category:'npc', icon:'🔥', subtitle:'Fire Genasi Druid — Party B',
+      tags:['gtag-pb'],
+      tagLabels:['PB'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Fire Genasi F. Druid, Circle of Midnight. Deep vivid orange-red skin with flame-like swirling texture, dark curly black hair, smoke trailing off one arm. From Scald. Nervous but growing. Guild Alliance glassblowing trainee. Mentor Pejnan — see ghost arc.' },
+        { title:'Ghost Arc', color:'st-purple', body:'Lorelei and Pejnan unknowingly worked with Ghost Glass — unlocked latent spirit-hearing in both. Lorelei found a gold skull medallion in pirate treasure (cursed, cannot be removed) — amplified ability into full spirit communion. Has fully leaned into ghost abilities — hence Circle of Midnight transition. Can summon midnight spirit Wisp (still manifesting form).' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PEJNAN THREAD PLANNED (post first Brimstone Gate visit): Pejnan finds Lorelei — sick, wild-eyed, grabs her mid-sentence about hearing voices. Guards drag him off. Lorelei is the only person who would believe him. He had no medallion — just voices and no framework. Deteriorating alone. Stage for maximum emotional impact.</div>' }
+      ]
+    },
+
+    { id:'npc_luella', name:'Luella Goldeneye (Zyali)', category:'npc', icon:'💛', subtitle:'Changeling Bard — Party B',
+      tags:['gtag-pb','gtag-dm'],
+      tagLabels:['PB','DM Secret'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Changeling F (real name Zyali). Bard/Rogue. Current persona: dark skin, black curly upswept hair, radiant smile, gold freckles and glitter, warm gold eyes, off-shoulder cream dress. From Lethbridge. Cunning, charming, expert infiltrator. Fled Lethbridge — father Ariavin wants her captured and executed.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">A dying changeling she met absorbed into her body pre-campaign — slowly feeds off her energy trying to recover and reform. Luella UNAWARE. Wears magically tethered loyalty ring she cannot remove — causes pain when father is hurt, could kill her if he dies. Ariavin\'s changeling spy sent to Scald was caught/destroyed (21st Joy Whelk). Another will be sent. PLANNED: Ring activates during Act 1 finale as Ariavin falls unconscious.</div>' }
+      ]
+    },
+
+    { id:'npc_val', name:'Val Flint', category:'npc', icon:'⚙️', subtitle:'Tiefling Artificer — Party B',
+      tags:['gtag-pb','gtag-dm'],
+      tagLabels:['PB','DM Secret'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Tiefling F. Artificer. Purple-lavender skin, large curved horns, short dark hair, gold-yellow eyes, nose ring, ornate gold/multicolored armor. From Scald. Stubborn, strong-willed, poor social graces. Best friends with Lorelei. Motivated by money and clout. Mentor Aargardt missing — gambling debts, likely kidnapped.' },
+        { title:'Relationships', color:'st-teal', body:'Childhood friend of Zlaavbac — unspoken complicated feelings Val hasn\'t acted on. Rival of Embrit Mauv (one-sided, comical, rapidly crumbling). Family all works at Brimstone Gate.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PARENTAGE (SECRET): Biological father is an unnamed devil — product of Winnie\'s Hellmouth deal to rescue Cornelius. Val does not know. Cornelius and Winnie know and do not discuss it. Brother Wil is fully human and has no idea — occasionally makes thoughtless comments about Val\'s tiefling features. The devil considers Val an asset and has been watching. PRIORITY: flesh out this devil soon.</div>' }
+      ]
+    },
+
+    { id:'npc_erin', name:'Erin Lawler', category:'npc', icon:'🍄', subtitle:'Mushroom Expert — PA Candidate',
+      tags:['gtag-pa'],
+      tagLabels:['PA Candidate'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Human F, 18. Sheriff Erik\'s daughter. Mushroom and fungi expert — mostly academic but real practical utility (poison ID, ingredient analysis). Some combat ability, developing. Lost mother Eve at 15, grieved 3 years. Meeting PA reignited her purpose. Idolizes PA. Begged Winston to let her join next mission.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">KEY VALUE IN LETHBRIDGE: As a human she can move through the racially segregated Dome without suspicion. Potential scene: identifies poison in someone\'s drink at a Dome party.</div>' }
+      ]
+    },
+
+    { id:'npc_zamazzyr', name:'Zamazzyr', category:'npc', icon:'💀', subtitle:'Tiefling Devil Fiend — Fadecliff',
+      tags:['gtag-pa','gtag-danger'],
+      tagLabels:['PA Adjacent','Danger'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Tiefling devil fiend. Escaped Brimstone Gate. Assembled devil army. Currently occupying Fadecliff — sitting in Victor\'s office. Fate/luck manipulation — feels invincible. Enabled by the Brimstone Gate Breach (17th Joy).' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">Aware of invasion, present when he escaped. Do not know his name.</div>' }
+      ]
+    },
+
+    { id:'npc_aszmad', name:'Mayor Aszmad', category:'npc', icon:'🐱', subtitle:'Mayor of Greyport — Secret Criminal',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Tabaxi M. Mayor of Greyport. Secret criminal empire via 8 clones. Recently saved drowning fisherman personally — public hero moment. Controls everything from a clean distance.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Gave Val intel on Aargardt → led party to Cirros and Reltch. Both parties aware of criminal reputation. Nobody has directly confronted him.</div>' }
+      ]
+    },
+
+    { id:'npc_periwinkle', name:'Periwinkle', category:'npc', icon:'🍹', subtitle:'Bartender — Hayward (PB Relationship)',
+      tags:['gtag-pb'],
+      tagLabels:['PB'],
+      sections:[
+        { title:'Overview', color:'st-gold', body:'Elf F. Blue hair, blue eyes, perpetual knowing smile. Owner and bartender of Periwinkle\'s Pub, Hayward (campaign origin location for PB). Fun, flirty, charming — owns every room she\'s in. Luella\'s girlfriend, though the relationship is still relatively new. Ex-girlfriend is Freya Oakheart (Hayward local).' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">That Peri/Freya history has some tension to it. "It\'s probably nothing." 😉 Freya still comes into the pub. Still in Hayward.</div>' }
+      ]
+    },
+
+    // ─────────────────────────────────── LOCATIONS ──────────────────────────────
+
+    { id:'loc_lethbridge', name:'Lethbridge', category:'location', icon:'🏙️', subtitle:'Floating City-Nation — PA Next',
+      tags:['gtag-pa','gtag-pb'],
+      tagLabels:['PA Next','PB (Luella)'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Flying city-nation, dome-sustained, floats over Calmaar (jurisdictional headache for Lantash). Racial segregation — humans free in Dome, others restricted. Election: Aschol vs. Truly, near coin-flip. Contains captive Reaper powering H.A.M.M.E.R. Ariavin controls all legal levers here.' },
+        { title:'The Dome (Upper)', color:'st-gold', body:'Wealthy elite, manicured, radial layout, Central Square golden light. Verdant Garden (hedge maze/lake), Lethbridge Arena, Cobalt Theater, Etten Bakery, The Flying Oyster, School of [Arcane — label obscured], Fashion Republic, Radiant Visage, Tailwind Inn, Every Last Stitch, Snail Hill.' },
+        { title:'The Undercity (Lower)', color:'st-purple', body:'Workers treated as slaves. Industrial, circular gear-border aesthetic. The Steady Drip (Nyra\'s — social hub), Power Generation (E — keeps city airborne), Airship Hangar (SW — PA\'s target), Guild Alliance Offices (S), Gearworks and Aeronautics, H.A.M.M.E.R. (N), Rune Smelter, Waste/Solar/Air Processing, Cloud Forge, Lumber Processing, Ambassadorial Quarters, Church of the Kindred, Market, TeaHouse, Undercity Security, Millworks, Sky Foundry, Wind Turbines.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Undercity is not a dungeon — it\'s a full city that happens to be enslaved. Dome = parasite, Undercity = host. Belson Truly\'s entire platform is visible in this map. Airship Hangar being in Undercity means PA needs Undercity access or a human proxy (Erin Lawler) to secure it. Luella has execution warrant here — ring activation planned Act 1 finale.</div>' }
+      ]
+    },
+
+    { id:'loc_egression_zone', name:'Egression Zone', category:'location', icon:'☁️', subtitle:'Massive Fog Basin — Calvyce',
+      tags:['gtag-pa','gtag-danger'],
+      tagLabels:['PA Explored','Danger'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Massive basin, thick poisonous fog year-round. Kills most living things. City extends 30+ miles from central crater. No bodies/skeletons — entire population transformed into faceless Egression Beasts. Central crater ~2-3 miles deep. Slowly expanding — surface residents noticed last 20 years.' },
+        { title:'Origin (CANONICAL)', color:'st-red', body:'1. An Orrel\'lie Hold sits at crater bottom — the central Hold, closest to The Incumbent. 2. The Vossmere built their city directly on top of it, never knowing. 3. Vossmere shot down a Blubberhive — decay chemicals + mutagenic drug compounds corroded into Hold, breached it before scheduled opening. Fog spread upward. Entire population transformed rapidly. Chemical corrosion continued creating crater. Blubberhive corpse still at bottom, desiccated, surrounding The Incumbent.' },
+        { title:'Crater Bottom', color:'st-purple', body:'The Incumbent (mid-sentence, unbothered). Desiccated Blubberhive corpse. MUTATED VEL\'URAK colony — thousand years of Incumbent energy + Blubberhive chemicals + isolation. Bioluminescent. Amber weaponized as superheated combustible slag. Mutated hybrid Queen — part Vel\'urak, part Blubberhive. Airborne capable. Players who think they understand Amberbacks are not prepared.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Victor has known about Zone expanding toward Fadecliff for centuries — told nobody. Undead Trinity building world-conquest army here. Oak Father has been compensating for broken seal for centuries — losing that fight for the first time. Potential cure: three ingredients identified (Blubberhive decay + mutagenic compounds + Incumbent energy). Val would figure this out.</div>' }
+      ]
+    },
+
+    { id:'loc_brimstone_gate', name:'Brimstone Gate', category:'location', icon:'🔥', subtitle:'Military Arena — Active Hellmouth',
+      tags:['gtag-pb'],
+      tagLabels:['PB Next'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Military arena around active hellmouth. Arid wasteland, mountain-surrounded. Hellmouth = ring of fire/portal inside arena (N end). Arena: oval, blood-soaked sand, scorch marks, two floor drains, chain-spike walls. External: Arena Entrance (S), Spectator Entrances (E+W), Officer & Visitor Housing (W), Military Office (SE), Military Camp (E). Val\'s family all here. Zlaavbac recovering.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">BREACH 17th Joy — dozens-hundreds infernals loose. Zlaavbac sealed Hellmouth via rockslide — severe injuries. 2 soldiers dead, 6 critical. This breach enabled Zamazzyr\'s Fadecliff invasion. PA\'s past, PB\'s future (~25 days from PB current date).</div>' }
+      ]
+    },
+
+    { id:'loc_golden_wood', name:'Golden Wood', category:'location', icon:'🌳', subtitle:'Ancient Autumn Forest — PA Current',
+      tags:['gtag-pa'],
+      tagLabels:['PA Current'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Ancient autumn forest. Feywild gate near Lake Elfin (lavender/purple water). Vaelmond\'s tower = Wizard Tower on map (east, near coast). Umbral One tar corruption stopped by PA. House of Kindred at forest edge (standalone, scale-bloom roof). PA on long rest here.' },
+        { title:'Sub-Biomes', color:'st-gold', body:'Bulb Forest (W — blue-purple coral growths, likely Feywild bleed). Shroomlands (central-E).' },
+        { title:'Open Features', color:'st-purple', body:'Dragon Remains (NE coast — TBD). Wreck of the Elmer Grimly (NW coast — TBD). The Great Stump (SE — TBD, possibly massive). Umbral bulbs on Calmaar roads: ~10 exist, 5-6 found near roads.' }
+      ]
+    },
+
+    { id:'loc_fadecliff', name:'Fadecliff', category:'location', icon:'🏭', subtitle:'Coal City — Devil Occupied',
+      tags:['gtag-both','gtag-danger'],
+      tagLabels:['Both','Occupied'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Tiered city across multiple cliff-faces, nestled between very tall mountains. NOT underground — ~1hr direct sunlight/day, perpetual near-darkness. Calmaar coal energy hub. Currently devil-occupied (Zamazzyr in Victor\'s estate, upper district). Bloodborne Collective displaced.' },
+        { title:'Locations', color:'st-gold', body:'Fadecliff Refinery, Coal Mines, Mine Warehouse, Midnight Slumber Inn, The Umbral Mug, Odds & Ends Oddities, Thruxie\'s Thrills Brothel & Bathhouse, Gloomblossom Floral, Shadetouch Jewelry, Maqus Exterminaire, Twilight Beacon, Quentyl Residence.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Szkaalbrxtnvaal trapped underground beneath city. GSP Cirros success = Fadecliff coal irrelevant — Victor knows this and is why he ordered the sabotage. Fires reported 21st Devotion (arson suspected).</div>' }
+      ]
+    },
+
+    { id:'loc_jaqtuun', name:"Jaq'tuun Castle", category:'location', icon:'🏰', subtitle:'Sunken Castle — Titan Lake',
+      tags:['gtag-pa'],
+      tagLabels:['PA Tease'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Ancient castle swallowed beneath Titan Lake, accessible through Titan\'s Maw. Belonged to the Duskryn family — supernatural monster hunters (Castlevania Belmont equivalent). Over 1300 years old, predates I.D. era. Lost when family\'s final battle against Szkaalbrxtnvaal\'s army caused it to be swallowed by the lake.' },
+        { title:'Security Layers', color:'st-orange', body:'Layer 1: Ancient seal on exterior door. Layer 2: Jaq\'tuun Automaton (massive ancient construct, ornate armor partially merged with organic growth after 1300 years, enormous claws, no consciousness — pure programmed guard). Layer 3 (2nd floor): THE ENDLESS KNIGHT — CR 14-17 animated armor on fixed patrol route it has followed without deviation for 1300+ years. Drags a greataxe — carved deep gash in floor tracing exact patrol path. Players can SEE the route before they see the Knight.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">The\'s warlock patron was defeated and sealed by this family 1300+ years ago — he has no idea. What grants access through the seal TBD. PA reached entrance but could NOT enter — seal held. Gold hidden under loose tile inside. Salamander Scavengers also tried and failed. Endless Knight soundtrack: quiet piano minor chords, low droning strings, metal grinding on stone underneath — never stops.</div>' }
+      ]
+    },
+
+    { id:'loc_cirros', name:'Cirros', category:'location', icon:'⛏️', subtitle:'Mountain City — Anauk\'s Hometown',
+      tags:['gtag-pa'],
+      tagLabels:['PA Hometown'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Mountain city, Anauk\'s hometown. Teal glacial rivers, volcanic/geothermal (lava glow behind mountains). Locations: Anauk\'s Home (lower), Mauv\'s Smithery (Embrit), Cirros Council, Treasures & Troves Artificery, Water Mill Tavern, Cerulean Candle, Braids of Beauty Hair Salon, Runesmith (Guild Alliance — Anauk\'s walkabout base), The Parched Miner, Andiches Sandwiches, Lunek\'s Livestock & Stables, Cirros General Goods, Cirros Mythril Mines Entrance. Winston has separate office building N of city. GSP on east edge.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">GSP (Geo-Sublimation Project): three interconnected buildings ~300ft tall. Run by Havril Hambuckle. Facing Council delays + Victor\'s sabotage. Could end Calmaar\'s dependence on Fadecliff coal. HAVRIL built H.A.M.M.E.R. — did NOT know its full purpose. Personal devastation incoming for Anauk when he finds out.</div>' }
+      ]
+    },
+
+    { id:'loc_scald', name:'Scald', category:'location', icon:'🌋', subtitle:'Geothermal City — Lorelei & Val\'s Hometown',
+      tags:['gtag-pb'],
+      tagLabels:['PB Hometown'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'City IS a giant geothermal engine — built directly atop active system. Lava fields W, steam vents throughout. Fire-resistant races only live comfortably. Locations: Goldwell Bank (Copperbottom, secret criminal), Smoldering Smithy, Gearworks & Repairs, Ember\'s Saloon, Domino\'s Demolition Retail, The Molten Mark, Administrative Offices, Material Surplus, Alchemy & Medical, General Goods, Cooling Bathhouse, Inferno Outfitters.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PLANNED: Nirran\'s son lifts entire city of Scald onto his shoulders shortly after PB leaves — holds it hundreds of feet above surrounding mountains. No demands. No attack. Just holds it. Nobody knows why. One of the most striking visual images of the campaign. Copperbottom confrontation about Aargardt planned for PB Act 1 finale sequence.</div>' }
+      ]
+    },
+
+    { id:'loc_hayward', name:'Hayward', category:'location', icon:'🌾', subtitle:'Pastoral Town — PA Namesake',
+      tags:['gtag-pa'],
+      tagLabels:['PA Namesake'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'PA namesake town. Pastoral — wheat (E), corn (W), river, roads converging at center. Locations: Riverview Inn, Periwinkle\'s Pub (campaign origin), Leather Legacy, Herbs of Heroes, Hayward Livestock, Faith Resolute — Temple of the Kindred (east, large walled compound). Sheriff: Erik Lawler. PA saved Artisan Festival (Steam Mephits) here.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Large unlabeled blue windmill structure N-center — RESOLVED: grain mill. Hayward is largest food production area in Calmaar, extensive fields processed and distributed across region. Drownout Heckler has had two confirmed sightings near Greywood nearby.</div>' }
+      ]
+    },
+
+    { id:'loc_nullwood', name:'Nullwood', category:'location', icon:'🌑', subtitle:'Inverted Shadow Realm — Umbral One\'s Domain',
+      tags:['gtag-pa','gtag-danger'],
+      tagLabels:['PA Explored','Danger'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Inverted shadow realm. Domain of The Umbral One. PA recently entered, destroyed tar corruption ritual heart-organ, escaped before Umbral One caught them. Vaelmond sutured rift closed.' }
+      ]
+    },
+
+    { id:'loc_great_lantern', name:'Great Lantern Factory', category:'location', icon:'🏭', subtitle:'Abandoned Factory — Calmaar',
+      tags:['gtag-pa'],
+      tagLabels:['PA Explored'],
+      sections:[
+        { title:'Overview', color:'st-teal', body:'Factory produced lanterns fueled by living organic biomass in basement — blue glowing biological material. Management integrated Ichabod (unit I-1, blue bowtie) into the extraction machine — permanently fusing him with it. Ichabod became the machine. He cannot be removed. He now sits at the center of the organic mass, slowly manufacturing new Lanternlocks from spare parts and biomass. Friendly construct brood queen. Cockney accent. Genuinely unbothered.' },
+        { title:'History (989 I.D.)', color:'st-purple', body:'Mona Lewis (engineer) accidentally triggered Ichabod\'s awakening by installing an incomplete linguistic subroutine, then losing him before finishing. Murray died suspiciously on 6th Solace — killed by proximity to organic biomass (proof of concept for danger). Mona grew suspicious. Wrote memo to her father 14th Solace. Both killed by Armond\'s order on 15th — bodies found locked together, Evrril died trying to protect Mona. The Uprising followed. Factory abandoned ~230 years ago.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Ichabod still wears the bowtie Mona put on him. PA gave him one of the last intact Great Lanterns in exchange for safe passage into the Egression Zone. Very few intact lanterns remain. Lanternlocks CANNOT leave the factory — their power supply is tied to the factory\'s presence.</div>' }
+      ]
+    },
+
+    // ─────────────────────────────────── CREATURES ──────────────────────────────
+
+    { id:'cr_incumbent', name:'The Incumbent', category:'creature', icon:'∞', subtitle:'Unfathomable Entity — Egression Zone Crater',
+      tags:['gtag-dm','gtag-danger'],
+      tagLabels:['DM Only','Unfathomable'],
+      sections:[
+        { title:'Overview', color:'st-red', body:'Not a god. Not a Titan. Predates both distinctions — possibly predates the universe itself, or arrived from its end. Current leading theory: born at the end of the universe, traveling backwards through time. Exists Effect-to-Cause. Has already experienced everything that will happen in Caelos. Doesn\'t react to present events because from its perspective they already occurred an eternity ago.' },
+        { title:'Status', color:'st-purple', body:'Was contained/sealed beneath the ground at what is now the Egression Zone crater — buried under the lost civilization that paved over it. The catastrophic event cracked the seal open. Now slowly resuming whatever it was doing when it got interrupted. Neither party aware.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Not evil — evil requires intent. It simply RESUMES. Like a process that was interrupted. Death has no jurisdiction here. Mogh has no file on it. No Promise covers it. It predates the framework everything else was written in. Abbanabanarran (cosmic space snail) is aware of its existence but lacks the intelligence to process what it means.</div>' }
+      ]
+    },
+
+    { id:'cr_drownout', name:'Drownout Heckler', category:'creature', icon:'👁️', subtitle:'Cryptid — Greywood',
+      tags:['gtag-danger'],
+      tagLabels:['Active Threat'],
+      sections:[
+        { title:'Overview', color:'st-red', body:'Cryptid. 9 feet tall, hairy arms and body, wiggling tendrils on back and face. Mimics sound of human laughter to lure prey before devouring victims. Two confirmed sightings near Greywood (11th Joy, 1st Kindred Whelk). Cryptid hunters actively investigating. DM\'s personal favorite creature.' },
+        { title:'Appearance', color:'st-gold', body:'Massive, dark, textured skin like rotting bark, deep-set glowing red eyes, mouth full of oversized teeth, tendrils hanging like dead roots. Far more terrifying than the name implies.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Has not yet interacted with either party. Cryptid migration east = other cryptids fleeing Oak Father / Zone expansion. Drownout Heckler is one of those migrants.</div>' }
+      ]
+    },
+
+    { id:'cr_oak_father', name:'Oak Father', category:'creature', icon:'🌲', subtitle:'Cryptid Apex Predator — Egression Zone',
+      tags:['gtag-dm','gtag-danger'],
+      tagLabels:['DM','Apex'],
+      sections:[
+        { title:'Overview', color:'st-red', body:'The cryptid all other cryptids fear. Ancient beyond measure. Massive, antlered. Fur like it grew FROM the forest rather than on it. Deep red eyes buried in a face that is the oldest wrongful part of the woods. Not benevolent — territorial apex predator. Has been stationed at the Egression Zone perimeter for unknown centuries.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Currently losing the containment argument for the first time as Zone expands. May have been original territorial claimant over The Incumbent\'s location — predates the Orrel\'lie civilization. Cryptid migration east (Drownout Heckler in Greywood etc.) = other cryptids fleeing away from Zone expansion. Oak Father is the only one that hasn\'t fled.</div>' }
+      ]
+    },
+
+    { id:'cr_reapers', name:'Reapers', category:'creature', icon:'💀', subtitle:'Cursed Aberrations — Worldwide Threat',
+      tags:['gtag-both','gtag-danger'],
+      tagLabels:['Both','Danger'],
+      sections:[
+        { title:'Overview', color:'st-red', body:'Pure magic essence beings. Former wizards cursed by Apotheosis proximity. Walking natural disasters — devour magic items, demolish entire towns. No social structure. Vaelmond risks becoming one. Captive Reaper powers H.A.M.M.E.R. in Lethbridge.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Umbral One is scheming to use a Reaper against the Conclave. Aschol is down to 1 captive Reaper and is desperately trying to force a wizard to transform into one for new fuel. The Reaper PA is hunting IS the last one powering H.A.M.M.E.R. — freeing/destroying it cripples the device. Other Scarred Craters worldwide — PA only knows about this one.</div>' }
+      ]
+    },
+
+    { id:'cr_veluurak', name:"Vel'urak (Amberbacks)", category:'creature', icon:'🦟', subtitle:'Infestation — The Holds',
+      tags:['gtag-danger'],
+      tagLabels:['Infestation'],
+      sections:[
+        { title:'Overview', color:'st-red', body:"Orrel'lie name: Vel'urak — 'the consuming interruption / that which broke the vigil.' Contemporary name: Amberbacks — coined by panicked journalist after Holds open. Large carnivorous burrowing insects. Dark red-orange coloring. Exoskeleton wings and shells partially conceal amber-like substance on abdomen containing offspring." },
+        { title:'Key Mechanics', color:'st-orange', body:'Light weakness: torchlight insufficient — requires magical light/radiant sources. Cannot breach surface. Damaging amber attached to LIVING parent triggers ENRAGED FRENZY. Seven variants: Pupa (swarm), Worker (baseline), Soldier (armored patrol), Ambusher (ceiling/wall clinger), Gravid (amber-carrying, orange glow), Juvenile Queen (mid-boss — NO glow, NO amber, NO warning), Herald (subsonic pulse — KILL IT IMMEDIATELY), Queen (true boss, partially immobile, full bioluminescence).' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Amber properties when exposed to sunlight for first time: UNKNOWN. Valuable to alchemists, artificers (Val would want to BUILD with it), merchants (Copperbottom would pay a fortune). Mystery attached to every harvested piece. Mutated variants in Egression Zone crater bottom are unrecognizable from surface variants — players who think they understand Amberbacks are not prepared.</div>' }
+      ]
+    },
+
+    { id:'cr_blubberhive', name:'Blubberhive', category:'creature', icon:'🐋', subtitle:'CR 23 — Lesser Titan',
+      tags:['gtag-danger'],
+      tagLabels:['CR 23','Lesser Titan'],
+      sections:[
+        { title:'Overview', color:'st-red', body:'Gargantuan flying marine creature with inflation bladders. Dark blue spotted back, white underbelly riddled with holes housing Leech Swarm parasites. Attacks cities as nutrient harvesting — not malicious. Can submerge 120hrs. One attacked Cirros ~30th Devotion — locals used deterrence (large smoke fires mask heat signatures). Hunted by airship crews.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">The scenario: party survives, escapes, redirects, or outsmarts. If directly underneath it, describe its shadow covering the entire town. Let the scale land before anything else happens. Leech Swarms are the primary ground threat. Toxic Detonation on death — 3-round countdown, 300ft radius. Its corpse at the bottom of the Egression Zone crater is STILL THERE, desiccated, surrounding The Incumbent.</div>' }
+      ]
+    },
+
+    { id:'cr_orrellie', name:"Orrel'lie", category:'creature', icon:'🏛️', subtitle:'Near-Extinct Underground Civilization',
+      tags:['gtag-dm'],
+      tagLabels:['DM','Near-Extinct'],
+      sections:[
+        { title:'Overview', color:'st-red', body:"Ancient race of underground-dwelling people. Sealed themselves in THE HOLDS across the world simultaneously — not fleeing a threat. The Holds were RESEARCH STATIONS. Distributed laboratories deliberately isolated so each population could study The Incumbent independently. A predetermined opening date was calculated centuries in advance — all Holds open simultaneously, leaders convene the greatest scholarly summit in Orrel'lie history. The mechanism worked perfectly. The date arrived on schedule. The bugs had gotten in. Almost nobody was left to walk out. The summit never happened." },
+        { title:'The Holds', color:'st-teal', body:"Desaturated teal stonework, root/vine overgrowth, dripping water, pools in crumbling rocky sinkholes. Multi-level. Each contains: Orrel'lie puzzles (testing worthiness), artifacts, lore, at least one Juvenile Queen. Puzzle path = safer. Brute force = consequences. Hold locations across Calmaar and beyond TBD — Warren network map to be built." },
+        { title:'DM Notes', color:'st-red', body:"<div class='dm-note'>When Holds open: world event — front page Whelk, both parties affected. Survivors emerge furious — not just grieving but ENRAGED. Government scientists move in under 'research and protection' framing. Scientists want Orrel'lie knowledge of The Incumbent specifically. The most intact undiscovered sealed Hold contains the most complete records. Scientists desperately trying to locate it.</div>" }
+      ]
+    },
+
+    // ─────────────────────────────────── FACTIONS ──────────────────────────────
+
+    { id:'fac_kindred', name:'The Kindred', category:'faction', icon:'⛪', subtitle:'The Divine Family — Conclave',
+      tags:['gtag-both','gtag-dm'],
+      tagLabels:['Both','DM'],
+      sections:[
+        { title:'Members', color:'st-orange', body:'Mogh (law/justice/discipline — exiled Konah, considers case closed, blind spot). Sylvis (nature/territory/rebirth). Ocea (protection/light/clarity — Evelyn\'s deity). Lilith (the word/the promise/secret knowledge). Kluggruth the Unchained (war/strategy/courage — appears as wild orc, actually brilliant tactician). Leiran the Quenchless (celebration/indulgence/lust — Hawaiian shirt, always has a drink, most approachable, had airtight alibi during Konah poisoning). Church (independence/determination/isolation — lone cowboy, hates family events, just goes by Church). Exiled: The Umbral One / Konah.' },
+        { title:'The Promise', color:'st-gold', body:'Binding divine oath co-created by Mogh + Lilith after Konah\'s exile. All Kindred swore it. Exact terms TBD.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Conclave security vulnerability: immortal servants have lived there for centuries — the servant who helped Konah attempt to poison Mogh was NEVER identified and is almost certainly still present. PLANNED: Umbral One smuggles Reaper into Conclave. Gods request PA\'s help. Party meets Kindred face to face. Vaelmond confronts Mogh. Evelyn meets Ocea. Unnamed servant exposed.</div>' }
+      ]
+    },
+
+    { id:'fac_bloodborne', name:'Bloodborne Collective', category:'faction', icon:'🩸', subtitle:'Vampire Mafia — Fadecliff Coal',
+      tags:['gtag-pa'],
+      tagLabels:['PA Adjacent'],
+      sections:[
+        { title:'Overview', color:'st-orange', body:'Vampire/creature-of-the-night mafia. Goal: control energy production via Fadecliff coal monopoly. Victor currently displaced — seeking allies in Zyrius to retake city from Zamazzyr. Evelyn and The previously employed here.' },
+        { title:'PA Relationship', color:'st-blue', body:'<div class="pa-note">Frenemy. Party helped during devil invasion — Victor owes favors.</div>' }
+      ]
+    },
+
+    { id:'fac_guild_alliance', name:'Guild Alliance', category:'faction', icon:'⚒️', subtitle:'Guild Collective — Worldwide Network',
+      tags:['gtag-both','gtag-dm'],
+      tagLabels:['Both','DM'],
+      sections:[
+        { title:'Overview', color:'st-orange', body:'Guild collective — adventurers and artisans. Vast worldwide connection network. Key NPCs: Lornish Etherrail (Anauk\'s mentor), Pejnan (Lorelei\'s mentor, ill in Zyrius), Aargardt (Val\'s mentor, missing — gambling debts).' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">May have institutional knowledge about Giant Runes being kept from junior members. Someone may know what Anauk\'s book is. HQ proximity to Scarred Crater almost certainly deliberate — someone made that decision. Guild Alliance may have institutional knowledge about The Apotheosis it isn\'t sharing. Pattern: also withholding Giant Rune knowledge from Anauk.</div>' }
+      ]
+    },
+
+    { id:'fac_snail_mail', name:'Snail Mail Corporation', category:'faction', icon:'🐌', subtitle:'Post & Delivery — Worldwide',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Overview', color:'st-orange', body:'Post mail, newspaper, package distribution via teleporting snails. 80% delivery rate. "Delivery not guaranteed." Leader: Post Master Fiendall Kellitser (elderly tortle, prioritizes wealth). Policy change 1st Devotion: all letters screened for gold/materials — confiscated if postage unpaid.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">The Mail Abyss: failed deliveries enter non-contextual liminal space. Thousands of lost packages drift there. Items re-emerge unpredictably years/decades later. Winston\'s Ethereal Mailbox is showing signs of lost mail seeping in — hook for discovering Mail Abyss. Adventure concept: ticking clock bomb hidden in one of thousands of packages — Lyle\'s professional ethics vs. survival.</div>' }
+      ]
+    },
+
+    { id:'fac_crimson_crusaders', name:'Crimson Crusaders', category:'faction', icon:'🏴‍☠️', subtitle:'Eco-Friendly Pirates — Crimson Cove',
+      tags:['gtag-pa'],
+      tagLabels:['PA (Rooker)'],
+      sections:[
+        { title:'Overview', color:'st-orange', body:'Environmentally-conscious pirates. Home base: Crimson Cove (Caldorn/Calmeri coast border). Leaders: Pirate King "Headless" Hobbert + Pirate Queen "Horrible" Hadley. Currently seeking legal action against author Sergio Durr for book "Crimson Crusaders: Terrorists for Hire" — first legal action in organization\'s history. Rooker was raised by them and crewed the Bourbonbarge.' }
+      ]
+    },
+
+    { id:'fac_undead_trinity', name:'Undead Trinity', category:'faction', icon:'💀', subtitle:'Derelict Monster Controllers — Egression Zone',
+      tags:['gtag-dm','gtag-danger'],
+      tagLabels:['DM','Derelict'],
+      sections:[
+        { title:'Overview', color:'st-orange', body:'Bone Warden + Fate Stalker + Fleshmender. Charged with monitoring/controlling Zrrlaakx. COMPLETELY DERELICT — entirely focused on building undead army in Egression Zone for world conquest. Zrrlaakx operates without restraint as a result. World-ending Trinity failure in progress.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PA has encountered Bone Warden, escaped. PB unaware. Genevieve Prospero is Bone Warden\'s top lieutenant. None of the other two Trinity members have interacted with either party.</div>' }
+      ]
+    },
+
+    // ─────────────────────────────────── LORE & HISTORY ──────────────────────────
+
+    { id:'lore_apotheosis', name:'The Apotheosis', category:'lore', icon:'💥', subtitle:'World-Changing Historical Event',
+      tags:['gtag-dm'],
+      tagLabels:['DM Only'],
+      sections:[
+        { title:'What Happened', color:'st-purple', body:'Vaelmond compressed all magic into a singularity. Two-week catastrophic surge. World survived but changed. Created Reaper curse in nearby wizards. Multiple Scarred Craters worldwide. Vaelmond feels personally responsible for every Reaper. Current year: 1219 I.D., year 1 I.D. = post-Apotheosis industrial revolution begins.' },
+        { title:'What\'s Known', color:'st-gold', body:'NO written history of this event exists anywhere in the world. Only two living witnesses: Vaelmond and Aerresti. PA knows because Vaelmond told them directly. Rest of Caelos lives in the resulting I.D. era with no knowledge of what caused it.' }
+      ]
+    },
+
+    { id:'lore_hammer', name:'H.A.M.M.E.R.', category:'lore', icon:'⚡', subtitle:'Hyperbolic Atmosphere & Meteorological Manipulation via Energies of Reapers',
+      tags:['gtag-dm'],
+      tagLabels:['DM Secret'],
+      sections:[
+        { title:'Overview', color:'st-purple', body:'Located in Lethbridge Undercity (N). Tech apparatus that siphons magical energy from captive Reapers, converts it into weather manipulation at will. Created by Havril "Haunches" Hambuckle — did NOT know its full purpose when he built it. Only Aschol authorized to command.' },
+        { title:'Knowledge Tiers', color:'st-red', body:'<div class="dm-note">Aschol\'s inner circle only: powered by captive Reapers, true name/acronym, full capabilities. General Lethbridge public: weather manipulation device, believed to improve city atmospheric conditions — benevolent framing. Calmaar at large: NO knowledge that Lethbridge has any weather manipulation device. PA: know there\'s a Reaper in Lethbridge, do NOT know about H.A.M.M.E.R. at all.</div>' },
+        { title:'Current Status', color:'st-orange', body:'Down to 1 captive Reaper — critically low. Escalating weather anomalies in Calmaar (Whelk thread) are H.A.M.M.E.R. blowback — nobody on the ground is connecting it to Lethbridge. Aschol actively trying to force a wizard to transform for new fuel. CONNECTIONS: Weather anomalies/airship groundings = H.A.M.M.E.R. blowback. Havril = Anauk\'s childhood best friend — personal devastation incoming.' }
+      ]
+    },
+
+    { id:'lore_apotheosis_era', name:'Era Timeline', category:'lore', icon:'📅', subtitle:'Caelos Historical Eras',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Eras', color:'st-purple', body:'P.H.E. — Creation through start of recorded history. Billions of years. C.D. — Start of recorded history through discovery of magic. ~2,000 years. A.D. — Magic discovered through pre-industrial. Dark era — massive experimentation, plagues, tens of thousands dead. ~600 years. Ended with The Apotheosis. I.D. (Industrialis Developmentia) — Post-Apotheosis industrial revolution. Current year: 1219 I.D.' },
+        { title:'Major Events', color:'st-gold', body:'Giant\'s War 1143-1175 I.D. — Giants ruled Caldorn, attempted expansion. 32-year war. Giants defeated, all sealed in Immutable Asylum. 44 years ago — within living memory. All still alive, all still angry. Mercer Expedition 08 — 35 years ago. Discovered advanced lost civilization, entire population transformed. Genevieve Prospero, last words "Forgive me," now Bone Warden lieutenant. Brimstone Gate Breach — 17th Joy, 1219 I.D. Dozens-hundreds infernals escaped. Zamazzyr invades Fadecliff.' }
+      ]
+    },
+
+    { id:'lore_vossmere', name:'The Vossmere', category:'lore', icon:'🚗', subtitle:'Lost Technological Civilization — Extinct',
+      tags:['gtag-dm'],
+      tagLabels:['DM','Extinct'],
+      sections:[
+        { title:'Overview', color:'st-purple', body:'Isolated surface civilization that developed independently from Calmaar. 1970s American technology equivalent — cars, trucks, traffic lights, radio (no TV yet), vinyl records, advanced medicine, mutagenic drug research. Kept deliberate distance from rest of world. Built their city directly over an Orrel\'lie Hold without ever knowing it was there. Shot down a Blubberhive — the chain reaction destroyed their entire civilization within weeks, transforming every citizen into an Egression Beast.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Neither party knows the Vossmere\'s name or full history yet. PA has found artifacts but not the full picture. Records exist in the ruins. They didn\'t cause it maliciously — they lit a match while standing on a powder keg they couldn\'t see.</div>' }
+      ]
+    },
+
+    { id:'lore_giants_war', name:"Giants' War", category:'lore', icon:'⛰️', subtitle:'1143-1175 I.D. — Within Living Memory',
+      tags:['gtag-both','gtag-dm'],
+      tagLabels:['Both','DM'],
+      sections:[
+        { title:'Overview', color:'st-purple', body:'Giants ruled Caldorn, attempted expansion into Calmaar/Calmeri mountains. 32-year war. Giants defeated, all sealed in Immutable Asylum. 44 years ago — within living memory. All still alive, all still angry. Giant\'s Watch monitors the Asylum.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">PLANNED: Giants uprising and revenge campaign against Calmaar. Anauk stole a Giant Rune book from a lost Snail Mail package — Lyle knows, Embrit knows about the book but NOT that it was stolen. Original sender/recipient unknown. Likely connects to the Caldorn Giant War. Guild Alliance may be hiding institutional knowledge about Giant Runes from junior members.</div>' }
+      ]
+    },
+
+    // ─────────────────────────────────── THREADS ────────────────────────────────
+
+    { id:'thread_reaper_hunt', name:'Reaper Hunt', category:'thread', icon:'🎯', subtitle:'PA Active — About to Escalate',
+      tags:['gtag-pa'],
+      tagLabels:['PA','Active'],
+      sections:[
+        { title:'Status', color:'st-ember', body:'Active — about to escalate. Reaper confirmed in Lethbridge.' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">Reapers are dangerous. Vaelmond may become one. Reaper in Lethbridge.</div>' },
+        { title:'What PA Doesn\'t Know', color:'st-red', body:'<div class="dm-note">The Lethbridge Reaper is captive, powering H.A.M.M.E.R. Freeing/destroying it cripples Aschol\'s weather weapon. Umbral One schemes to use Reaper against Conclave. Other Scarred Craters worldwide. Aschol is actively trying to create a NEW Reaper by forcing a wizard to transform.</div>' },
+        { title:'Next Beat', color:'st-gold', body:'Infiltrate Lethbridge. Navigate Reaper + election powder keg + Ariavin\'s turf. The Reaper and H.A.M.M.E.R. are the same problem.' }
+      ]
+    },
+
+    { id:'thread_pb_act1', name:'PB Act 1 Finale', category:'thread', icon:'🌋', subtitle:'PB — Full Sequence Planned',
+      tags:['gtag-pb','gtag-dm'],
+      tagLabels:['PB','DM Only'],
+      sections:[
+        { title:'Planned Sequence', color:'st-ember', body:'1. Brimstone Gate breach — PB may be present 17th Joy. Val\'s family inside. Zlaavbac\'s heroic rockslide moment.<br><br>2. Return to Scald — confront Copperbottom about Aargardt.<br><br>3. Independent journalist appears — tracked meteor story from 21st Devotion Whelk. Luella caught off guard — focused on avoiding father\'s direct agents, didn\'t anticipate unrelated investigator finding her through meteor trail. TBD: name, race, personality, motivation.<br><br>4. Nirran\'s son rises — ground shakes. Nirran\'s son lifts entire city of Scald onto his shoulders, holds it hundreds of feet above surrounding mountains. No demands. No attack. No explanation. Nobody knows why.<br><br>5. Luella\'s ring activates — she feels pain, collapses briefly. Father Ariavin has fallen unconscious somewhere. Timing: possibly connected to PA\'s activities in Lethbridge.<br><br>6. Aerresti\'s meteor — screams overhead, lands nearby. Note inside: "We need to talk. Meet me at the Scarred Crater."' },
+        { title:'Act 2 Opener', color:'st-gold', body:'Aerresti meets PB at Scarred Crater. Begins sharing info. Eventually advises them to return to Brimstone Gate — "you\'ll be needed" — without fully explaining why. PB arrives as participants in invasion rather than newspaper readers.' }
+      ]
+    },
+
+    { id:'thread_missing_ships', name:'Missing Ships', category:'thread', icon:'🚢', subtitle:'Running Thread — All Northern Ports',
+      tags:['gtag-both','gtag-dm'],
+      tagLabels:['Both','DM'],
+      sections:[
+        { title:'Status', color:'st-ember', body:'Started Greyport, now all northern ports of Calmaar + Calmeri. Something systematic. Ship disappearances have escalated across the Whelk issues.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Something collecting them OR something destroying them — two very different villains attached to each answer. Gyarmos (lakes/seas Titan, status unknown) — asleep, dead, or busy? Timing with ship disappearances potentially significant. Wreck of the Giantswatch permanently in Greyport harbor — TBD what sank it.</div>' }
+      ]
+    },
+
+    { id:'thread_egression_expedition', name:'Egression Expedition', category:'thread', icon:'🚁', subtitle:'PA Future — Setup in Progress',
+      tags:['gtag-pa','gtag-dm'],
+      tagLabels:['PA','Simmering'],
+      sections:[
+        { title:'Status', color:'st-ember', body:'Simmering — setup in progress. Need airship from Lethbridge first.' },
+        { title:'What PA Knows', color:'st-blue', body:'<div class="pa-note">Zone is deadly. Genevieve may be reachable. Need airship. Had brief visual contact with Genevieve.</div>' },
+        { title:'What PA Doesn\'t Know', color:'st-red', body:'<div class="dm-note">Trinity building world-conquest army. Zrrlaakx claims Zone. Lost civilization knew about Reapers (vinyl records). Victor watching Zone expand toward Fadecliff in silence for centuries.</div>' }
+      ]
+    },
+
+    { id:'thread_lorelei_ghost', name:'Lorelei Ghost Arc / Pejnan', category:'thread', icon:'👻', subtitle:'PB — Pending First Brimstone Visit',
+      tags:['gtag-pb','gtag-dm'],
+      tagLabels:['PB','Planned'],
+      sections:[
+        { title:'Status', color:'st-ember', body:'Post first Brimstone Gate visit — Pejnan finds Lorelei in person. Sick, wild-eyed, disturbed. Grabs her — tells her he can hear them too, no one believes him, they\'re taking him away. Guards arrive very insistent, drag him off mid-sentence. Lorelei is the only person who would believe him.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">He had no medallion to channel the Ghost Glass exposure. Just voices and no framework. Deteriorating alone this whole time. Stage for maximum emotional impact. Pejnan recovering in Zyrius currently.</div>' }
+      ]
+    },
+
+    { id:'thread_weather_anomalies', name:'Weather Anomalies', category:'thread', icon:'⛈️', subtitle:'Running Thread — H.A.M.M.E.R. Blowback',
+      tags:['gtag-both','gtag-dm'],
+      tagLabels:['Both','DM Secret'],
+      sections:[
+        { title:'Status', color:'st-ember', body:'Escalating. Meteorologists baffled. Airships grounded — weather anomalies (1st Joy Whelk). Nobody on the ground is connecting it to Lethbridge.' },
+        { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Weather anomalies = H.A.M.M.E.R. blowback from Aschol\'s overuse with only 1 Reaper left. The Whelk has been running weather anomaly reports since Joy. Nobody in Calmaar suspects Lethbridge has anything to do with it.</div>' }
+      ]
+    },
+
+    // ─────────────────────────────────── WORLD INFO ─────────────────────────────
+
+    { id:'world_calendar', name:'Calendar & Current Dates', category:'world', icon:'📅', subtitle:'300-Day Year — 10 Months',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Calendar', color:'st-blue', body:'300 days/year. 10 months × 30 days. No weeks. 24hr days. Whelk publishes: 1st, 11th, 21st each month (30 issues/year).<br><br>1. Awakening — Spring begins (Bloom Festival 28th)<br>2. Devotion — planting, marriages (Devotion Day 12th)<br>3. Joy — Summer begins (Charm Day 9th)<br>4. Kindred — very rainy (Net Day 1st)<br>5. Medial — Peak summer, wildfires (Antirium 15th)<br>6. Harvest — Autumn begins (The Gathering 19th)<br>7. Resolute — prep for winter (Ancestor Day 27th)<br>8. Solace — community sharing (Lots 13th)<br>9. Sacrifice — deep winter, remembrance (Immolation Day 20th)<br>10. Silence — fatal cold spikes (The Silence 5th)' },
+        { title:'Current Dates', color:'st-gold', body:'<strong>PA Current:</strong> 27th of Joy, 1219 I.D. (Day 87). Late summer. On long rest at Vaelmond\'s tower. Next: Lethbridge.<br><br><strong>PB Current:</strong> 22nd of Devotion, 1219 I.D. (Day 52). Late spring. Just finished Cirros. Next: Brimstone Gate.<br><br><strong>Gap:</strong> ~35 days. PB needs to catch up before multi-party crossover. Brimstone Gate breach (17th Joy) is ~25 days in PB\'s future.' }
+      ]
+    },
+
+    { id:'world_whelk', name:'Word of the Whelk — Issue Archive', category:'world', icon:'📰', subtitle:'In-World Newspaper — Calmaar Edition',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Issue Archive', color:'st-blue', body:'<strong>1st Awakening (Day 1)</strong> — Artisan Festival announced. Ship missing N.Sea. Lantash LGBTQ+ support. Leland Leicker obit.<br><br><strong>11th Awakening (Day 11)</strong> — Festival success. Sheriff Garver thanks PA by name. Woodgrove fires. New dwarf police force Cirros.<br><br><strong>21st Awakening (Day 21)</strong> — PA destroyed a WEAKENED Reaper in Everhaven. Demons defeated at Brimstone Gate 18th. Mythril mine layoffs.<br><br><strong>1st Devotion (Day 31)</strong> — BLUBBERHIVE attacks Cirros, locals fight it off. Snail Mail policy change.<br><br><strong>11th Devotion (Day 41)</strong> — House of Kindred preps Devotion Day. Missing persons increasing.<br><br><strong>21st Devotion (Day 51)</strong> — Fadecliff fires (arson suspected). Victor Caeldus votes NO on redistribution bill. METEOR STORM reported. [PB\'s meteors — they\'re reading about themselves]<br><br><strong>1st Joy (Day 61)</strong> — GARVER MURDERED 28th Devotion, 8 stab wounds. Coal prices skyrocket. Airships grounded — weather anomalies.<br><br><strong>11th Joy (Day 71)</strong> — Missing livestock near Greyport. New sheriff Erik Lawler. DROWNOUT HECKLER first sighting near Greywood.<br><br><strong>18th Joy SPECIAL (Day 78)</strong> — BRIMSTONE GATE BREACH 17th Joy. 2 dead, 6 critical. Hellmouth compromised. Dozens-hundreds infernals escaped. Zlaavbac triggers rockslide. [PB\'s future ~25 days away]<br><br><strong>21st Joy (Day 81)</strong> — Strange staircase on north shore. Crimson Crusaders sue author Sergio Durr. CHANGELING CAUGHT IN SCALD sabotaging lava pump — from Lethbridge, destroyed. [Ariavin\'s spy sent to find Luella]<br><br><strong>1st Kindred (Day 91)</strong> — MYSTERY BULBS on Calmaar roads (5 found, ~10 total — Umbral One\'s tar corruption). Lethbridge election nearly tied. Ship disappearances now ALL northern ports Calmaar + Calmeri. Drownout Heckler SECOND sighting near Greywood.' }
+      ]
+    },
+
+    { id:'world_titans', name:'Titans', category:'world', icon:'🌍', subtitle:'World-Scale Ancient Entities',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Known Titans', color:'st-blue', body:'<strong>Abbanabanarran</strong> — Source of all matter in universe. A gargantuan cosmic space snail. [DM: The fact that the source of all matter is a space snail in a world with Snail Mail Corp, Gertie, and the Word of the WHELK…]<br><br><strong>Gyarmos</strong> — Lakes and seas. Status unknown. Timing with missing ships potentially significant.<br><br><strong>Jyrani</strong> — The skies. Gargantuan feral elder harpy. Status unknown.<br><br><strong>Mythrin</strong> — The Feywild. Extremely powerful, mischievous, naive and innocent. Golden Wood has deep Feywild connection.<br><br><strong>Nirran</strong> — Fire and volcanic domains. Conscious, intelligent, cunning, manipulative. Cooperates with his Trinity to contain his son — the actual massive destructive force. PLANNED: Nirran\'s son rises and lifts ENTIRE CITY OF SCALD.<br><br><strong>Root Lord</strong> — Life and plants. Gargantuan abomination. Lives primarily underground. PA witnessed first confirmation at Titan\'s Maw.<br><br><strong>Zrrlaakx</strong> — Death (claimed) / Egression Zone. Massive bipedal toxic dragon. Stepped in after Titan of Death was killed. Trinity DERELICT. Operates without restraint.' }
+      ]
+    },
+
+    { id:'world_geography', name:'Regions of Caelos', category:'world', icon:'🗺️', subtitle:'12 Rectangular Regions — Political Borders',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Active Regions', color:'st-blue', body:'<strong>Calmaar</strong> — Central. Current campaign region for both parties.<br><strong>Caldorn</strong> — Northwest. Giant War territory. Crimson Crusaders home (border).<br><strong>Calmeri</strong> — North. Moonstone Shores, Whirltower. Northern ports affected by missing ships.<br><strong>Calvyce</strong> — South. Egression Zone location.<br><br>8 undeveloped regions pending. Future: undiscovered continent across Abyssal Shelf ocean to the west — golden city on its shores.' },
+        { title:'World State', color:'st-gold', body:'Year: 1219 I.D. Early-mid industrial revolution meets high fantasy magic. Magic exists but less culturally central than previous era — industry filled the vacuum. Two active parties playing simultaneously in same world — actions affect each other. Long-term vision: both parties meet in large multi-player session once timelines align.' }
+      ]
+    },
+
+    { id:'world_music', name:'Vorpal Lance Music — Soundtrack', category:'world', icon:'🎵', subtitle:'58 Tracks Completed — Gaps Listed',
+      tags:['gtag-both'],
+      tagLabels:['Both'],
+      sections:[
+        { title:'Existing Tracks (58)', color:'st-blue', body:'Abandoned Wizard Tower | Aromatic Armorsmith | Battle - Feywild Mystics | Battle - Golden Wood - Multiple Enemies | Battle - Mud Crab Ambush | Battle - Roadside Encounter | Battle - Standard Enemy 2 | Battle of the Blubberhive | The Blind Ascent (Lower + Upper) | Blubberhive Cry | Boss - Cult Chant Metal | Boss - Minor Boss Encounter | Boss - The Reaper | The Brimstone Gate | Caught in a Fae Trap | Chill - Guitar Celestial Chords | Cloudkicker - Explore + Night | Dance - The Piggy Jig | Dungeon - Crunchy Synth Ambience | Dungeon - The Great Lantern Factory | Dungeon - Titan\'s Maw | The Egression Zone | The Endless Knight | Everhaven - Devastation | Factory Not Abandoned! | Festival Disrupted - Steam Mephit Attack | The Golden Wood | Jaq\'tuun Castle | The Mistress of Sorrow | Mysterious Tattoo | NPC - Druid Matriarch | NPC - Mayor Aszmad | NPC - Winston Mercer | The Nullwood | Petrifying Rain | Population Center - Cirros | Everhaven | Fadecliff | Greyport | Lethbridge Upper | Scald | Woodgrove | Zyrius | Powerful Paladin | Salamander Treasure Thieves | Scarred Crater | The Slumbering One Awakens! - Szkaalbrxtnvaal Attacks! | Snail Mail HQ | Strollin\' | Theme of Crawly | Titan - Titanic Presence | Titan Lake | Tough Tavern | Vampire Ambush | Wind Through the Leaves (+ VA)' },
+        { title:'Priority Gaps', color:'st-ember', body:'🔴 TOP: Population Center - Lethbridge (Undercity) — must feel like Lethbridge Upper\'s darker oppressed twin. Same city. Hates itself.<br>🔴 TOP: Word of the Whelk Jingle — short (45sec-1min), 6/8 swing feel, pizzicato strings + hi-hat typewriter rhythm.<br>🔴 TOP: Airship Travel — tone TBD based on party choice (Elysian = cheap and cheerful, Traxus = industrial and grey).<br><br>🟡 MEDIUM: The Vel\'urak/Amberbacks | The Brimstone Gate Invasion | The Holds | The Warrens | Jaq\'tuun Castle Combat | Egression Zone Combat<br><br>🟢 FUTURE: The Incumbent | Vossmere Ruins | Mutated Vel\'urak | NPC themes (Nyra, Aschol, Vaelmond, Aerresti) | Population Centers (Hayward, Whelk)' }
+      ]
+    },
+
+  ];
+
+  // ─── GRIMOIRE STATE ───
+  let grimoire_initialized = false;
+
+  function grimoire_init() {
+    if (grimoire_initialized) return;
+    grimoire_initialized = true;
+    grimoire_buildCategories();
+  }
+
+  function grimoire_buildCategories() {
+    const cats = [
+      { key:'npc',      listId:'grimoire-npcs-list' },
+      { key:'location', listId:'grimoire-locations-list' },
+      { key:'creature', listId:'grimoire-creatures-list' },
+      { key:'faction',  listId:'grimoire-factions-list' },
+      { key:'lore',     listId:'grimoire-lore-list' },
+      { key:'thread',   listId:'grimoire-threads-list' },
+      { key:'world',    listId:'grimoire-world-list' },
+    ];
+    for (const cat of cats) {
+      const list = document.getElementById(cat.listId);
+      if (!list) continue;
+      const entries = GRIMOIRE_DATA.filter(e => e.category === cat.key);
+      list.innerHTML = entries.map(e => grimoire_entryRowHTML(e)).join('');
+    }
+  }
+
+  function grimoire_entryRowHTML(entry) {
+    const tagHTML = (entry.tags || []).map((cls, i) =>
+      `<span class="grimoire-tag ${cls}">${entry.tagLabels[i]}</span>`
+    ).join('');
+    return `<div class="grimoire-entry-row" onclick="grimoire_openEntry('${entry.id}')">
+      <span class="grimoire-entry-icon">${entry.icon}</span>
+      <div class="grimoire-entry-info">
+        <div class="grimoire-entry-name">${entry.name}</div>
+        ${entry.subtitle ? `<div class="grimoire-entry-sub">${entry.subtitle}</div>` : ''}
+      </div>
+      <div class="grimoire-entry-tags">${tagHTML}</div>
+    </div>`;
+  }
+
+  function grimoire_openEntry(id) {
+    const entry = GRIMOIRE_DATA.find(e => e.id === id);
+    if (!entry) return;
+    const detail = document.getElementById('grimoireDetail');
+    const inner = document.getElementById('grimoireDetailInner');
+
+    const tagHTML = (entry.tags || []).map((cls, i) =>
+      `<span class="grimoire-tag ${cls}">${entry.tagLabels[i]}</span>`
+    ).join('');
+
+    const sectionsHTML = (entry.sections || []).map(s => `
+      <div class="grimoire-section">
+        <div class="grimoire-section-title ${s.color}">${s.title}</div>
+        <div class="grimoire-section-body">${s.body}</div>
+      </div>
+    `).join('');
+
+    inner.innerHTML = `
+      <div class="grimoire-detail-card">
+        <div class="grimoire-detail-header">
+          <div class="grimoire-detail-title">${entry.icon} ${entry.name}</div>
+          ${entry.subtitle ? `<div class="grimoire-detail-subtitle">${entry.subtitle}</div>` : ''}
+          <div class="grimoire-detail-tag-row">${tagHTML}</div>
+        </div>
+        <div class="grimoire-detail-body">${sectionsHTML}</div>
+      </div>
+    `;
+
+    // Position detail over grimoire content
+    const container = document.querySelector('#tab-encounter .grimoire-container');
+    container.style.position = 'relative';
+    detail.style.display = 'block';
+    // Scroll to top of detail
+    document.querySelector('.tab-content').scrollTop = 0;
+  }
+
+  function grimoire_closeDetail() {
+    document.getElementById('grimoireDetail').style.display = 'none';
+    document.querySelector('.tab-content').scrollTop = 0;
+  }
+
+  // Active tag filters (set of gtag class keys e.g. 'pa', 'dm')
+  let _grimoire_active_tags = new Set();
+
+  function grimoire_toggleChip(el, tag) {
+    if (_grimoire_active_tags.has(tag)) {
+      _grimoire_active_tags.delete(tag);
+      el.classList.remove('active');
+    } else {
+      _grimoire_active_tags.add(tag);
+      el.classList.add('active');
+    }
+    // Re-run search with current text value
+    const input = document.getElementById('grimoireSearch');
+    grimoire_runSearch(input ? input.value : '');
+  }
+
+  function grimoire_clearSearch() {
+    const input = document.getElementById('grimoireSearch');
+    input.value = '';
+    // Clear all chips
+    _grimoire_active_tags.clear();
+    document.querySelectorAll('.gtag-chip').forEach(c => c.classList.remove('active'));
+    grimoire_runSearch('');
+    input.focus();
+  }
+
+  function grimoireSearch(query) {
+    grimoire_runSearch(query);
+  }
+
+  function grimoire_runSearch(query) {
+    const clearBtn = document.getElementById('grimoireSearchClear');
+    const resultsDiv = document.getElementById('grimoireResults');
+    const categoriesDiv = document.getElementById('grimoireCategories');
+    const countDiv = document.getElementById('grimoireResultCount');
+    // Close any open detail
+    document.getElementById('grimoireDetail').style.display = 'none';
+
+    const hasText = query.trim().length > 0;
+    const hasTags = _grimoire_active_tags.size > 0;
+    clearBtn.style.display = (hasText || hasTags) ? 'block' : 'none';
+
+    if (!hasText && !hasTags) {
+      resultsDiv.style.display = 'none';
+      categoriesDiv.style.display = 'block';
+      countDiv.textContent = '';
+      return;
+    }
+
+    categoriesDiv.style.display = 'none';
+    resultsDiv.style.display = 'block';
+
+    const q = query.toLowerCase();
+
+    const matches = GRIMOIRE_DATA.filter(entry => {
+      // Tag filter: entry must have ALL active tags
+      if (hasTags) {
+        const entryTags = new Set(entry.tags || []);
+        for (const t of _grimoire_active_tags) {
+          if (!entryTags.has('gtag-' + t)) return false;
+        }
+      }
+      // Text filter: if query present, entry must match somewhere
+      if (hasText) {
+        if (entry.name.toLowerCase().includes(q)) return true;
+        if (entry.subtitle && entry.subtitle.toLowerCase().includes(q)) return true;
+        if ((entry.sections || []).some(s =>
+          s.title.toLowerCase().includes(q) ||
+          s.body.toLowerCase().includes(q)
+        )) return true;
+        return false;
+      }
+      return true;
+    });
+
+    const catClass = { npc:'cat-npc', location:'cat-location', creature:'cat-creature', faction:'cat-faction', lore:'cat-lore', thread:'cat-thread', world:'cat-world' };
+    const catLabel = { npc:'NPC', location:'Location', creature:'Creature', faction:'Faction', lore:'Lore', thread:'Thread', world:'World' };
+
+    if (matches.length === 0) {
+      const filterDesc = [
+        hasTags ? [..._grimoire_active_tags].map(t => t.toUpperCase()).join(' + ') : '',
+        hasText ? `"${query}"` : ''
+      ].filter(Boolean).join(' + ');
+      resultsDiv.innerHTML = `<div class="grimoire-no-results"><div class="gnr-icon">📖</div>No entries found for ${filterDesc}</div>`;
+      countDiv.textContent = 'No results';
+      return;
+    }
+
+    countDiv.textContent = `${matches.length} result${matches.length !== 1 ? 's' : ''}`;
+
+    function highlight(text, q) {
+      if (!q) return text;
+      const idx = text.toLowerCase().indexOf(q.toLowerCase());
+      if (idx < 0) return text;
+      return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + q.length) + '</mark>' + text.slice(idx + q.length);
+    }
+
+    // Build snippet from body content
+    function snippet(entry, q) {
+      if (q) {
+        for (const s of (entry.sections || [])) {
+          const plain = s.body.replace(/<[^>]*>/g, '');
+          const idx = plain.toLowerCase().indexOf(q.toLowerCase());
+          if (idx >= 0) {
+            const start = Math.max(0, idx - 30);
+            const end = Math.min(plain.length, idx + q.length + 50);
+            return (start > 0 ? '…' : '') + plain.slice(start, end) + (end < plain.length ? '…' : '');
+          }
+        }
+      }
+      return entry.subtitle || '';
+    }
+
+    resultsDiv.innerHTML = matches.map(e => `
+      <div class="grimoire-result-item" onclick="grimoire_openEntry('${e.id}')">
+        <span class="grimoire-result-cat ${catClass[e.category]}">${catLabel[e.category]}</span>
+        <div style="flex:1;min-width:0">
+          <div class="grimoire-result-name">${highlight(e.name, query)}</div>
+          <div class="grimoire-result-sub">${snippet(e, query)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
 
 </script>
 
