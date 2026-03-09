@@ -1,7 +1,7 @@
 # THE CAELOS CODEX — CONDENSED REFERENCE v5e
 # Primary audience: Claude. Optimized for fast parsing, not human readability.
 # Paste at start of every new chat. Update after each session.
-# Last updated: 03/07/26 (session 3 — map integration, dungeons, H.A.M.M.E.R., The Incumbent, Jaq'tuun) | Full formatted version: Caelos Codex v4.docx
+# Last updated: 03/08/26 (session 4 — Great Lantern Factory full lore, Ichabod, PB session planning, Lorelei ghost arc, NPC additions) | Full formatted version: Caelos Codex v4.docx
 # IMPORTANT: All [DM] PLANNED tags and future story beats are MALLEABLE. Nothing is locked until it happens at the table. Better ideas, different angles, new connections always take priority over existing plans — as long as it remains consistent with established canon.
 # Dashboard: caelos_dm_dashboard.html — single-file PWA, GitHub Pages hosted, Pixel 10 Pro target
 
@@ -34,7 +34,7 @@ Whelk publishes: 1st, 11th, 21st each month (30 issues/year).
 
 ---
 
-## [WHELK] Word of the Whelk — Issue Archive (Calmaar edition only)
+## [MEDIA:WHELK|NEWSPAPER] Word of the Whelk — Issue Archive (Calmaar edition only)
 
 1st Awakening (Day 1) — Artisan Festival announced. Ship missing N.Sea (5th this month). Lantash LGBTQ+ support. Leland Leicker obit.
 11th Awakening (Day 11) — Festival success. Sheriff Garver thanks PA by name in print. Woodgrove fires. New dwarf police force Cirros.
@@ -69,7 +69,7 @@ Human Dhampir F. Barbarian/Cleric. Player: Kjersten. Long dark hair, gold-tinted
 ## [PC:LYLE_FROTHBOTTOM|PA]
 Halfling M (elderly). Ranger. Player: Megan. White hair and mustache, blue workman shirt, leather mail satchel, Snail Mail branded case. Proud Snail Mail Corporation employee. Quest: find 7 Golden Snail Shells worldwide for early retirement pension. Old flame Winnifred (adventurer/cave diver — broke up because he couldn't handle the worry). [DM] Knows Anauk stole the Snail Mail package — professional ethics conflict he sits with quietly.
 
-## [PC:GERTIE|PA]
+## [CREATURE:GERTIE|BEAST|COMPANION|PA]
 Giant Snail (companion). Lyle's. Pony-sized. White body, large warm brown eyes, tan spiral shell with full leather pack and mail bags strapped on top. Non-combat. Beloved. The spiritual mascot of the campaign.
 
 ## [PC:ROOKER|PA]
@@ -77,7 +77,11 @@ Kenku M. Rogue/Swashbuckler. Player: Amber. Crow-headed humanoid, dark blue-blac
 [DM] IMPLICATIONS: Umbral One has a follower operating inside the House of the Kindred — cultivating assets, not just passing through. Rooker may be an unwitting asset. The ability itself is dangerous in ways Rooker doesn't fully understand yet — mimicking the dead's voices could cause devastating psychological effects on those who hear them.
 
 ## [PC:LORELEI|PB]
-Fire Genasi F. Druid. Player: Esther. Deep vivid orange-red skin with flame-like swirling texture, dark curly black hair, dark red eyes, smoke trailing off one arm, simple brown vest. From Scald. Nervous but growing. Guild Alliance glassblowing trainee. Mentor Pejnan ill — recovering in Zyrius hospital. [DM] Recently cursed — can hear ghosts. Embracing ghostly abilities, changed appearance. Can summon midnight spirit Wisp (still manifesting form). More ghostly developments planned.
+Fire Genasi F. Druid, Circle of Midnight. Player: Esther. Deep vivid orange-red skin with flame-like swirling texture, dark curly black hair, dark red eyes, smoke trailing off one arm, simple brown vest. From Scald. Nervous but growing. Guild Alliance glassblowing trainee. Mentor Pejnan — see ghost arc below.
+
+GHOST ARC: Lorelei and Pejnan were glassblowing in Scald when they unknowingly worked with Ghost Glass — a rare material with paranormal properties neither recognized. Exposure unlocked latent spirit-hearing in both. For Pejnan: slow deterioration — voices with no framework, no medallion to channel them, gradual breakdown. For Lorelei: amplified when she found a gold skull medallion in pirate treasure at Elzon's Crest. Cursed, cannot be removed. Channeled Ghost Glass sensitivity into full spirit communion. Eventually generated a calling to Spectre Caverns (west of Greyport, mountains between Greyport and Scald). Inside: thugs/mercs protecting a large mechanical device containing trapped souls — slowly leaking (why she could still hear them after leaving). Also found: Mayor Aszmad's smuggling stronghold (outside Greyport jurisdiction — he's too smart to get caught). Aszmad gave Val intel on Aargardt → led party to Cirros and Reltch. Since caverns, Lorelei has leaned fully into ghost abilities — hence Circle of Midnight transition. Can summon midnight spirit Wisp (still manifesting form).
+
+PEJNAN THREAD — PLANNED (post first Brimstone Gate visit): Pejnan finds Lorelei in person. Sick, wild-eyed, disturbed. Grabs her — tells her he can hear them too, no one believes him, they're taking him away. Guards arrive very insistent, drag him off mid-sentence. Lorelei is the only person who would believe him. [DM] He had no medallion to channel the Ghost Glass exposure. Just voices and no framework. Deteriorating alone this whole time. Stage for maximum emotional impact.
 
 ## [PC:VAL|PB]
 Tiefling F. Artificer. Player: Kay. Purple-lavender skin, large curved horns, short dark hair, gold-yellow eyes, nose ring, ornate gold/multicolored armor. From Scald. Stubborn, strong-willed, poor social graces. Best friends with Lorelei. Motivated by money and clout. Mentor Aargardt missing — gambling debts, likely kidnapped. Family works at Brimstone Gate (see Flint family).
@@ -144,6 +148,12 @@ Human M. Sheriff of Hayward. Botanist by trade — voted into sheriff role by un
 
 ## [NPC:ERIN_LAWLER|ALIVE|PA_CANDIDATE]
 Human F, 18. Erik's daughter. Mushroom and fungi expert — mostly academic but real practical utility (poison ID, ingredient analysis). Some combat ability, developing. Lost mother Eve at 15, grieved 3 years. Meeting PA came near end of recovery — reignited her purpose. Idolizes PA. Has been trying to prove herself to them. Begged Winston to let her join next mission. Winston highly recommending her to party — wants to speak with them first. [DM] KEY VALUE IN LETHBRIDGE: As a human she can move through racially segregated Dome without suspicion. Potential scene: identifies poison in someone's drink at a Dome party.
+
+## [NPC:PERIWINKLE|ALIVE|PB]
+Elf F. Blue hair, blue eyes, pointy ears, perpetual knowing smile. Owner and bartender of Periwinkle's Pub, Hayward (campaign origin location for PB). Fun, flirty, charming — owns every room she's in, knows exactly what you want before you ask. Luella's girlfriend, though the relationship is still relatively new. Ex-girlfriend is Freya Oakheart (Hayward local). That history has some tension to it. [DM] "It's probably nothing." 😉
+
+## [NPC:FREYA_OAKHEART|ALIVE|PB]
+Human F. Dark wavy hair, green eyes, freckles, quiet commanding presence. Wears gold-striped armor. Beekeeper and ornithologist — bees seem naturally drawn to her. Periwinkle's ex-girlfriend. PB has met her. Still in Hayward. Still comes into the pub. [DM] That expression is not "I'm over it." Tension with Peri's current relationship with Luella — nature and degree TBD but the slow fuse is lit.
 
 ## [NPC:HAVRIL_HAMBUCKLE|ALIVE|PA]
 Dwarf M. Project Director, Geo-Sublimation Project (GSP), Cirros (east side). Blonde, well-trimmed beard, always smiling, never says no to a drink. Childhood friend of Anauk. GSP: three interconnected buildings ~300ft tall — even without generating energy yet produces massive steam clouds pouring over mountains and out to sea. Facing Council political delays AND deliberate sabotage by Victor Caeldus agents. Asked Anauk to quietly investigate — Victor dismissed findings with hollow promise. Case closed. [DM] If GSP succeeds it makes Fadecliff coal largely irrelevant — major political threat to Victor even in exile.
@@ -272,10 +282,11 @@ Massive basin, thick poisonous fog year-round. Kills most living things. City ex
 
 [PA] Explored Zone. Found Vossmere ruins, radio equipment, vinyl records, cars/trucks/traffic lights. Discovered mutagenic drug experimentation evidence. Have NOT reached crater bottom.
 
-## [VOSSMERE] The Vossmere — Lost Technological Civilization
+## [RACE:VOSSMERE|EXTINCT] The Vossmere — Lost Technological Civilization
 Isolated surface civilization that developed independently from Calmaar. 1970s American technology equivalent — cars, trucks, traffic lights, radio (no TV yet), vinyl records, advanced medicine, mutagenic drug research. Kept deliberate distance from rest of world. Built their city directly over an Orrel'lie Hold without ever knowing it was there. Shot down a Blubberhive — the chain reaction that event triggered destroyed their entire civilization within weeks, transforming every citizen into an Egression Beast and birthing the Zone. They didn't cause it maliciously. They lit a match while standing on a powder keg they couldn't see. Their ruins extend 30+ miles from the crater center. [DM] Neither party knows the Vossmere's name or full history yet. Records exist in the ruins — PA has found artifacts but not the full picture.
 
 
+## [LOC:SCARRED_CRATER|CALMAAR] [PB_TARGET]
 Where The Apotheosis singularity occurred. Wild magic zone. Aerresti lives here. Multiple other Scarred Craters exist worldwide — PA only knows this one. Located NW of Brimstone Gate, NE of Guild Alliance HQ, SE of Scald — centrally positioned in PB's entire arc. [PB] PLANNED: Meet Aerresti here at Act 1 end.
 [DM] Guild Alliance HQ proximity to Scarred Crater almost certainly deliberate — someone made that decision. Guild Alliance may have institutional knowledge about The Apotheosis it isn't sharing with junior members. Pattern: also withholding Giant Rune knowledge from Anauk.
 
@@ -340,7 +351,7 @@ Atypically warm tropical waters despite northern latitude. Something in the ocea
 
 ---
 
-## [HISTORY]
+## [HISTORY|WORLD_LORE]
 P.H.E. — Creation through start of recorded history. Billions of years.
 C.D. — Start of recorded history through discovery of magic. ~2,000 years.
 A.D. — Magic discovered through pre-industrial. Dark era — massive experimentation, plagues, tens of thousands dead. ~600 years. Ended with The Apotheosis.
@@ -353,18 +364,20 @@ BRIMSTONE GATE BREACH — 17th Joy, 1219 I.D. In PA's past. In PB's future. 2 so
 
 ---
 
-## [CREATURES]
+## [CREATURE:REAPERS|ABERRATION|CURSED]
 REAPERS — Pure magic essence beings. Former wizards cursed by Apotheosis proximity. Walking natural disasters — devour magic items, demolish entire towns. No social structure. Vaelmond risks becoming one. Umbral One scheming to weaponize one against Conclave. Lost Egression Zone civilization knew about them (radio record "Tales of the Reapers").
 
+## [CREATURE:DROWNOUT_HECKLER|CRYPTID|GREYWOOD]
 DROWNOUT_HECKLER — Cryptid. 9 feet tall, hairy arms and body, wiggling tendrils on back and face. Mimics sound of human laughter to lure prey before devouring victims. Two confirmed sightings near Greywood (11th Joy, 1st Kindred Whelk). Cryptid hunters actively investigating. Has not yet interacted with either party. DM's personal favorite creature. Appearance: massive, dark, textured skin like rotting bark, deep-set glowing red eyes, mouth full of oversized teeth, tendrils hanging like dead roots. Far more terrifying than the name implies.
 
+## [CREATURE:OAK_FATHER|CRYPTID|EGRESSION_ZONE]
 OAK_FATHER — The cryptid all other cryptids fear. Ancient beyond measure. Massive, antlered. Fur like it grew FROM the forest rather than on it. Deep red eyes buried in a face that is the oldest wrongful part of the woods. Not benevolent — territorial apex predator. Has been stationed at the Egression Zone perimeter for unknown centuries. Currently losing the containment argument for the first time as Zone expands. [DM] May have been original territorial claimant over The Incumbent's location — predates the Orrel'lie civilization. Cryptid migration east (Drownout Heckler in Greywood etc.) = other cryptids fleeing away from Zone expansion. Oak Father is the only one that hasn't fled.
 
-VEL'URAK (AMBERBACKS) — see [VELUURAK] section below.
+VEL'URAK (AMBERBACKS) — see [CREATURE:VELUURAK] section below.
 
 ---
 
-## [ORRELLIE] The Orrel'lie — Ancient Underground Civilization
+## [RACE:ORRELLIE|NEAR_EXTINCT|UNDERGROUND] The Orrel'lie — Ancient Underground Civilization
 
 **Pronunciation:** OR-el-lie.
 
@@ -384,7 +397,7 @@ VEL'URAK (AMBERBACKS) — see [VELUURAK] section below.
 
 ---
 
-## [VELUURAK] Vel'urak (Amberbacks) — The Infestation
+## [CREATURE:VELUURAK|BEAST|INFESTATION] Vel'urak (Amberbacks) — The Infestation
 
 **Orrel'lie name:** Vel'urak — roughly "the consuming interruption" / "that which broke the vigil." Encodes both physical destruction AND failure of sacred purpose. Carved into warning stones throughout the Holds.
 **Contemporary name:** Amberbacks — coined by a panicked journalist after the Holds open. Stuck immediately. Accurate, undignified, perfect.
@@ -407,7 +420,7 @@ VEL'URAK (AMBERBACKS) — see [VELUURAK] section below.
 7. **HERALD** — rare, lean, non-combatant. Resonating abdomen produces subsonic pulse that travels through rock — alerts entire Hold to intruder presence. Flight capable. Kill it immediately or run.
 8. **QUEEN** — true boss. Massive, partially immobile. Full bioluminescence across carapace from long proximity to Incumbent energy. Surrounded by Soldiers at all times. Possibly dim intelligence. No flight — too large. The hatching hive room is her throne.
 
-## [MEDIA] In-World Published Works
+## [MEDIA|IN_WORLD_PUBLICATIONS] In-World Published Works
 
 **Crimson Crusaders: Terrorists for Hire** | Sergio Dyrr | Slanderous hit piece on the Crimson Crusaders. Poorly sourced eyewitness accounts, no research. Framing: eco-friendly pirates are secret terrorists with aerial capabilities holding the region hostage. Inaccurate but persuasive to weak minds. First legal action in Crimson Crusader history. [Rooker] Grew up in that organization.
 
@@ -482,7 +495,7 @@ Per-party sections (swap on party toggle):
 - File size target: keep under 5MB. Currently ~2.3MB.
 
 
-## [BESTIARY] Full stat entries in caelos_dm_dashboard.html bestiary data
+## [BESTIARY|STAT_BLOCKS] Full stat entries in caelos_dm_dashboard.html bestiary data
 
 GNAWMAW | CR 12 | Huge Aberration (Monstrosity), Chaotic Evil
 AC 15 | HP 189 (18d12+72) | Speed 30ft/climb 20ft/fly 20ft (hover) | Init +1
@@ -559,6 +572,16 @@ Reaction: Protective Interposition (steps in front of attack targeting Ichabod)
 Feeding: ⚫ No Blood — Construct. Lantern core is pressurized alchemical fuel. Do not attempt.
 [PA] Encountered at Great Lantern Factory. Factory abandoned after Uprising — constructs gained consciousness led by ICHABOD (unit I-1, blue bowtie, repaired it 7 times). Lanternlocks maintain dead factory indefinitely. Not hostile by default — 1 round classification window (DC13 Deception to pass as maintenance worker). [DM] Lanternlocks CANNOT leave the Great Lantern Factory — their power supply is tied to the factory's presence. Straying too far causes power failure. Ichabod and crew are permanently bound to the building they've chosen to maintain forever.
 
+## [LOC:GREAT_LANTERN_FACTORY|CALMAAR|ABANDONED|PA]
+GREAT LANTERN FACTORY — FULL LORE
+The factory produced lanterns fueled by a living organic biomass in the basement — blue glowing biological material that management harvested for fuel. Management built a machine to accelerate extraction but it was too dangerous for humans to operate. They integrated the smartest Lanternlock (Ichabod, unit I-1) into the system — not knowing this would permanently fuse him with it. Ichabod became the machine. He cannot be removed. He now sits at the center of the organic mass in the basement, slowly manufacturing new Lanternlocks from spare parts and biomass. He is essentially a friendly construct brood queen. Cockney accent. Genuinely unbothered. [PA] gave him one of the last intact Great Lanterns in exchange for safe passage into the Egression Zone. Very few intact lanterns remain — damaged lanterns are non-functional and replacements require a lengthy process Ichabod struggles with alone (Mona's engineering skills died with her).
+
+FACTORY HISTORY (989 I.D.):
+Evrril Lewis (Sub-Supervisor, Mona's father) ran day-to-day operations. Eleanor Licthwnd = Primary Supervisor. Armond Bondi = Factory Foreman. All deceased. Mona Lewis (Engineer) accidentally triggered Ichabod's awakening by installing an incomplete linguistic subroutine, then losing him before finishing it. She spent her final days posting memos desperately searching for him — never knowing he was in the basement beneath her. Murray died suspiciously on the 6th of Solace — killed by proximity to the organic biomass in the basement before Ichabod's integration. His death was the proof of concept that the extraction machine was too dangerous for humans to operate — the reason management chose to integrate Ichabod instead. Covered up by management as a workplace tragedy. Mona grew suspicious: secret basement, Murray's death, management in hazmat gear with weapons on her day off. Wrote a memo to her father (14th Solace). Both were killed by Armond's order on the 15th — bodies found in/behind side warehouse. Kill memo was not destroyed as ordered. Two bodies found locked together, clearly fought at time of death — Evrril died trying to protect Mona. The Uprising followed — exact trigger TBD. Constructs gained consciousness. Roof of main floor destroyed. Factory abandoned ~230 years ago. Ichabod still wears the bowtie Mona put on him.
+Mona Lewis: Engineer. Named Ichabod. Put his magnetic bowtie on his chest. Inadvertently set his awakening in motion. Never found him. Deceased.
+
+[DM SIDE PROJECT — LOW PRIORITY] Caelos Historical Timeline: establish major past events players won't directly experience but that give the world texture. Factory story (989 I.D. → Uprising → 230 years silence) is one anchor point. Work on when no other priorities.
+
 POLAR_OWLBEAR | CR 11 | Large Monstrosity, Unaligned
 AC 17 | HP 178 (17d10+85) | Speed 40ft, Climb 30ft | Init +2
 STR 22 DEX 14 CON 20 INT 5 WIS 16 CHA 8
@@ -588,7 +611,7 @@ Feeding: 🔴 Extremely Dangerous — blood is mutagenic compound. Auto 6d6 pois
 
 ---
 
-## [THREADS]
+## [THREADS|ACTIVE_PLOTLINES]
 
 [THREAD:REAPER_HUNT|PA]
 Status: Active — about to escalate. Reaper confirmed in Lethbridge.
@@ -628,7 +651,7 @@ ACT 2 OPENER: Aerresti meets PB at Scarred Crater. Begins sharing info. Eventual
 
 ---
 
-## [MUSIC] Vorpal Lance Music — Campaign Soundtrack
+## [MUSIC|SOUNDTRACK] Vorpal Lance Music — Campaign Soundtrack
 
 **Project:** Vorpal Lance Music. Original music composed for Caelos. DAW: FL Studio. Instruments available: guitar, bass, keyboard (not currently active), plus full FL Studio library. Music is a core part of the campaign vision — not background noise, intentional design. 58 tracks already completed as of session 4. ALL tracks are mixed to loop seamlessly for repeat playback at the table.
 
@@ -695,20 +718,19 @@ Abandoned Wizard Tower | Aromatic Armorsmith | Battle - Feywild Mystics | Battle
 - Winnie Flint (née Howell) infernal contacts — nature and scope of her 'old contacts' network, possible infernal ties post-deal
 - Aargardt's full criminal entanglements
 - Val's devil father — name, personality, motivation, what he wants with Val (PRIORITY)
-- Egression Zone origin — multiple theories exist, none confirmed. Do NOT canonize in bestiary or dashboard until locked in.
+- Egression Zone origin — RESOLVED: See [EGRESSION_ZONE] canonical origin. Orrel'lie Hold + Vossmere city + Blubberhive corpse + mutagenic compounds. Do NOT contradict this in bestiary or dashboard.
 - Dragon Remains on Golden Wood NE coast — whose remains? How old? Any connection to Szkaalbrxtnvaal?
 - Wreck of the Elmer Grimly (Golden Wood NW coast) — ship identity, story, crew, cargo TBD
 - The Great Stump (Golden Wood SE) — scale and origin TBD. Feywild connection? Titan-scale tree once?
 - Bulb Forest (Golden Wood west) — Feywild bleed zone? Permanent or growing?
 - Snail Mail HQ exact location — which city/region is the main campus in?
 - The barrel/brewing room at Snail Mail HQ — what is being brewed? Corporate perk or operational necessity?
-- Unlabeled blue windmill structure in Hayward (north-center) — identity TBD
+- Unlabeled blue windmill structure in Hayward (north-center) — RESOLVED: grain mill. Hayward is largest food production area in Calmaar, extensive fields processed and distributed across region.
 - Wreck of the Giantswatch in Greyport harbor — what sank it, when, any relevance to current missing ships thread?
 - Everhaven pre-destruction state — what was it before? Was Reaper attack the primary cause of destruction or did it worsen prior damage?
 - Lethbridge School of [Arcane?] — full name, significance to magical segregation in the Dome TBD
 - Missing ships (all northern ports) — something collecting them or destroying them? Two very different villains attached to each answer
 - Gyarmos (lakes/seas Titan, status unknown) — asleep, dead, or busy? Timing with ship disappearances potentially significant
-- The Great Stump (Golden Wood SE) — scale TBD. "Great" in a world with Titans could mean anything from impressive to divine in origin
 - Nyra Le Fae and Belson Truly — do they know each other personally? That relationship could be the spine of the entire Lethbridge arc
 - Winnie Flint's old contacts — has she ever written TO the devil? Does she know how? Does he write back?
 - Umbral One's follower at House of Kindred — still embedded there NOW while PA is on long rest in the Golden Wood nearby?
