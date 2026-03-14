@@ -2619,6 +2619,365 @@
   .wx-pre-val { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin: 2px 0; }
   .wx-pre-icon { font-size: 12px; }
 
+  /* ═══════════════════════════════════════
+     MAGIC ITEM TRACKER
+  ═══════════════════════════════════════ */
+
+  /* PC card items button */
+  .pc-items-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--sub);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pc-items-btn:active { background: rgba(232,200,122,0.08); border-color: rgba(232,200,122,0.3); }
+  .pc-items-icon { font-size: 14px; opacity: 0.6; }
+  .pc-items-label { flex: 1; text-align: left; }
+  .pc-items-count {
+    font-size: 11px;
+    background: rgba(232,200,122,0.15);
+    border: 1px solid rgba(232,200,122,0.3);
+    color: var(--gold);
+    border-radius: 10px;
+    padding: 1px 7px;
+    min-width: 18px;
+    text-align: center;
+  }
+  /* Glow when attuned items present */
+  .pc-items-btn.has-attuned {
+    border-color: rgba(160,80,255,0.4);
+    box-shadow: 0 0 8px rgba(160,80,255,0.15);
+    color: rgba(200,160,255,0.8);
+    animation: items-btn-breathe 3s ease-in-out infinite;
+  }
+  @keyframes items-btn-breathe {
+    0%,100% { box-shadow: 0 0 6px rgba(160,80,255,0.15); border-color: rgba(160,80,255,0.3); }
+    50%      { box-shadow: 0 0 14px rgba(160,80,255,0.35); border-color: rgba(160,80,255,0.6); }
+  }
+
+  /* Items popup */
+  #items-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: popup-in 0.22s cubic-bezier(0.34,1.2,0.64,1);
+  }
+  #items-popup.popup-closing { animation: popup-out 0.2s ease-in forwards; }
+  .items-popup-card {
+    position: relative;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+    border-top: 2px solid var(--gold);
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Items list (scrollable) */
+  .items-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .items-empty {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    padding: 8px 0;
+    text-align: center;
+  }
+
+  /* Individual item card */
+  .item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  /* Attuned glow — purple */
+  .item-card.item-attuned {
+    border-color: rgba(160,80,255,0.5);
+    box-shadow: 0 0 12px rgba(160,80,255,0.2), inset 0 0 20px rgba(160,80,255,0.04);
+    animation: item-attune-pulse 3s ease-in-out infinite;
+  }
+  @keyframes item-attune-pulse {
+    0%,100% { box-shadow: 0 0 8px rgba(160,80,255,0.15), inset 0 0 16px rgba(160,80,255,0.03); border-color: rgba(160,80,255,0.4); }
+    50%      { box-shadow: 0 0 18px rgba(160,80,255,0.35), inset 0 0 24px rgba(160,80,255,0.07); border-color: rgba(160,80,255,0.7); }
+  }
+
+  .item-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .item-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .item-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .item-rarity {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .item-card-btns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .item-attune-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: rgba(200,160,255,0.9);
+    background: rgba(160,80,255,0.15);
+    border: 1px solid rgba(160,80,255,0.35);
+    border-radius: 6px;
+    padding: 2px 7px;
+  }
+  .item-req-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    color: var(--sub);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 7px;
+  }
+  .item-edit-btn, .item-del-btn {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--sub);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.12s;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .item-edit-btn:active { background: rgba(232,200,122,0.15); color: var(--gold); border-color: rgba(232,200,122,0.4); }
+  .item-del-btn:active  { background: rgba(224,104,104,0.15); color: #e06868; border-color: rgba(224,104,104,0.4); }
+
+  .item-desc, .item-func {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.5;
+    margin-bottom: 5px;
+  }
+  .item-func-lbl {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  /* Charge pips */
+  .item-charges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+  }
+  .item-charge-lbl {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 32px;
+  }
+  .item-charge-pips {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .item-charge-pip {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    border: 1px solid rgba(232,200,122,0.4);
+    background: rgba(232,200,122,0.12);
+    cursor: pointer;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+  .item-charge-pip.used {
+    background: rgba(232,200,122,0.06);
+    border-color: rgba(232,200,122,0.15);
+    opacity: 0.35;
+  }
+  .item-charge-pip:active { transform: scale(0.85); }
+
+  /* Attunement checkboxes */
+  .item-attune-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 7px;
+    flex-wrap: wrap;
+  }
+  .item-check-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  .item-check-label:hover { color: var(--text); }
+  .item-check-disabled { opacity: 0.35; cursor: default !important; }
+  .item-checkbox {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .item-checkbox.checked { background: rgba(232,200,122,0.15); border-color: rgba(232,200,122,0.5); }
+  .item-checkbox.checked::after { content: '✓'; color: var(--gold); font-size: 10px; }
+  .item-checkbox.attuned { background: rgba(160,80,255,0.2); border-color: rgba(160,80,255,0.6); }
+  .item-checkbox.attuned::after { content: '⚡'; font-size: 9px; }
+
+  /* Add/edit form */
+  .items-form {
+    border-top: 1px solid var(--border);
+    padding: 12px 14px 16px;
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .item-rar-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .item-rar-btn {
+    flex: 1;
+    min-width: 60px;
+    padding: 5px 4px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--raised);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--sub);
+    cursor: pointer;
+    transition: all 0.12s;
+    text-align: center;
+  }
+  .item-rar-btn:active { transform: scale(0.93); }
+  .item-rar-btn.active { background: rgba(255,255,255,0.05); }
+  .items-input {
+    width: 100%;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    padding: 8px 12px;
+    outline: none;
+    margin-bottom: 6px;
+    transition: border-color 0.2s;
+  }
+  .items-input:focus { border-color: rgba(232,200,122,0.4); }
+  .items-textarea {
+    width: 100%;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    margin-bottom: 6px;
+    resize: none;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+  .items-textarea:focus { border-color: rgba(232,200,122,0.4); }
+  .item-charges-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .item-charge-form-lbl {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    color: var(--sub);
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .item-charges-input {
+    width: 60px;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 5px 8px;
+    text-align: center;
+    outline: none;
+  }
+  .item-form-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+
   /* ══════════════════════════════
      SECTION ACTIVE GLOWS — per color
   ══════════════════════════════ */
@@ -2845,7 +3204,7 @@
   .enemy-tracker { padding:4px 6px; }
   .enemy-group { background:var(--raised);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;overflow:hidden; }
   .enemy-group-head { display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(155,26,26,0.15);border-bottom:1px solid var(--border); }
-  .enemy-group-name { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);flex:1; }
+  .enemy-group-name { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:#a355ff;flex:1; }
   .enemy-group-cr { font-family:'Rajdhani',sans-serif;font-size:11px;color:#ff8888;background:rgba(155,26,26,0.4);padding:2px 7px;border-radius:4px; }
   .enemy-dismiss-all { font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--sub);background:transparent;border:1px solid var(--border);border-radius:5px;padding:3px 8px;cursor:pointer; }
   .enemy-row { display:flex;align-items:center;gap:5px;padding:5px 10px;border-bottom:1px solid rgba(42,42,58,0.5); }
@@ -4710,6 +5069,12 @@
         <div class="surprise-toggle"><button class="surprise-btn" id="surpriseBtn" onclick="toggleSurprise()">⚡ Surprise</button></div>
       </div>
 
+      <div class="c-section s-wrap-gray">
+        <div class="c-head s-gray" onclick="toggleSec(this)">
+          <div class="c-left"><span class="c-icon" style="color:#01F9C6">📋</span><span class="c-title" style="color:#01F9C6">Combat Reminders</span></div>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="c-body">
       <div class="c-section">
         <div class="c-head s-red" onclick="toggleSec(this)">
           <div class="c-left"><span class="c-icon">🔴</span><span class="c-title">Every Round — Never Skip</span></div>
@@ -4779,11 +5144,13 @@
           <div class="item warn" onclick="toggle(this)"><div class="cb"></div><div class="item-body"><div class="item-text">Someone should sweat today</div><span class="item-note">Easy wins feel hollow. Earned wins feel legendary.</span></div></div>
         </div>
       </div>
+        </div>
+      </div>
 
       <!-- BATTLEFIELD EFFECTS -->
       <div class="c-section" id="bf-section">
         <div class="c-head s-red" onclick="toggleSec(this)" id="bf-head">
-          <div class="c-left"><span class="c-icon">🌩</span><span class="c-title">Battlefield Effects</span></div>
+          <div class="c-left"><span class="c-icon">⚡</span><span class="c-title">Battlefield Effects</span></div>
           <span class="chevron">▶</span>
         </div>
         <div class="c-body" id="bf-body">
@@ -4849,7 +5216,7 @@
 
 <div class="c-section" id="enemy-cond-section">
         <div class="c-head s-gray" onclick="toggleSec(this)">
-          <div class="c-left"><span class="c-icon">⬡</span><span class="c-title">Enemies</span></div>
+          <div class="c-left"><span class="c-icon">👾</span><span class="c-title" style="color:#a355ff">Enemies</span></div>
           <span class="chevron">▶</span>
         </div>
         <div class="c-body">
@@ -5398,6 +5765,20 @@
 
   // ── QUICK NOTES — session-only per PC ──
   const pcNotes = {};
+
+  // ── MAGIC ITEMS — keyed by pid e.g. "A-0" ──
+  // Each item: { id, name, desc, func, rarity, maxCharges, usedCharges, requiresAttunement, attuned }
+  const magicItems = {};
+  function getItems(pid)   { return magicItems[pid] || []; }
+  function nextItemId(pid) { const it = getItems(pid); return it.length ? Math.max(...it.map(i=>i.id))+1 : 1; }
+  function saveItems()     { try { localStorage.setItem('caelos_magic_items', JSON.stringify(magicItems)); } catch(e){} }
+  function loadItems()     {
+    try {
+      const saved = JSON.parse(localStorage.getItem('caelos_magic_items'));
+      if (saved) Object.assign(magicItems, saved);
+    } catch(e){}
+  }
+  loadItems();
   function updatePCNote(pid, val) {
     pcNotes[pid] = val;
     const el = document.getElementById(`qnote-${pid}`);
@@ -6027,6 +6408,13 @@
           </div>
           <button class="ds-clear-btn" onclick="clearDS('${party}',${idx})">✕ Clear</button>
         </div>
+
+        <!-- MAGIC ITEMS BUTTON -->
+        <button class="pc-items-btn" onclick="openItemsPopup('${pid}')" id="items-btn-${pid}">
+          <span class="pc-items-icon">✦</span>
+          <span class="pc-items-label">Magic Items</span>
+          <span class="pc-items-count" id="items-count-${pid}">${getItems(pid).length > 0 ? getItems(pid).length : ''}</span>
+        </button>
       `;
       grid.appendChild(card);
     });
@@ -6185,6 +6573,8 @@
     renderPCs();
     // Re-render calendar so event dots and filters update
     if (typeof renderCalendar === 'function') renderCalendar();
+    // Sync weather to the newly active party's current date
+    syncWeatherToPartyDate();
     const lbl = document.getElementById('aoeTargetCount');
     if (lbl) lbl.textContent = '';
     aoeSelected.pc.clear();
@@ -6192,6 +6582,16 @@
   }
 
   renderPCs();
+
+  // ── AUTO-LOAD WEATHER FOR CURRENT PARTY DATE ON INIT ──
+  function syncWeatherToPartyDate() {
+    const pd = PARTY_DATES[party];
+    if (!pd) return;
+    wxMonth = pd.month;
+    wxDay   = pd.day;
+    wxYear  = pd.year;
+    loadDateWeather();
+  }
 
   // ── TAB SWITCHING ──
   function switchTab(name, btn) {
@@ -7106,7 +7506,967 @@
 
   // Init weather tab
   renderDatePicker();
-  renderWeatherCard();
+
+
+
+  // ═══════════════════════════════════════
+  // CALENDAR SYSTEM
+  // ═══════════════════════════════════════
+// ── CAELOS CALENDAR DATA ──
+  const MONTHS = [
+    { num:1,  name:'Awakening', season:'Spring begins', festDay:28, festName:'Bloom Festival' },
+    { num:2,  name:'Devotion',  season:'Spring',        festDay:12, festName:'Devotion Day' },
+    { num:3,  name:'Joy',       season:'Summer begins', festDay:9,  festName:'Charm Day' },
+    { num:4,  name:'Kindred',   season:'Summer',        festDay:1,  festName:'Net Day' },
+    { num:5,  name:'Medial',    season:'Peak summer',   festDay:15, festName:'Antirium' },
+    { num:6,  name:'Harvest',   season:'Autumn begins', festDay:19, festName:'The Gathering' },
+    { num:7,  name:'Resolute',  season:'Autumn',        festDay:27, festName:'Ancestor Day' },
+    { num:8,  name:'Solace',    season:'Winter begins', festDay:13, festName:'Lots' },
+    { num:9,  name:'Sacrifice', season:'Deep winter',   festDay:20, festName:'Immolation Day' },
+    { num:10, name:'Silence',   season:'Late winter',   festDay:5,  festName:'The Silence' },
+  ];
+
+  const WHELK_DAYS = [1, 11, 21];
+
+  // ── ERAS ──
+  const ERAS = [
+    { abbr:'P.H.E.', name:'Pre-Historic Era',         defaultYear: 1 },
+    { abbr:'C.D.',   name:'C.D.',                     defaultYear: 1 },
+    { abbr:'A.D.',   name:'Arcania-Dominatia',         defaultYear: 1 },
+    { abbr:'I.D.',   name:'Industrialis Developmentia', defaultYear: 1219 },
+  ];
+
+  // Party dates — live reference, persisted via localStorage
+  const PARTY_DATES = {
+    A: { era:'I.D.', month:1,  day:25, year:1219 },
+    B: { era:'I.D.', month:2,  day:22, year:1219 },
+  };
+  function savePartyDates() {
+    try { localStorage.setItem('caelos_party_dates', JSON.stringify(PARTY_DATES)); } catch(e){}
+  }
+  function loadPartyDates() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('caelos_party_dates'));
+      if (saved?.A) Object.assign(PARTY_DATES.A, saved.A);
+      if (saved?.B) Object.assign(PARTY_DATES.B, saved.B);
+    } catch(e){}
+  }
+  // Weather emoji map
+  const WEATHER_EMOJI = {
+    'clear':'☀️','overcast':'🌥️','hazy':'🌫️','fog':'🌁','modrain':'🌧️',
+    'exheat':'🔥','excold':'❄️','thunder':'⛈️','tornado':'🌪️','blizzard':'🌨️',
+    'acid':'☠️','petrify':'🪨','freeze':'🧊','hurricane':'🌀','sleepfog':'😴','veilstars':'✨',
+  };
+  const WEATHER_NAMES = {
+    'clear':'Sunny / Clear','overcast':'Overcast / Light Rain','hazy':'Warm & Hazy',
+    'fog':'Foggy','modrain':'Moderate Rain','exheat':'Extreme Heat','excold':'Extreme Cold',
+    'thunder':'Thunderstorm','tornado':'Tornado','blizzard':'Blizzard','acid':'Acid Rain',
+    'petrify':'Petrifying Rain','freeze':'Freezing Rain','hurricane':'Hurricane',
+    'sleepfog':'Sleeping Fog','veilstars':'Veil of Stars',
+  };
+  const WEATHER_KEYS = Object.keys(WEATHER_EMOJI);
+
+  // Event categories
+  const EVENT_CATS = [
+    { key:'goal',   icon:'🎯', label:'Goal',    color:'rgba(104,216,168,0.7)' },
+    { key:'warn',   icon:'⚠️', label:'Warning', color:'rgba(255,122,47,0.7)'  },
+    { key:'note',   icon:'📌', label:'Note',    color:'rgba(232,200,122,0.7)' },
+    { key:'combat', icon:'⚔️', label:'Combat',  color:'rgba(224,104,104,0.7)' },
+    { key:'travel', icon:'🗺️', label:'Travel',  color:'rgba(104,168,216,0.7)' },
+  ];
+
+  // Storage: keyed by "era-year-month-day"
+  // weatherData[key] = { type: 'clear', manual: false }
+  // eventData[key]   = [ { id, cat, text }, ... ]  — array, multiple events per day
+  const weatherData = {};
+  const eventData   = {};
+
+  function getEvents(dk, forDisplay) {
+    const all = eventData[dk] || [];
+    if (!forDisplay) return all; // raw — no filter
+    // Filter: show active party's events + DM events
+    return all.filter(ev => {
+      const p = ev.party || 'A';
+      return p === _activeParty || p === 'DM';
+    });
+  }
+  function nextEventId(dk) {
+    const evs = getEvents(dk);
+    return evs.length ? Math.max(...evs.map(e=>e.id)) + 1 : 1;
+  }
+
+  function dayKey(era, year, month, day) {
+    return era + '-' + year + '-' + month + '-' + day;
+  }
+
+  // weatherData and eventData loaded from localStorage on init
+
+  // ── STATE ──
+  let calState = {
+    era:   'I.D.',
+    month: 1,
+    year:  1219,
+    selectedDay: 25,
+  };
+
+  function renderCalendar() {
+    const widget = document.getElementById('cal-widget');
+    if (!widget) return;
+    const m   = MONTHS[calState.month - 1];
+    const sel = calState.selectedDay;
+    const yr  = calState.year;
+    const era = calState.era;
+    const eraObj = ERAS.find(e => e.abbr === era);
+
+    // Era select options
+    const eraOptions = ERAS.map(e =>
+      `<option value="${e.abbr}" ${e.abbr === era ? 'selected' : ''}>${e.abbr} — ${e.name}</option>`
+    ).join('');
+
+    // Day grid
+    let dayCells = '';
+    for (let d = 1; d <= 30; d++) {
+      const isSelected = d === sel;
+      const isWhelk    = WHELK_DAYS.includes(d);
+      const isFest     = d === m.festDay;
+
+      const isPartyA = era === 'I.D.' && calState.month === PARTY_DATES.A.month
+                       && yr === PARTY_DATES.A.year && d === PARTY_DATES.A.day;
+      const isPartyB = era === 'I.D.' && calState.month === PARTY_DATES.B.month
+                       && yr === PARTY_DATES.B.year && d === PARTY_DATES.B.day;
+      const isBoth   = isPartyA && isPartyB;
+      let cls = 'cal-day';
+      if (isSelected)          cls += ' cal-day-selected';
+      else if (isWhelk)        cls += ' cal-day-whelk';
+      if (isFest && !isSelected) cls += ' cal-day-festival';
+      if (isBoth)              cls += ' cal-day-party-both';
+      else if (isPartyA)       cls += ' cal-day-party-a';
+      else if (isPartyB)       cls += ' cal-day-party-b';
+
+      // Weather emoji and event dot for this day
+      const dk = dayKey(era, yr, calState.month, d);
+      const wx = weatherData[dk];
+      const ev = eventData[dk];
+      const wxEmoji = wx ? `<span class="cal-day-wx">${WEATHER_EMOJI[wx.type]||''}</span>` : '';
+      const evs        = getEvents(dk, true); // filtered for active party
+      const evsAll     = getEvents(dk);        // all events for DM lock check
+      const hasDmOnly  = evsAll.some(e => (e.party||'A') === 'DM') && evs.filter(e=>(e.party||'A')!=='DM').length === 0;
+      const hasLock    = evsAll.some(e => (e.party||'A') === 'DM');
+      const evDot      = evs.length > 0
+        ? `<span class="cal-day-ev-dot">${evs.length > 1 ? evs.length : ''}${hasLock ? '<span class="ev-lock">🔒</span>' : ''}</span>`
+        : (hasLock && _activeParty !== 'DM' ? '' : '');
+
+      dayCells += `<div class="${cls}" onclick="selectDay(${d})">${d}${wxEmoji}${evDot}</div>`;
+    }
+
+    // Event banner
+    let eventText  = `${m.name} · ${m.season}`;
+    let eventClass = '';
+    if (sel === m.festDay) {
+      eventText  = `✦ ${m.festName}`;
+      eventClass = 'ev-festival';
+    } else if (WHELK_DAYS.includes(sel)) {
+      eventText  = `📰 Word of the Whelk publishes`;
+      eventClass = 'ev-whelk';
+    } else if (era === 'I.D.' && sel === PARTY_DATES.A.day && calState.month === PARTY_DATES.A.month && yr === PARTY_DATES.A.year) {
+      eventText  = `🌀 PA current date`;
+      eventClass = 'ev-party';
+    } else if (era === 'I.D.' && sel === PARTY_DATES.B.day && calState.month === PARTY_DATES.B.month && yr === PARTY_DATES.B.year) {
+      eventText  = `✨ PB current date`;
+      eventClass = 'ev-party';
+    }
+
+    // Readout
+    const dayNum = (calState.month - 1) * 30 + sel;
+
+    widget.innerHTML = `
+      <div class="cal-readout">
+        <div class="cal-readout-inner">
+          <div>
+            <div class="cal-readout-label">Selected Date</div>
+            <div class="cal-readout-date" id="cal-readout-date">${sel}<sup style="font-size:13px;opacity:0.6;vertical-align:super">${ordinal(sel)}</sup> of ${m.name}</div>
+            <div class="cal-readout-sub">
+              <span>${yr} ${era}</span>
+              <span>·</span>
+              <span>Day ${dayNum} of year</span>
+            </div>
+          </div>
+          <div class="cal-readout-step-btns">
+            <button class="cal-step-btn step-fwd" onclick="stepActiveParty(1, this)" title="Advance party date +1 day">+</button>
+            <button class="cal-step-btn step-bwd" onclick="stepActiveParty(-1, this)" title="Move party date -1 day">−</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cal-controls">
+        <div class="cal-era-row">
+          <span class="cal-era-label">Era</span>
+          <select class="cal-era-select" onchange="changeEra(this.value)">${eraOptions}</select>
+        </div>
+        <div class="cal-month-bar">
+          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+          <div>
+            <div class="cal-month-name">${m.name}</div>
+            <span class="cal-month-sub">${calState.month}/10 · ${m.season}</span>
+          </div>
+          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="cal-year-bar">
+          <button class="cal-year-btn" onclick="changeYear(-1)">−</button>
+          <span class="cal-year-display">${yr}</span>
+          <span class="cal-year-era-lbl">${era}</span>
+          <button class="cal-year-btn" onclick="changeYear(1)">+</button>
+        </div>
+      </div>
+
+      <div class="cal-grid">${dayCells}</div>
+
+      <div class="cal-event-banner ${eventClass}">${eventText}</div>
+
+
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="leg-box"></div>Whelk</div>
+        <div class="cal-legend-item"><div class="leg-sq"></div>Festival</div>
+        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('A')" title="Jump to PA current date">
+          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,168,216,0.8);flex-shrink:0"></div>PA
+        </div>
+        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('B')" title="Jump to PB current date">
+          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,216,168,0.8);flex-shrink:0"></div>PB
+        </div>
+      </div>
+    `;
+  }
+
+  function selectDay(d) {
+    calState.selectedDay = d;
+    // Sync weather tab to selected date
+    wxMonth = calState.month; wxDay = d; wxYear = calState.year;
+    loadDateWeather(); // this now calls syncBFWeather internally
+    renderCalendar();
+    openDayPopup(d);
+  }
+
+  // Track which event is being edited in the popup (null = adding new)
+  let _editingEventId = null;
+
+  function openDayPopup(d) {
+    const era = calState.era;
+    const yr  = calState.year;
+    const m   = MONTHS[calState.month - 1];
+    const dk  = dayKey(era, yr, calState.month, d);
+    _editingEventId = null;
+
+    const existing = document.getElementById('day-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'day-popup';
+    document.body.appendChild(popup);
+    refreshPopup(dk, d, m, yr, era);
+  }
+
+  function refreshPopup(dk, d, m, yr, era) {
+    const popup = document.getElementById('day-popup');
+    if (!popup) return;
+
+    const wx  = weatherData[dk];
+    const evs    = getEvents(dk, true); // filtered for active party
+    const evsAll = getEvents(dk);        // all for edit access
+
+    // Weather
+    const wxName    = wx ? (WEATHER_NAMES[wx.type]||wx.type) : 'No weather set';
+    const wxEmoji   = wx ? (WEATHER_EMOJI[wx.type]||'') : '—';
+    const manualTag = wx?.manual ? '<span class="popup-manual-tag">✎ Manual</span>' : '';
+    const wxOptions = '<option value="">— Set weather —</option>' +
+      WEATHER_KEYS.map(k =>
+        `<option value="${k}" ${wx?.type===k?'selected':''}>${WEATHER_EMOJI[k]} ${WEATHER_NAMES[k]}</option>`
+      ).join('');
+
+    // Events list
+    const evList = evs.length
+      ? evs.map(ev => {
+          const cat   = EVENT_CATS.find(c=>c.key===ev.cat) || EVENT_CATS[2];
+          const evP    = ev.party || 'A';
+          const pBadge = evP === 'DM'
+            ? `<span class="ev-party-badge dm">🔒 Both</span>`
+            : '';
+          return `<div class="popup-ev-item">
+            <span class="popup-ev-icon" style="color:${cat.color}">${cat.icon}</span>
+            <span class="popup-ev-text">${ev.text||'<em style="opacity:0.4">No text</em>'}</span>
+            ${pBadge}
+            <button class="popup-ev-edit" onclick="editEvent('${dk}',${ev.id})">✎</button>
+            <button class="popup-ev-del"  onclick="deleteEvent('${dk}',${ev.id})">✕</button>
+          </div>`;
+        }).join('')
+      : '<div class="popup-ev-empty">No events — add one below</div>';
+
+    // Add / edit form
+    const editing = _editingEventId !== null ? evs.find(e=>e.id===_editingEventId) : null;
+    const catBtns = EVENT_CATS.map(c => {
+      const isActive = editing ? editing.cat===c.key : false;
+      return `<button class="popup-cat-btn${isActive?' active':''}"
+        style="${isActive?'border-color:'+c.color+';color:'+c.color:''}"
+        onclick="setNewEventCat('${dk}',${editing?editing.id:'null'},'${c.key}')"
+        title="${c.label}">${c.icon}</button>`;
+    }).join('');
+
+    popup.innerHTML = `
+      <div class="popup-backdrop" onclick="closeDayPopup()"></div>
+      <div class="popup-card">
+        <div class="popup-header">
+          <span class="popup-date">${d}<sup>${ordinal(d)}</sup> ${m.name}, ${yr} ${era}</span>
+          <button class="popup-close" onclick="closeDayPopup()">✕</button>
+        </div>
+
+        <div class="popup-section">
+          <div class="popup-section-label">Weather ${manualTag}</div>
+          <div class="popup-wx-row">
+            <span class="popup-wx-emoji">${wxEmoji}</span>
+            <span class="popup-wx-name">${wxName}</span>
+          </div>
+          <select class="popup-wx-select" onchange="setWeather('${dk}',this.value)">${wxOptions}</select>
+          ${wx ? `<button class="popup-clear-btn" onclick="clearWeather('${dk}')">Clear weather</button>` : ''}
+        </div>
+
+        <div class="popup-section">
+          <div class="popup-section-label">Events</div>
+          <div class="popup-ev-list" id="popup-ev-list">${evList}</div>
+        </div>
+
+        <div class="popup-section popup-add-section">
+          <div class="popup-section-label">${editing ? '✎ Edit Event' : '+ Add Event'}</div>
+          <div class="popup-cat-row">${catBtns}</div>
+          <div class="popup-dm-row${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}"
+            onclick="toggleEventDM('${dk}',${editing?editing.id:'null'})">
+            <div class="popup-dm-checkbox${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}">
+              ${(editing?(editing.party==='DM'):_newEventParty==='DM') ? '🔒' : ''}
+            </div>
+            <span class="popup-dm-label">🔒 DM Event — visible to both parties</span>
+          </div>
+          <div class="popup-add-row">
+            <input class="popup-event-input" id="popup-ev-input" type="text" maxlength="80"
+              placeholder="Goal, note, reminder…"
+              value="${editing?.text||''}"
+              onkeydown="if(event.key==='Enter')saveEvent('${dk}')">
+            <button class="popup-save-btn" onclick="saveEvent('${dk}')">${editing?'Save':'Add'}</button>
+          </div>
+          ${editing ? `<button class="popup-clear-btn" style="margin-top:4px" onclick="cancelEdit('${dk}')">Cancel edit</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function closeDayPopup() {
+    const p = document.getElementById('day-popup');
+    if (p) { p.classList.add('popup-closing'); setTimeout(() => p.remove(), 200); }
+  }
+
+  function setWeather(dk, type) {
+    if (!type) return;
+    weatherData[dk] = { type, manual:true };
+    saveCalendarData();
+    // Sync to main weather card if this day is currently selected
+    if (calState.month === wxMonth && calState.year === wxYear &&
+        calState.selectedDay === wxDay) {
+      currentWeather = type;
+      if (typeof renderWeatherCard === 'function') renderWeatherCard();
+      if (typeof updateBFWeather   === 'function') updateBFWeather();
+    }
+    renderCalendar();
+    const d   = calState.selectedDay;
+    const m   = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function clearWeather(dk) {
+    delete weatherData[dk];
+    saveCalendarData();
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  // New event cat selection — updates the button row live
+  let _newEventCat   = 'note';
+  let _newEventParty = 'A'; // 'A', 'B', or 'DM'
+
+  function setNewEventCat(dk, editId, cat) {
+    _newEventCat = cat;
+    if (editId !== 'null') {
+      const evs = getEvents(dk);
+      const ev  = evs.find(e=>e.id===editId);
+      if (ev) { ev.cat = cat; renderCalendar(); }
+    }
+    const popup = document.getElementById('day-popup');
+    if (!popup) return;
+    popup.querySelectorAll('.popup-cat-btn').forEach((btn,i) => {
+      const c = EVENT_CATS[i];
+      const isActive = c.key === cat;
+      btn.classList.toggle('active', isActive);
+      btn.style.borderColor = isActive ? c.color : '';
+      btn.style.color       = isActive ? c.color : '';
+    });
+  }
+
+  function toggleEventDM(dk, editId) {
+    const isDM = _newEventParty === 'DM';
+    _newEventParty = isDM ? _activeParty : 'DM';
+
+    if (editId !== 'null') {
+      const evs = getEvents(dk);
+      const ev  = evs.find(e=>e.id===editId);
+      if (ev) { ev.party = _newEventParty; saveCalendarData(); renderCalendar(); }
+    }
+    // Update checkbox UI
+    const row      = document.querySelector('.popup-dm-row');
+    const checkbox = document.querySelector('.popup-dm-checkbox');
+    const nowDM    = _newEventParty === 'DM';
+    if (row)      row.classList.toggle('checked', nowDM);
+    if (checkbox) { checkbox.classList.toggle('checked', nowDM); checkbox.textContent = nowDM ? '🔒' : ''; }
+  }
+
+  function saveEvent(dk) {
+    const input = document.getElementById('popup-ev-input');
+    const text  = input ? input.value.trim() : '';
+    if (!eventData[dk]) eventData[dk] = [];
+
+    if (_editingEventId !== null) {
+      const ev = eventData[dk].find(e=>e.id===_editingEventId);
+      if (ev) { ev.text = text; ev.cat = _newEventCat; ev.party = _newEventParty; }
+      _editingEventId = null;
+    } else {
+      eventData[dk].push({ id: nextEventId(dk), cat: _newEventCat, party: _newEventParty, text });
+    }
+    _newEventCat   = 'note';
+    _newEventParty = _activeParty; // default next event to current party
+    saveCalendarData();
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function editEvent(dk, id) {
+    _editingEventId = id;
+    const ev = getEvents(dk).find(e=>e.id===id);
+    if (ev) { _newEventCat = ev.cat; _newEventParty = ev.party || _activeParty; }
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+    setTimeout(() => document.getElementById('popup-ev-input')?.focus(), 30);
+  }
+
+  function deleteEvent(dk, id) {
+    if (!eventData[dk]) return;
+    eventData[dk] = eventData[dk].filter(e=>e.id!==id);
+    if (eventData[dk].length === 0) delete eventData[dk];
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function cancelEdit(dk) {
+    _editingEventId = null;
+    _newEventCat   = 'note';
+    _newEventParty = _activeParty;
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function changeMonth(dir) {
+    calState.month += dir;
+    if (calState.month < 1)  { calState.month = 10; calState.year--; }
+    if (calState.month > 10) { calState.month = 1;  calState.year++; }
+    wxMonth = calState.month; wxYear = calState.year;
+    renderCalendar();
+  }
+
+  function changeYear(dir) {
+    calState.year = Math.max(1, calState.year + dir);
+    renderCalendar();
+  }
+
+  function changeEra(era) {
+    const eraObj = ERAS.find(e => e.abbr === era);
+    calState.era = era;
+    calState.year = eraObj ? eraObj.defaultYear : 1;
+    calState.month = 1;
+    calState.selectedDay = 1;
+    renderCalendar();
+  }
+
+  function ordinal(n) {
+    const s = ['th','st','nd','rd'];
+    const v = n % 100;
+    return s[(v-20)%10] || s[v] || s[0];
+  }
+
+  function jumpToParty(p) {
+    const pd = PARTY_DATES[p];
+    if (!pd) return;
+    calState.era         = pd.era;
+    calState.year        = pd.year;
+    calState.month       = pd.month;
+    calState.selectedDay = pd.day;
+    _activeParty = p;
+    // Switch the main party badge if it's different
+    if (typeof party !== 'undefined' && party !== p) {
+      party = p;
+      const badge = document.getElementById('partyBadge');
+      if (badge && typeof partyName === 'function') badge.textContent = partyName();
+      if (typeof renderPCs === 'function') renderPCs();
+      const lbl = document.getElementById('aoeTargetCount');
+      if (lbl) lbl.textContent = '';
+      if (typeof aoeSelected !== 'undefined') aoeSelected.pc.clear();
+    }
+    syncWeatherToPartyDate();
+    renderCalendar();
+
+    // Bubble the readout date text
+    setTimeout(() => {
+      const readout = document.querySelector('.cal-readout-date');
+      if (readout) {
+        readout.classList.remove('readout-jump');
+        void readout.offsetWidth;
+        readout.classList.add('readout-jump');
+        setTimeout(() => readout.classList.remove('readout-jump'), 650);
+      }
+    }, 20);
+
+    // Bubble the party date cell — find by day number in the grid
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.cal-day');
+      cells.forEach(c => {
+        if (parseInt(c.textContent) === pd.day &&
+            c.classList.contains(party === 'A' ? 'cal-day-party-a' : 'cal-day-party-b')) {
+          // Temporarily override animation with jump-land
+          const originalAnim = c.style.animation;
+          c.style.animation = 'day-jump-land 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards';
+          c.addEventListener('animationend', () => {
+            c.style.animation = originalAnim;
+          }, { once: true });
+        }
+      });
+    }, 40);
+  }
+
+  // _activeParty mirrors the dashboard party variable
+  // Updated by toggleParty() hook below
+  let _activeParty = 'A';
+
+  function stepActiveParty(dir, btn) {
+    // Fire burst — appended to body over the button so DOM rebuild can't kill it
+    if (btn) {
+      const rect = btn.getBoundingClientRect();
+      const burst = document.createElement('div');
+      burst.style.cssText = `
+        position:fixed;
+        left:${rect.left + rect.width/2}px;
+        top:${rect.top + rect.height/2}px;
+        width:12px; height:12px;
+        border-radius:50%;
+        transform:translate(-50%,-50%) scale(0);
+        pointer-events:none;
+        z-index:9999;
+        background:${dir > 0 ? 'rgba(232,200,122,0.7)' : 'rgba(200,200,220,0.5)'};
+        animation:step-burst 0.38s ease-out forwards;
+      `;
+      document.body.appendChild(burst);
+      burst.addEventListener('animationend', () => burst.remove(), { once: true });
+    }
+    const pd = PARTY_DATES[_activeParty];
+    pd.day += dir;
+
+    // Roll over month boundaries — both directions
+    if (pd.day > 30) {
+      pd.day = 1;
+      pd.month++;
+      if (pd.month > 10) { pd.month = 1; pd.year++; }
+    } else if (pd.day < 1) {
+      pd.month--;
+      if (pd.month < 1) { pd.month = 10; pd.year--; }
+      pd.day = 30;
+    }
+
+    // Animate the readout date
+    const readout = document.getElementById('cal-readout-date');
+    if (readout) {
+      const animClass = dir > 0 ? 'stepper-anim-fwd' : 'stepper-anim-bwd';
+      readout.classList.remove('stepper-anim-fwd', 'stepper-anim-bwd');
+      void readout.offsetWidth;
+      readout.classList.add(animClass);
+      readout.addEventListener('animationend', () => readout.classList.remove(animClass), { once: true });
+    }
+
+    // Jump calendar view to follow the party date
+    calState.month = pd.month;
+    calState.year  = pd.year;
+    calState.selectedDay = pd.day;
+    savePartyDates();
+    wxMonth = pd.month; wxDay = pd.day; wxYear = pd.year;
+    // Update currentWeather if weatherData has this day
+    const stepDk = dayKey(pd.era, pd.year, pd.month, pd.day);
+    if (weatherData[stepDk]) {
+      currentWeather = weatherData[stepDk].type;
+      renderWeatherCard();
+      updateBFWeather();
+    }
+    renderCalendar();
+    loadDateWeather();
+  }
+
+  // ── GENERATE NEXT 10 DAYS OF WEATHER ──
+  function generateWeatherDays() {
+    const pd  = PARTY_DATES[_activeParty];
+    if (!pd) return;
+    const weatherKeys = Object.keys(WEATHER_EMOJI);
+
+    let month = pd.month;
+    let day   = pd.day;
+    let year  = pd.year;
+    let era   = pd.era;
+    let generated = 0;
+
+    for (let i = 0; i < 10; i++) {
+      const dk = dayKey(era, year, month, day);
+      // Only roll if not already set
+      if (!weatherData[dk]) {
+        // Use the same weighted roll table as the manual roller
+        const roll   = Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*20)+1;
+        const rolled = rollToWeather(roll, month);
+        weatherData[dk] = { type: rolled, manual: false };
+        generated++;
+      }
+      // Advance one day
+      day++;
+      if (day > 30) { day = 1; month++; }
+      if (month > 10) { month = 1; year++; }
+    }
+
+    saveCalendarData();
+    renderCalendar();
+
+    // Brief confirmation flash on the button
+    const btn = document.querySelector('.wx-gen-btn');
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = `✓ ${generated} days rolled`;
+      btn.style.borderColor = 'rgba(104,216,168,0.5)';
+      btn.style.color = '#68d8a8';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    }
+  }
+
+  // Purge weather older than 3 days behind whichever party is furthest BEHIND
+  function purgeOldWeather() {
+    // Find the earlier party date (lower day-of-year)
+    const pdA   = PARTY_DATES['A'];
+    const pdB   = PARTY_DATES['B'];
+    const doyA  = (pdA.year - 1) * 300 + (pdA.month - 1) * 30 + pdA.day;
+    const doyB  = (pdB.year - 1) * 300 + (pdB.month - 1) * 30 + pdB.day;
+    const earlierDoy = Math.min(doyA, doyB);
+
+    Object.keys(weatherData).forEach(dk => {
+      const parts = dk.split('-');
+      const day   = parseInt(parts[parts.length-1]);
+      const month = parseInt(parts[parts.length-2]);
+      const year  = parseInt(parts[parts.length-3]);
+      const keyDoy = (year - 1) * 300 + (month - 1) * 30 + day;
+      if (earlierDoy - keyDoy > 3) {
+        delete weatherData[dk];
+      }
+    });
+    saveCalendarData();
+  }
+
+  // ── CALENDAR INIT ──
+  function calInit() {
+    loadPartyDates();
+    loadCalendarData();
+    _activeParty = party; // sync to current dashboard party
+    purgeOldWeather(); // clean up old weather data
+    calState.era   = 'I.D.';
+    calState.month = PARTY_DATES[party].month;
+    calState.year  = PARTY_DATES[party].year;
+    calState.selectedDay = PARTY_DATES[party].day;
+    syncWeatherToPartyDate();
+    renderCalendar();
+  }
+
+  function loadCalendarData() {
+    try {
+      const wd = JSON.parse(localStorage.getItem('caelos_weather_data'));
+      const ed = JSON.parse(localStorage.getItem('caelos_event_data'));
+      if (wd) Object.assign(weatherData, wd);
+      if (ed) Object.assign(eventData, ed);
+    } catch(e){}
+  }
+
+  function saveCalendarData() {
+    try {
+      localStorage.setItem('caelos_weather_data', JSON.stringify(weatherData));
+      localStorage.setItem('caelos_event_data',   JSON.stringify(eventData));
+    } catch(e){}
+  }
+
+
+
+  // ═══════════════════════════════════════
+  // MAGIC ITEM TRACKER
+  // ═══════════════════════════════════════
+
+  const RARITIES = [
+    { key:'common',    label:'Common',     color:'#aaa8a0' },
+    { key:'uncommon',  label:'Uncommon',   color:'#4fa854' },
+    { key:'rare',      label:'Rare',       color:'#4a7fd4' },
+    { key:'veryrare',  label:'Very Rare',  color:'#9b4fd4' },
+    { key:'legendary', label:'Legendary',  color:'#e8a030' },
+  ];
+
+  let _itemsCurrentPid  = null;
+  let _editingItemId    = null;
+  let _itemFormRarity   = 'common';
+
+  function openItemsPopup(pid) {
+    _itemsCurrentPid = pid;
+    _editingItemId   = null;
+    _itemFormRarity  = 'common';
+    const existing = document.getElementById('items-popup');
+    if (existing) existing.remove();
+    const popup = document.createElement('div');
+    popup.id = 'items-popup';
+    document.body.appendChild(popup);
+    refreshItemsPopup();
+  }
+
+  function closeItemsPopup() {
+    const p = document.getElementById('items-popup');
+    if (p) { p.classList.add('popup-closing'); setTimeout(() => p.remove(), 200); }
+  }
+
+  function refreshItemsPopup() {
+    const popup = document.getElementById('items-popup');
+    if (!popup) return;
+    const pid    = _itemsCurrentPid;
+    const items  = getItems(pid);
+    // Find PC name
+    const [p, idxStr] = pid.split('-');
+    const pc = partyData[p]?.[parseInt(idxStr)];
+    const pcName = pc ? pc.name : pid;
+
+    // Item cards list
+    const itemCards = items.length ? items.map(item => {
+      const rar     = RARITIES.find(r=>r.key===item.rarity) || RARITIES[0];
+      const attuneGlow = item.attuned ? 'item-attuned' : '';
+      const attuneBadge = item.attuned
+        ? `<span class="item-attune-badge">⚡ Attuned</span>` : '';
+      const reqBadge = item.requiresAttunement && !item.attuned
+        ? `<span class="item-req-badge">Attunement req.</span>` : '';
+
+      // Charge pips
+      let chargePips = '';
+      if (item.maxCharges > 0) {
+        const pips = Array.from({length: item.maxCharges}, (_,i) => {
+          const used = i < item.usedCharges;
+          return `<button class="item-charge-pip ${used?'used':''}"
+            onclick="toggleCharge('${pid}',${item.id},${i})"></button>`;
+        }).join('');
+        chargePips = `<div class="item-charges">
+          <span class="item-charge-lbl">${item.maxCharges - item.usedCharges}/${item.maxCharges}</span>
+          <div class="item-charge-pips">${pips}</div>
+        </div>`;
+      }
+
+      return `<div class="item-card ${attuneGlow}" id="item-card-${item.id}">
+        <div class="item-card-header">
+          <div class="item-name-row">
+            <span class="item-name">${item.name||'Unnamed Item'}</span>
+            <span class="item-rarity" style="color:${rar.color}">${rar.label}</span>
+          </div>
+          <div class="item-card-btns">
+            ${attuneBadge}${reqBadge}
+            <button class="item-edit-btn" onclick="editItem('${pid}',${item.id})">✎</button>
+            <button class="item-del-btn"  onclick="deleteItem('${pid}',${item.id})">✕</button>
+          </div>
+        </div>
+        ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
+        ${item.func ? `<div class="item-func"><span class="item-func-lbl">Function:</span> ${item.func}</div>` : ''}
+        ${chargePips}
+        <div class="item-attune-row">
+          <label class="item-check-label" onclick="toggleItemField('${pid}',${item.id},'requiresAttunement')">
+            <span class="item-checkbox ${item.requiresAttunement?'checked':''}"></span>
+            Requires Attunement
+          </label>
+          <label class="item-check-label ${item.requiresAttunement?'':'item-check-disabled'}"
+            onclick="maybeToggleAttuned(event, '${pid}', ${item.id})">
+            <span class="item-checkbox ${item.attuned?'checked attuned':''}"></span>
+            Attuned
+          </label>
+        </div>
+      </div>`;
+    }).join('') : `<div class="items-empty">No magic items yet — add one below</div>`;
+
+    // Add/edit form
+    const editing = _editingItemId !== null ? items.find(i=>i.id===_editingItemId) : null;
+    const rarBtns = RARITIES.map(r => {
+      const isActive = (editing ? editing.rarity : _itemFormRarity) === r.key;
+      return `<button class="item-rar-btn ${isActive?'active':''}"
+        style="${isActive?'border-color:'+r.color+';color:'+r.color:''}"
+        onclick="setItemRarity('${pid}',${editing?editing.id:'null'},'${r.key}')">${r.label}</button>`;
+    }).join('');
+
+    popup.innerHTML = `
+      <div class="popup-backdrop" onclick="closeItemsPopup()"></div>
+      <div class="items-popup-card">
+        <div class="popup-header">
+          <span class="popup-date">✦ ${pcName}'s Magic Items</span>
+          <button class="popup-close" onclick="closeItemsPopup()">✕</button>
+        </div>
+
+        <div class="items-list">${itemCards}</div>
+
+        <div class="items-form">
+          <div class="popup-section-label">${editing ? '✎ Edit Item' : '+ Add Item'}</div>
+          <div class="item-rar-row">${rarBtns}</div>
+          <input class="items-input" id="item-name-input" type="text" maxlength="60"
+            placeholder="Item name…" value="${editing?.name||''}">
+          <textarea class="items-textarea" id="item-desc-input" maxlength="300"
+            placeholder="Description…" rows="2">${editing?.desc||''}</textarea>
+          <textarea class="items-textarea" id="item-func-input" maxlength="300"
+            placeholder="Function / how to use…" rows="2">${editing?.func||''}</textarea>
+          <div class="item-charges-form">
+            <span class="item-charge-form-lbl">Max Charges</span>
+            <input class="item-charges-input" id="item-charges-input" type="number"
+              min="0" max="20" value="${editing?.maxCharges||0}" placeholder="0">
+            <span class="item-charge-form-lbl" style="margin-left:8px">0 = no charges</span>
+          </div>
+          <div class="item-form-btns">
+            <button class="popup-save-btn" onclick="saveItem('${pid}')">${editing?'Save':'Add Item'}</button>
+            ${editing ? `<button class="popup-clear-btn" onclick="cancelItemEdit('${pid}')">Cancel</button>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveItem(pid) {
+    const name    = document.getElementById('item-name-input')?.value.trim() || '';
+    const desc    = document.getElementById('item-desc-input')?.value.trim() || '';
+    const func    = document.getElementById('item-func-input')?.value.trim() || '';
+    const maxCh   = parseInt(document.getElementById('item-charges-input')?.value) || 0;
+    if (!magicItems[pid]) magicItems[pid] = [];
+
+    if (_editingItemId !== null) {
+      const item = magicItems[pid].find(i=>i.id===_editingItemId);
+      if (item) {
+        item.name = name; item.desc = desc; item.func = func;
+        item.rarity = _itemFormRarity; item.maxCharges = maxCh;
+        if (maxCh < item.usedCharges) item.usedCharges = maxCh;
+      }
+      _editingItemId = null;
+    } else {
+      magicItems[pid].push({
+        id: nextItemId(pid), name, desc, func,
+        rarity: _itemFormRarity, maxCharges: maxCh, usedCharges: 0,
+        requiresAttunement: false, attuned: false
+      });
+    }
+    _itemFormRarity = 'common';
+    saveItems();
+    updateItemsCount(pid);
+    refreshItemsPopup();
+  }
+
+  function editItem(pid, id) {
+    _editingItemId = id;
+    const item = getItems(pid).find(i=>i.id===id);
+    if (item) _itemFormRarity = item.rarity || 'common';
+    refreshItemsPopup();
+    setTimeout(() => document.getElementById('item-name-input')?.focus(), 30);
+  }
+
+  function deleteItem(pid, id) {
+    if (!magicItems[pid]) return;
+    magicItems[pid] = magicItems[pid].filter(i=>i.id!==id);
+    if (magicItems[pid].length === 0) delete magicItems[pid];
+    saveItems();
+    updateItemsCount(pid);
+    refreshItemsPopup();
+  }
+
+  function cancelItemEdit(pid) {
+    _editingItemId  = null;
+    _itemFormRarity = 'common';
+    refreshItemsPopup();
+  }
+
+  function maybeToggleAttuned(e, pid, id) {
+    const item = getItems(pid).find(i=>i.id===id);
+    if (!item || !item.requiresAttunement) return;
+    toggleItemField(pid, id, 'attuned');
+  }
+
+  function toggleItemField(pid, id, field) {
+    const item = getItems(pid).find(i=>i.id===id);
+    if (!item) return;
+    if (field === 'attuned' && !item.requiresAttunement) return;
+    item[field] = !item[field];
+    // If turning off requiresAttunement, also turn off attuned
+    if (field === 'requiresAttunement' && !item.requiresAttunement) item.attuned = false;
+    saveItems();
+    updateItemsCount(pid);
+    renderPCs(); // re-render so attuned glow updates on PC card
+    refreshItemsPopup();
+  }
+
+  function toggleCharge(pid, id, pip) {
+    const item = getItems(pid).find(i=>i.id===id);
+    if (!item) return;
+    // Tapping a used pip un-uses it; tapping unused marks it used
+    if (item.usedCharges > pip) {
+      item.usedCharges = pip;
+    } else {
+      item.usedCharges = pip + 1;
+    }
+    item.usedCharges = Math.max(0, Math.min(item.maxCharges, item.usedCharges));
+    saveItems();
+    refreshItemsPopup();
+  }
+
+  function setItemRarity(pid, editId, rarity) {
+    _itemFormRarity = rarity;
+    if (editId !== 'null') {
+      const item = getItems(pid).find(i=>i.id===editId);
+      if (item) { item.rarity = rarity; saveItems(); }
+    }
+    refreshItemsPopup();
+  }
+
+  function updateItemsCount(pid) {
+    const el = document.getElementById('items-count-' + pid);
+    if (el) el.textContent = getItems(pid).length > 0 ? getItems(pid).length : '';
+    // Also glow the button if any attuned items
+    const btn = document.getElementById('items-btn-' + pid);
+    if (btn) btn.classList.toggle('has-attuned', getItems(pid).some(i=>i.attuned));
+  }
+
+  // ── STARTUP: load party dates + sync weather AFTER everything is defined ──
+  (function() {
+    loadPartyDates();
+    loadCalendarData();
+    syncWeatherToPartyDate();
+  })();
+
+
+
+
 </script>
 
 <script>
@@ -9839,713 +11199,6 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
         </div>
       </div>
     `).join('');
-  }
-
-
-
-  // ═══════════════════════════════════════
-  // CALENDAR SYSTEM
-  // ═══════════════════════════════════════
-// ── CAELOS CALENDAR DATA ──
-  const MONTHS = [
-    { num:1,  name:'Awakening', season:'Spring begins', festDay:28, festName:'Bloom Festival' },
-    { num:2,  name:'Devotion',  season:'Spring',        festDay:12, festName:'Devotion Day' },
-    { num:3,  name:'Joy',       season:'Summer begins', festDay:9,  festName:'Charm Day' },
-    { num:4,  name:'Kindred',   season:'Summer',        festDay:1,  festName:'Net Day' },
-    { num:5,  name:'Medial',    season:'Peak summer',   festDay:15, festName:'Antirium' },
-    { num:6,  name:'Harvest',   season:'Autumn begins', festDay:19, festName:'The Gathering' },
-    { num:7,  name:'Resolute',  season:'Autumn',        festDay:27, festName:'Ancestor Day' },
-    { num:8,  name:'Solace',    season:'Winter begins', festDay:13, festName:'Lots' },
-    { num:9,  name:'Sacrifice', season:'Deep winter',   festDay:20, festName:'Immolation Day' },
-    { num:10, name:'Silence',   season:'Late winter',   festDay:5,  festName:'The Silence' },
-  ];
-
-  const WHELK_DAYS = [1, 11, 21];
-
-  // ── ERAS ──
-  const ERAS = [
-    { abbr:'P.H.E.', name:'Pre-Historic Era',         defaultYear: 1 },
-    { abbr:'C.D.',   name:'C.D.',                     defaultYear: 1 },
-    { abbr:'A.D.',   name:'Arcania-Dominatia',         defaultYear: 1 },
-    { abbr:'I.D.',   name:'Industrialis Developmentia', defaultYear: 1219 },
-  ];
-
-  // Party dates — live reference, persisted via localStorage
-  const PARTY_DATES = {
-    A: { era:'I.D.', month:1,  day:25, year:1219 },
-    B: { era:'I.D.', month:2,  day:22, year:1219 },
-  };
-  function savePartyDates() {
-    try { localStorage.setItem('caelos_party_dates', JSON.stringify(PARTY_DATES)); } catch(e){}
-  }
-  function loadPartyDates() {
-    try {
-      const saved = JSON.parse(localStorage.getItem('caelos_party_dates'));
-      if (saved?.A) Object.assign(PARTY_DATES.A, saved.A);
-      if (saved?.B) Object.assign(PARTY_DATES.B, saved.B);
-    } catch(e){}
-  }
-  // Weather emoji map
-  const WEATHER_EMOJI = {
-    'clear':'☀️','overcast':'🌥️','hazy':'🌫️','fog':'🌁','modrain':'🌧️',
-    'exheat':'🔥','excold':'❄️','thunder':'⛈️','tornado':'🌪️','blizzard':'🌨️',
-    'acid':'☠️','petrify':'🪨','freeze':'🧊','hurricane':'🌀','sleepfog':'😴','veilstars':'✨',
-  };
-  const WEATHER_NAMES = {
-    'clear':'Sunny / Clear','overcast':'Overcast / Light Rain','hazy':'Warm & Hazy',
-    'fog':'Foggy','modrain':'Moderate Rain','exheat':'Extreme Heat','excold':'Extreme Cold',
-    'thunder':'Thunderstorm','tornado':'Tornado','blizzard':'Blizzard','acid':'Acid Rain',
-    'petrify':'Petrifying Rain','freeze':'Freezing Rain','hurricane':'Hurricane',
-    'sleepfog':'Sleeping Fog','veilstars':'Veil of Stars',
-  };
-  const WEATHER_KEYS = Object.keys(WEATHER_EMOJI);
-
-  // Event categories
-  const EVENT_CATS = [
-    { key:'goal',   icon:'🎯', label:'Goal',    color:'rgba(104,216,168,0.7)' },
-    { key:'warn',   icon:'⚠️', label:'Warning', color:'rgba(255,122,47,0.7)'  },
-    { key:'note',   icon:'📌', label:'Note',    color:'rgba(232,200,122,0.7)' },
-    { key:'combat', icon:'⚔️', label:'Combat',  color:'rgba(224,104,104,0.7)' },
-    { key:'travel', icon:'🗺️', label:'Travel',  color:'rgba(104,168,216,0.7)' },
-  ];
-
-  // Storage: keyed by "era-year-month-day"
-  // weatherData[key] = { type: 'clear', manual: false }
-  // eventData[key]   = [ { id, cat, text }, ... ]  — array, multiple events per day
-  const weatherData = {};
-  const eventData   = {};
-
-  function getEvents(dk, forDisplay) {
-    const all = eventData[dk] || [];
-    if (!forDisplay) return all; // raw — no filter
-    // Filter: show active party's events + DM events
-    return all.filter(ev => {
-      const p = ev.party || 'A';
-      return p === _activeParty || p === 'DM';
-    });
-  }
-  function nextEventId(dk) {
-    const evs = getEvents(dk);
-    return evs.length ? Math.max(...evs.map(e=>e.id)) + 1 : 1;
-  }
-
-  function dayKey(era, year, month, day) {
-    return era + '-' + year + '-' + month + '-' + day;
-  }
-
-  // weatherData and eventData loaded from localStorage on init
-
-  // ── STATE ──
-  let calState = {
-    era:   'I.D.',
-    month: 1,
-    year:  1219,
-    selectedDay: 25,
-  };
-
-  function renderCalendar() {
-    const widget = document.getElementById('cal-widget');
-    if (!widget) return;
-    const m   = MONTHS[calState.month - 1];
-    const sel = calState.selectedDay;
-    const yr  = calState.year;
-    const era = calState.era;
-    const eraObj = ERAS.find(e => e.abbr === era);
-
-    // Era select options
-    const eraOptions = ERAS.map(e =>
-      `<option value="${e.abbr}" ${e.abbr === era ? 'selected' : ''}>${e.abbr} — ${e.name}</option>`
-    ).join('');
-
-    // Day grid
-    let dayCells = '';
-    for (let d = 1; d <= 30; d++) {
-      const isSelected = d === sel;
-      const isWhelk    = WHELK_DAYS.includes(d);
-      const isFest     = d === m.festDay;
-
-      const isPartyA = era === 'I.D.' && calState.month === PARTY_DATES.A.month
-                       && yr === PARTY_DATES.A.year && d === PARTY_DATES.A.day;
-      const isPartyB = era === 'I.D.' && calState.month === PARTY_DATES.B.month
-                       && yr === PARTY_DATES.B.year && d === PARTY_DATES.B.day;
-      const isBoth   = isPartyA && isPartyB;
-      let cls = 'cal-day';
-      if (isSelected)          cls += ' cal-day-selected';
-      else if (isWhelk)        cls += ' cal-day-whelk';
-      if (isFest && !isSelected) cls += ' cal-day-festival';
-      if (isBoth)              cls += ' cal-day-party-both';
-      else if (isPartyA)       cls += ' cal-day-party-a';
-      else if (isPartyB)       cls += ' cal-day-party-b';
-
-      // Weather emoji and event dot for this day
-      const dk = dayKey(era, yr, calState.month, d);
-      const wx = weatherData[dk];
-      const ev = eventData[dk];
-      const wxEmoji = wx ? `<span class="cal-day-wx">${WEATHER_EMOJI[wx.type]||''}</span>` : '';
-      const evs        = getEvents(dk, true); // filtered for active party
-      const evsAll     = getEvents(dk);        // all events for DM lock check
-      const hasDmOnly  = evsAll.some(e => (e.party||'A') === 'DM') && evs.filter(e=>(e.party||'A')!=='DM').length === 0;
-      const hasLock    = evsAll.some(e => (e.party||'A') === 'DM');
-      const evDot      = evs.length > 0
-        ? `<span class="cal-day-ev-dot">${evs.length > 1 ? evs.length : ''}${hasLock ? '<span class="ev-lock">🔒</span>' : ''}</span>`
-        : (hasLock && _activeParty !== 'DM' ? '' : '');
-
-      dayCells += `<div class="${cls}" onclick="selectDay(${d})">${d}${wxEmoji}${evDot}</div>`;
-    }
-
-    // Event banner
-    let eventText  = `${m.name} · ${m.season}`;
-    let eventClass = '';
-    if (sel === m.festDay) {
-      eventText  = `✦ ${m.festName}`;
-      eventClass = 'ev-festival';
-    } else if (WHELK_DAYS.includes(sel)) {
-      eventText  = `📰 Word of the Whelk publishes`;
-      eventClass = 'ev-whelk';
-    } else if (era === 'I.D.' && sel === PARTY_DATES.A.day && calState.month === PARTY_DATES.A.month && yr === PARTY_DATES.A.year) {
-      eventText  = `🌀 PA current date`;
-      eventClass = 'ev-party';
-    } else if (era === 'I.D.' && sel === PARTY_DATES.B.day && calState.month === PARTY_DATES.B.month && yr === PARTY_DATES.B.year) {
-      eventText  = `✨ PB current date`;
-      eventClass = 'ev-party';
-    }
-
-    // Readout
-    const dayNum = (calState.month - 1) * 30 + sel;
-
-    widget.innerHTML = `
-      <div class="cal-readout">
-        <div class="cal-readout-inner">
-          <div>
-            <div class="cal-readout-label">Selected Date</div>
-            <div class="cal-readout-date" id="cal-readout-date">${sel}<sup style="font-size:13px;opacity:0.6;vertical-align:super">${ordinal(sel)}</sup> of ${m.name}</div>
-            <div class="cal-readout-sub">
-              <span>${yr} ${era}</span>
-              <span>·</span>
-              <span>Day ${dayNum} of year</span>
-            </div>
-          </div>
-          <div class="cal-readout-step-btns">
-            <button class="cal-step-btn step-fwd" onclick="stepActiveParty(1, this)" title="Advance party date +1 day">+</button>
-            <button class="cal-step-btn step-bwd" onclick="stepActiveParty(-1, this)" title="Move party date -1 day">−</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="cal-controls">
-        <div class="cal-era-row">
-          <span class="cal-era-label">Era</span>
-          <select class="cal-era-select" onchange="changeEra(this.value)">${eraOptions}</select>
-        </div>
-        <div class="cal-month-bar">
-          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
-          <div>
-            <div class="cal-month-name">${m.name}</div>
-            <span class="cal-month-sub">${calState.month}/10 · ${m.season}</span>
-          </div>
-          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
-        </div>
-        <div class="cal-year-bar">
-          <button class="cal-year-btn" onclick="changeYear(-1)">−</button>
-          <span class="cal-year-display">${yr}</span>
-          <span class="cal-year-era-lbl">${era}</span>
-          <button class="cal-year-btn" onclick="changeYear(1)">+</button>
-        </div>
-      </div>
-
-      <div class="cal-grid">${dayCells}</div>
-
-      <div class="cal-event-banner ${eventClass}">${eventText}</div>
-
-
-      <div class="cal-legend">
-        <div class="cal-legend-item"><div class="leg-box"></div>Whelk</div>
-        <div class="cal-legend-item"><div class="leg-sq"></div>Festival</div>
-        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('A')" title="Jump to PA current date">
-          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,168,216,0.8);flex-shrink:0"></div>PA
-        </div>
-        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('B')" title="Jump to PB current date">
-          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,216,168,0.8);flex-shrink:0"></div>PB
-        </div>
-      </div>
-    `;
-  }
-
-  function selectDay(d) {
-    calState.selectedDay = d;
-    // Sync weather tab to selected date
-    wxMonth = calState.month; wxDay = d; wxYear = calState.year;
-    loadDateWeather(); // this now calls syncBFWeather internally
-    renderCalendar();
-    openDayPopup(d);
-  }
-
-  // Track which event is being edited in the popup (null = adding new)
-  let _editingEventId = null;
-
-  function openDayPopup(d) {
-    const era = calState.era;
-    const yr  = calState.year;
-    const m   = MONTHS[calState.month - 1];
-    const dk  = dayKey(era, yr, calState.month, d);
-    _editingEventId = null;
-
-    const existing = document.getElementById('day-popup');
-    if (existing) existing.remove();
-
-    const popup = document.createElement('div');
-    popup.id = 'day-popup';
-    document.body.appendChild(popup);
-    refreshPopup(dk, d, m, yr, era);
-  }
-
-  function refreshPopup(dk, d, m, yr, era) {
-    const popup = document.getElementById('day-popup');
-    if (!popup) return;
-
-    const wx  = weatherData[dk];
-    const evs    = getEvents(dk, true); // filtered for active party
-    const evsAll = getEvents(dk);        // all for edit access
-
-    // Weather
-    const wxName    = wx ? (WEATHER_NAMES[wx.type]||wx.type) : 'No weather set';
-    const wxEmoji   = wx ? (WEATHER_EMOJI[wx.type]||'') : '—';
-    const manualTag = wx?.manual ? '<span class="popup-manual-tag">✎ Manual</span>' : '';
-    const wxOptions = '<option value="">— Set weather —</option>' +
-      WEATHER_KEYS.map(k =>
-        `<option value="${k}" ${wx?.type===k?'selected':''}>${WEATHER_EMOJI[k]} ${WEATHER_NAMES[k]}</option>`
-      ).join('');
-
-    // Events list
-    const evList = evs.length
-      ? evs.map(ev => {
-          const cat   = EVENT_CATS.find(c=>c.key===ev.cat) || EVENT_CATS[2];
-          const evP    = ev.party || 'A';
-          const pBadge = evP === 'DM'
-            ? `<span class="ev-party-badge dm">🔒 Both</span>`
-            : '';
-          return `<div class="popup-ev-item">
-            <span class="popup-ev-icon" style="color:${cat.color}">${cat.icon}</span>
-            <span class="popup-ev-text">${ev.text||'<em style="opacity:0.4">No text</em>'}</span>
-            ${pBadge}
-            <button class="popup-ev-edit" onclick="editEvent('${dk}',${ev.id})">✎</button>
-            <button class="popup-ev-del"  onclick="deleteEvent('${dk}',${ev.id})">✕</button>
-          </div>`;
-        }).join('')
-      : '<div class="popup-ev-empty">No events — add one below</div>';
-
-    // Add / edit form
-    const editing = _editingEventId !== null ? evs.find(e=>e.id===_editingEventId) : null;
-    const catBtns = EVENT_CATS.map(c => {
-      const isActive = editing ? editing.cat===c.key : false;
-      return `<button class="popup-cat-btn${isActive?' active':''}"
-        style="${isActive?'border-color:'+c.color+';color:'+c.color:''}"
-        onclick="setNewEventCat('${dk}',${editing?editing.id:'null'},'${c.key}')"
-        title="${c.label}">${c.icon}</button>`;
-    }).join('');
-
-    popup.innerHTML = `
-      <div class="popup-backdrop" onclick="closeDayPopup()"></div>
-      <div class="popup-card">
-        <div class="popup-header">
-          <span class="popup-date">${d}<sup>${ordinal(d)}</sup> ${m.name}, ${yr} ${era}</span>
-          <button class="popup-close" onclick="closeDayPopup()">✕</button>
-        </div>
-
-        <div class="popup-section">
-          <div class="popup-section-label">Weather ${manualTag}</div>
-          <div class="popup-wx-row">
-            <span class="popup-wx-emoji">${wxEmoji}</span>
-            <span class="popup-wx-name">${wxName}</span>
-          </div>
-          <select class="popup-wx-select" onchange="setWeather('${dk}',this.value)">${wxOptions}</select>
-          ${wx ? `<button class="popup-clear-btn" onclick="clearWeather('${dk}')">Clear weather</button>` : ''}
-        </div>
-
-        <div class="popup-section">
-          <div class="popup-section-label">Events</div>
-          <div class="popup-ev-list" id="popup-ev-list">${evList}</div>
-        </div>
-
-        <div class="popup-section popup-add-section">
-          <div class="popup-section-label">${editing ? '✎ Edit Event' : '+ Add Event'}</div>
-          <div class="popup-cat-row">${catBtns}</div>
-          <div class="popup-dm-row${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}"
-            onclick="toggleEventDM('${dk}',${editing?editing.id:'null'})">
-            <div class="popup-dm-checkbox${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}">
-              ${(editing?(editing.party==='DM'):_newEventParty==='DM') ? '🔒' : ''}
-            </div>
-            <span class="popup-dm-label">🔒 DM Event — visible to both parties</span>
-          </div>
-          <div class="popup-add-row">
-            <input class="popup-event-input" id="popup-ev-input" type="text" maxlength="80"
-              placeholder="Goal, note, reminder…"
-              value="${editing?.text||''}"
-              onkeydown="if(event.key==='Enter')saveEvent('${dk}')">
-            <button class="popup-save-btn" onclick="saveEvent('${dk}')">${editing?'Save':'Add'}</button>
-          </div>
-          ${editing ? `<button class="popup-clear-btn" style="margin-top:4px" onclick="cancelEdit('${dk}')">Cancel edit</button>` : ''}
-        </div>
-      </div>
-    `;
-  }
-
-  function closeDayPopup() {
-    const p = document.getElementById('day-popup');
-    if (p) { p.classList.add('popup-closing'); setTimeout(() => p.remove(), 200); }
-  }
-
-  function setWeather(dk, type) {
-    if (!type) return;
-    weatherData[dk] = { type, manual:true };
-    saveCalendarData();
-    // Sync to main weather card if this day is currently selected
-    if (calState.month === wxMonth && calState.year === wxYear &&
-        calState.selectedDay === wxDay) {
-      currentWeather = type;
-      if (typeof renderWeatherCard === 'function') renderWeatherCard();
-      if (typeof updateBFWeather   === 'function') updateBFWeather();
-    }
-    renderCalendar();
-    const d   = calState.selectedDay;
-    const m   = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-  }
-
-  function clearWeather(dk) {
-    delete weatherData[dk];
-    saveCalendarData();
-    renderCalendar();
-    const d = calState.selectedDay;
-    const m = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-  }
-
-  // New event cat selection — updates the button row live
-  let _newEventCat   = 'note';
-  let _newEventParty = 'A'; // 'A', 'B', or 'DM'
-
-  function setNewEventCat(dk, editId, cat) {
-    _newEventCat = cat;
-    if (editId !== 'null') {
-      const evs = getEvents(dk);
-      const ev  = evs.find(e=>e.id===editId);
-      if (ev) { ev.cat = cat; renderCalendar(); }
-    }
-    const popup = document.getElementById('day-popup');
-    if (!popup) return;
-    popup.querySelectorAll('.popup-cat-btn').forEach((btn,i) => {
-      const c = EVENT_CATS[i];
-      const isActive = c.key === cat;
-      btn.classList.toggle('active', isActive);
-      btn.style.borderColor = isActive ? c.color : '';
-      btn.style.color       = isActive ? c.color : '';
-    });
-  }
-
-  function toggleEventDM(dk, editId) {
-    const isDM = _newEventParty === 'DM';
-    _newEventParty = isDM ? _activeParty : 'DM';
-
-    if (editId !== 'null') {
-      const evs = getEvents(dk);
-      const ev  = evs.find(e=>e.id===editId);
-      if (ev) { ev.party = _newEventParty; saveCalendarData(); renderCalendar(); }
-    }
-    // Update checkbox UI
-    const row      = document.querySelector('.popup-dm-row');
-    const checkbox = document.querySelector('.popup-dm-checkbox');
-    const nowDM    = _newEventParty === 'DM';
-    if (row)      row.classList.toggle('checked', nowDM);
-    if (checkbox) { checkbox.classList.toggle('checked', nowDM); checkbox.textContent = nowDM ? '🔒' : ''; }
-  }
-
-  function saveEvent(dk) {
-    const input = document.getElementById('popup-ev-input');
-    const text  = input ? input.value.trim() : '';
-    if (!eventData[dk]) eventData[dk] = [];
-
-    if (_editingEventId !== null) {
-      const ev = eventData[dk].find(e=>e.id===_editingEventId);
-      if (ev) { ev.text = text; ev.cat = _newEventCat; ev.party = _newEventParty; }
-      _editingEventId = null;
-    } else {
-      eventData[dk].push({ id: nextEventId(dk), cat: _newEventCat, party: _newEventParty, text });
-    }
-    _newEventCat   = 'note';
-    _newEventParty = _activeParty; // default next event to current party
-    saveCalendarData();
-    renderCalendar();
-    const d = calState.selectedDay;
-    const m = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-  }
-
-  function editEvent(dk, id) {
-    _editingEventId = id;
-    const ev = getEvents(dk).find(e=>e.id===id);
-    if (ev) { _newEventCat = ev.cat; _newEventParty = ev.party || _activeParty; }
-    const d = calState.selectedDay;
-    const m = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-    setTimeout(() => document.getElementById('popup-ev-input')?.focus(), 30);
-  }
-
-  function deleteEvent(dk, id) {
-    if (!eventData[dk]) return;
-    eventData[dk] = eventData[dk].filter(e=>e.id!==id);
-    if (eventData[dk].length === 0) delete eventData[dk];
-    renderCalendar();
-    const d = calState.selectedDay;
-    const m = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-  }
-
-  function cancelEdit(dk) {
-    _editingEventId = null;
-    _newEventCat   = 'note';
-    _newEventParty = _activeParty;
-    const d = calState.selectedDay;
-    const m = MONTHS[calState.month-1];
-    refreshPopup(dk, d, m, calState.year, calState.era);
-  }
-
-  function changeMonth(dir) {
-    calState.month += dir;
-    if (calState.month < 1)  { calState.month = 10; calState.year--; }
-    if (calState.month > 10) { calState.month = 1;  calState.year++; }
-    wxMonth = calState.month; wxYear = calState.year;
-    renderCalendar();
-  }
-
-  function changeYear(dir) {
-    calState.year = Math.max(1, calState.year + dir);
-    renderCalendar();
-  }
-
-  function changeEra(era) {
-    const eraObj = ERAS.find(e => e.abbr === era);
-    calState.era = era;
-    calState.year = eraObj ? eraObj.defaultYear : 1;
-    calState.month = 1;
-    calState.selectedDay = 1;
-    renderCalendar();
-  }
-
-  function ordinal(n) {
-    const s = ['th','st','nd','rd'];
-    const v = n % 100;
-    return s[(v-20)%10] || s[v] || s[0];
-  }
-
-  function jumpToParty(p) {
-    const pd = PARTY_DATES[p];
-    if (!pd) return;
-    calState.era         = pd.era;
-    calState.year        = pd.year;
-    calState.month       = pd.month;
-    calState.selectedDay = pd.day;
-    _activeParty = p;
-    // Switch the main party badge if it's different
-    if (typeof party !== 'undefined' && party !== p) {
-      party = p;
-      const badge = document.getElementById('partyBadge');
-      if (badge && typeof partyName === 'function') badge.textContent = partyName();
-      if (typeof renderPCs === 'function') renderPCs();
-      const lbl = document.getElementById('aoeTargetCount');
-      if (lbl) lbl.textContent = '';
-      if (typeof aoeSelected !== 'undefined') aoeSelected.pc.clear();
-    }
-    renderCalendar();
-
-    // Bubble the readout date text
-    setTimeout(() => {
-      const readout = document.querySelector('.cal-readout-date');
-      if (readout) {
-        readout.classList.remove('readout-jump');
-        void readout.offsetWidth;
-        readout.classList.add('readout-jump');
-        setTimeout(() => readout.classList.remove('readout-jump'), 650);
-      }
-    }, 20);
-
-    // Bubble the party date cell — find by day number in the grid
-    setTimeout(() => {
-      const cells = document.querySelectorAll('.cal-day');
-      cells.forEach(c => {
-        if (parseInt(c.textContent) === pd.day &&
-            c.classList.contains(party === 'A' ? 'cal-day-party-a' : 'cal-day-party-b')) {
-          // Temporarily override animation with jump-land
-          const originalAnim = c.style.animation;
-          c.style.animation = 'day-jump-land 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards';
-          c.addEventListener('animationend', () => {
-            c.style.animation = originalAnim;
-          }, { once: true });
-        }
-      });
-    }, 40);
-  }
-
-  // _activeParty mirrors the dashboard party variable
-  // Updated by toggleParty() hook below
-  let _activeParty = 'A';
-
-  function stepActiveParty(dir, btn) {
-    // Fire burst — appended to body over the button so DOM rebuild can't kill it
-    if (btn) {
-      const rect = btn.getBoundingClientRect();
-      const burst = document.createElement('div');
-      burst.style.cssText = `
-        position:fixed;
-        left:${rect.left + rect.width/2}px;
-        top:${rect.top + rect.height/2}px;
-        width:12px; height:12px;
-        border-radius:50%;
-        transform:translate(-50%,-50%) scale(0);
-        pointer-events:none;
-        z-index:9999;
-        background:${dir > 0 ? 'rgba(232,200,122,0.7)' : 'rgba(200,200,220,0.5)'};
-        animation:step-burst 0.38s ease-out forwards;
-      `;
-      document.body.appendChild(burst);
-      burst.addEventListener('animationend', () => burst.remove(), { once: true });
-    }
-    const pd = PARTY_DATES[_activeParty];
-    pd.day += dir;
-
-    // Roll over month boundaries — both directions
-    if (pd.day > 30) {
-      pd.day = 1;
-      pd.month++;
-      if (pd.month > 10) { pd.month = 1; pd.year++; }
-    } else if (pd.day < 1) {
-      pd.month--;
-      if (pd.month < 1) { pd.month = 10; pd.year--; }
-      pd.day = 30;
-    }
-
-    // Animate the readout date
-    const readout = document.getElementById('cal-readout-date');
-    if (readout) {
-      const animClass = dir > 0 ? 'stepper-anim-fwd' : 'stepper-anim-bwd';
-      readout.classList.remove('stepper-anim-fwd', 'stepper-anim-bwd');
-      void readout.offsetWidth;
-      readout.classList.add(animClass);
-      readout.addEventListener('animationend', () => readout.classList.remove(animClass), { once: true });
-    }
-
-    // Jump calendar view to follow the party date
-    calState.month = pd.month;
-    calState.year  = pd.year;
-    calState.selectedDay = pd.day;
-    savePartyDates();
-    wxMonth = pd.month; wxDay = pd.day; wxYear = pd.year;
-    // Update currentWeather if weatherData has this day
-    const stepDk = dayKey(pd.era, pd.year, pd.month, pd.day);
-    if (weatherData[stepDk]) {
-      currentWeather = weatherData[stepDk].type;
-      renderWeatherCard();
-      updateBFWeather();
-    }
-    renderCalendar();
-    loadDateWeather();
-  }
-
-  // ── GENERATE NEXT 10 DAYS OF WEATHER ──
-  function generateWeatherDays() {
-    const pd  = PARTY_DATES[_activeParty];
-    if (!pd) return;
-    const weatherKeys = Object.keys(WEATHER_EMOJI);
-
-    let month = pd.month;
-    let day   = pd.day;
-    let year  = pd.year;
-    let era   = pd.era;
-    let generated = 0;
-
-    for (let i = 0; i < 10; i++) {
-      const dk = dayKey(era, year, month, day);
-      // Only roll if not already set
-      if (!weatherData[dk]) {
-        // Use the same weighted roll table as the manual roller
-        const roll   = Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*20)+1;
-        const rolled = rollToWeather(roll, month);
-        weatherData[dk] = { type: rolled, manual: false };
-        generated++;
-      }
-      // Advance one day
-      day++;
-      if (day > 30) { day = 1; month++; }
-      if (month > 10) { month = 1; year++; }
-    }
-
-    saveCalendarData();
-    renderCalendar();
-
-    // Brief confirmation flash on the button
-    const btn = document.querySelector('.wx-gen-btn');
-    if (btn) {
-      const orig = btn.textContent;
-      btn.textContent = `✓ ${generated} days rolled`;
-      btn.style.borderColor = 'rgba(104,216,168,0.5)';
-      btn.style.color = '#68d8a8';
-      setTimeout(() => {
-        btn.textContent = orig;
-        btn.style.borderColor = '';
-        btn.style.color = '';
-      }, 2000);
-    }
-  }
-
-  // Purge weather older than 3 days behind whichever party is furthest BEHIND
-  function purgeOldWeather() {
-    // Find the earlier party date (lower day-of-year)
-    const pdA   = PARTY_DATES['A'];
-    const pdB   = PARTY_DATES['B'];
-    const doyA  = (pdA.year - 1) * 300 + (pdA.month - 1) * 30 + pdA.day;
-    const doyB  = (pdB.year - 1) * 300 + (pdB.month - 1) * 30 + pdB.day;
-    const earlierDoy = Math.min(doyA, doyB);
-
-    Object.keys(weatherData).forEach(dk => {
-      const parts = dk.split('-');
-      const day   = parseInt(parts[parts.length-1]);
-      const month = parseInt(parts[parts.length-2]);
-      const year  = parseInt(parts[parts.length-3]);
-      const keyDoy = (year - 1) * 300 + (month - 1) * 30 + day;
-      if (earlierDoy - keyDoy > 3) {
-        delete weatherData[dk];
-      }
-    });
-    saveCalendarData();
-  }
-
-  // ── CALENDAR INIT ──
-  function calInit() {
-    loadPartyDates();
-    loadCalendarData();
-    _activeParty = party; // sync to current dashboard party
-    purgeOldWeather(); // clean up old weather data
-    calState.era   = 'I.D.';
-    calState.month = PARTY_DATES[party].month;
-    calState.year  = PARTY_DATES[party].year;
-    calState.selectedDay = PARTY_DATES[party].day;
-    renderCalendar();
-  }
-
-  function loadCalendarData() {
-    try {
-      const wd = JSON.parse(localStorage.getItem('caelos_weather_data'));
-      const ed = JSON.parse(localStorage.getItem('caelos_event_data'));
-      if (wd) Object.assign(weatherData, wd);
-      if (ed) Object.assign(eventData, ed);
-    } catch(e){}
-  }
-
-  function saveCalendarData() {
-    try {
-      localStorage.setItem('caelos_weather_data', JSON.stringify(weatherData));
-      localStorage.setItem('caelos_event_data',   JSON.stringify(eventData));
-    } catch(e){}
   }
 
 </script>
