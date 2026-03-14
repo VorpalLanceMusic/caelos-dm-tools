@@ -143,7 +143,7 @@
   }
 
   .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+  .tab-panel.active { display: block; overflow-x: hidden; }
 
   /* ── BOTTOM NAV ── */
   .bottom-nav {
@@ -1522,6 +1522,789 @@
       radial-gradient(ellipse at 30% 80%, rgba(120,0,0,0.05) 0%, transparent 50%);
   }
 
+    /* ── CALENDAR ── */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+
+  :root {
+    --blood:   #9b1a1a;
+    --ember:   #c8722a;
+    --gold:    #e8c87a;
+    --bg:      #0a0a0f;
+    --surface: #12121a;
+    --raised:  #1a1a26;
+    --border:  #2a2a3a;
+    --text:    #ddd8cc;
+    --sub:     #6a6860;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+
+
+  /* ── CALENDAR WIDGET ── */
+  .cal-widget {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* Readout bar */
+  .cal-readout {
+    background: linear-gradient(135deg, #1c0808 0%, #0e0e1a 100%);
+    border-bottom: 2px solid var(--blood);
+    padding: 14px 16px 12px;
+  }
+  .cal-readout-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin-bottom: 4px;
+  }
+  .cal-readout-date {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    animation: readout-breathe 5s ease-in-out infinite;
+  }
+  @keyframes readout-breathe {
+    0%,100% { text-shadow: 0 0 12px rgba(232,200,122,0.25); }
+    50%      { text-shadow: 0 0 24px rgba(232,200,122,0.55); }
+  }
+  @keyframes readout-jump-land {
+    0%   { transform: scale(1);    text-shadow: 0 0 8px rgba(232,200,122,0.3); }
+    25%  { transform: scale(1.18); text-shadow: 0 0 32px rgba(232,200,122,1), 0 0 60px rgba(232,200,122,0.4); }
+    55%  { transform: scale(1.08); text-shadow: 0 0 20px rgba(232,200,122,0.7); }
+    75%  { transform: scale(1.13); text-shadow: 0 0 26px rgba(232,200,122,0.85); }
+    100% { transform: scale(1);    text-shadow: 0 0 12px rgba(232,200,122,0.25); }
+  }
+  .cal-readout-date.readout-jump {
+    animation: readout-jump-land 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards !important;
+  }
+  .cal-readout-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    color: var(--sub);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* Header step buttons */
+  .cal-readout-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .cal-readout-step-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .cal-step-btn {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--sub);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  @keyframes step-burst {
+    0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0.8; }
+    100% { transform: translate(-50%,-50%) scale(5);   opacity: 0; }
+  }
+  .cal-step-btn .burst {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: step-burst 0.35s ease-out forwards;
+  }
+  .cal-step-btn.step-fwd .burst { background: rgba(232,200,122,0.5); }
+  .cal-step-btn.step-bwd .burst { background: rgba(200,200,220,0.35); }
+  .cal-step-btn:active {
+    transform: scale(0.86);
+    border-color: rgba(232,200,122,0.4);
+    color: var(--gold);
+  }
+  @keyframes stepper-bump-fwd {
+    0%   { transform: scale(1)    translateX(0);   opacity: 1; }
+    35%  { transform: scale(0.8)  translateX(10px); opacity: 0; }
+    36%  { transform: scale(0.8)  translateX(-10px); opacity: 0; }
+    100% { transform: scale(1)    translateX(0);   opacity: 1; }
+  }
+  @keyframes stepper-bump-bwd {
+    0%   { transform: scale(1)    translateX(0);   opacity: 1; }
+    35%  { transform: scale(0.8)  translateX(-10px); opacity: 0; }
+    36%  { transform: scale(0.8)  translateX(10px);  opacity: 0; }
+    100% { transform: scale(1)    translateX(0);   opacity: 1; }
+  }
+  .stepper-anim-fwd { animation: stepper-bump-fwd 0.3s ease-in-out; }
+  .stepper-anim-bwd { animation: stepper-bump-bwd 0.3s ease-in-out; }
+
+  .cal-readout-era-badge {
+    font-size: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    background: rgba(155,26,26,0.25);
+    border: 1px solid rgba(155,26,26,0.5);
+    color: rgba(232,200,122,0.7);
+  }
+
+  /* Era + Month nav bar */
+  .cal-controls {
+    background: var(--raised);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Era selector row */
+  .cal-era-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 6px;
+    border-bottom: 1px solid rgba(42,42,58,0.6);
+  }
+  .cal-era-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sub);
+    flex-shrink: 0;
+  }
+  .cal-era-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 4px 28px 4px 10px;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236a6860'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color 0.2s;
+    max-width: 220px;
+  }
+  .cal-era-select:focus { border-color: rgba(155,26,26,0.6); }
+
+  /* Month nav row */
+  .cal-month-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+  }
+  .cal-month-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex: 1;
+    text-align: center;
+  }
+  .cal-month-sub {
+    font-size: 10px;
+    color: var(--sub);
+    font-family: 'Nunito', sans-serif;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .cal-nav-btn {
+    width: 30px; height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--sub);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .cal-nav-btn:active { background: var(--blood); border-color: var(--blood); color: var(--gold); }
+
+  /* Year bar */
+  .cal-year-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 5px 12px 8px;
+    background: var(--raised);
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-year-btn {
+    width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--sub);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .cal-year-btn:active { background: var(--blood); border-color: var(--blood); color: var(--gold); }
+  .cal-year-display {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 48px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .cal-year-era-lbl {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    color: var(--sub);
+    letter-spacing: 0.5px;
+  }
+
+  /* Day grid — 6 columns, 5 rows = 30 days */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    padding: 10px 10px 8px;
+    background: var(--surface);
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--sub);
+    cursor: pointer;
+    transition: all 0.12s;
+    position: relative;
+    user-select: none;
+    border: 1px solid transparent;
+  }
+  .cal-day:active { transform: scale(0.86); }
+  .cal-day:not(.cal-day-selected):hover {
+    background: var(--raised);
+    color: var(--text);
+  }
+
+  /* Whelk publish days — gold border, gold text */
+  .cal-day-whelk {
+    border-color: rgba(232,200,122,0.3);
+    color: rgba(232,200,122,0.75);
+  }
+
+  /* Weather emoji in cell */
+  .cal-day-wx {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  /* Event dot in cell */
+  .cal-day-ev-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 5px; height: 5px;
+    border-radius: 3px;
+    background: rgba(232,200,122,0.7);
+    pointer-events: none;
+    font-size: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1px;
+  }
+  /* Festival / holiday days — teal square border */
+  .cal-day-festival {
+    color: #68d8c8;
+    border-color: rgba(104,216,200,0.35);
+    background: rgba(104,216,200,0.06);
+  }
+
+  /* Selected */
+  .cal-day-selected {
+    background: var(--blood) !important;
+    border-color: transparent !important;
+    color: var(--gold) !important;
+    box-shadow: 0 0 10px rgba(155,26,26,0.5);
+    animation: day-ignite 0.22s ease-out;
+  }
+  @keyframes day-ignite {
+    0%   { transform: scale(0.75); }
+    65%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes day-jump-land {
+    0%   { transform: scale(1);    box-shadow: 0 0 0px rgba(232,200,122,0); }
+    20%  { transform: scale(1.35); box-shadow: 0 0 18px rgba(232,200,122,0.8); }
+    50%  { transform: scale(1.15); box-shadow: 0 0 10px rgba(232,200,122,0.5); }
+    70%  { transform: scale(1.22); box-shadow: 0 0 14px rgba(232,200,122,0.6); }
+    100% { transform: scale(1);    box-shadow: 0 0 10px rgba(155,26,26,0.5); }
+  }
+  .cal-day-jump-land,
+  .cal-day-party-a.cal-day-jump-land,
+  .cal-day-party-b.cal-day-jump-land,
+  .cal-day-selected.cal-day-jump-land {
+    animation: day-jump-land 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  /* Party date rings — gentle scale + glow breathe */
+  @keyframes party-a-breathe {
+    0%,100% { transform: scale(1);    box-shadow: inset 0 0 0 2px rgba(104,168,216,0.5), 0 0 3px rgba(104,168,216,0.1); }
+    50%      { transform: scale(1.12); box-shadow: inset 0 0 0 2px rgba(104,168,216,0.95), 0 0 10px rgba(104,168,216,0.4); }
+  }
+  @keyframes party-b-breathe {
+    0%,100% { transform: scale(1);    box-shadow: inset 0 0 0 2px rgba(104,216,168,0.5), 0 0 3px rgba(104,216,168,0.1); }
+    50%      { transform: scale(1.12); box-shadow: inset 0 0 0 2px rgba(104,216,168,0.95), 0 0 10px rgba(104,216,168,0.4); }
+  }
+  .cal-day-party-a {
+    color: #68a8d8;
+    animation: party-a-breathe 2.6s ease-in-out infinite;
+  }
+  .cal-day-party-b {
+    color: #68d8a8;
+    animation: party-b-breathe 2.6s ease-in-out infinite;
+    animation-delay: 0.4s;
+  }
+  .cal-day-party-both {
+    color: var(--text);
+    animation: party-a-breathe 2.6s ease-in-out infinite;
+  }
+  /* Ring + breathe survives selection */
+  .cal-day-selected.cal-day-party-a {
+    animation: party-a-breathe 2.6s ease-in-out infinite;
+  }
+  .cal-day-selected.cal-day-party-b {
+    animation: party-b-breathe 2.6s ease-in-out infinite;
+  }
+
+  /* Event banner */
+  .cal-event-banner {
+    padding: 5px 14px 7px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    color: var(--sub);
+    font-style: italic;
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid rgba(42,42,58,0.5);
+    min-height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  .cal-event-banner.ev-festival { color: #68d8c8; }
+  .cal-event-banner.ev-whelk    { color: rgba(232,200,122,0.7); }
+  .cal-event-banner.ev-party    { color: #68a8d8; }
+
+  /* Legend */
+  /* ── DAY POPUP ── */
+  #day-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: popup-in 0.22s cubic-bezier(0.34,1.2,0.64,1);
+  }
+  #day-popup.popup-closing {
+    animation: popup-out 0.2s ease-in forwards;
+  }
+  @keyframes popup-in {
+    0%   { opacity:0; transform:translateY(20px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+  @keyframes popup-out {
+    0%   { opacity:1; transform:translateY(0); }
+    100% { opacity:0; transform:translateY(20px); }
+  }
+  .popup-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+  }
+  .popup-card {
+    position: relative;
+    background: var(--raised);
+    border: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+    z-index: 1;
+    border-top: 2px solid var(--blood);
+  }
+  .popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .popup-date {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+  .popup-close {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--sub);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .popup-close:active { background: var(--blood); color: var(--gold); }
+  .popup-section {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(42,42,58,0.7);
+  }
+  .popup-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .popup-section-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .popup-manual-tag {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: rgba(232,200,122,0.15);
+    border: 1px solid rgba(232,200,122,0.3);
+    color: rgba(232,200,122,0.7);
+    letter-spacing: 0.5px;
+  }
+  .popup-wx-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .popup-wx-emoji { font-size: 22px; }
+  .popup-wx-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .popup-wx-select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    padding: 7px 10px;
+    outline: none;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+  .popup-wx-select:focus { border-color: rgba(155,26,26,0.5); }
+  .popup-cat-row {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+  .popup-cat-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-cat-btn:active { transform: scale(0.9); }
+  .popup-cat-btn.active { background: rgba(255,255,255,0.06); }
+  .popup-event-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    margin-bottom: 6px;
+    transition: border-color 0.2s;
+  }
+  .popup-event-input:focus { border-color: rgba(232,200,122,0.4); }
+  /* DM shared event checkbox */
+  .popup-dm-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .popup-dm-checkbox {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .popup-dm-checkbox.checked {
+    background: rgba(224,104,104,0.2);
+    border-color: rgba(224,104,104,0.6);
+    color: rgba(224,104,104,0.9);
+  }
+  .popup-dm-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--sub);
+    transition: color 0.15s;
+  }
+  .popup-dm-row:hover .popup-dm-label { color: var(--text); }
+  .popup-dm-row.checked .popup-dm-label { color: rgba(224,104,104,0.9); }
+
+  /* Party badge on event list items */
+  .ev-party-badge {
+    font-size: 11px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .ev-party-badge.pa  { color: rgba(104,168,216,0.9); background: rgba(104,168,216,0.1); }
+  .ev-party-badge.pb  { color: rgba(104,216,168,0.9); background: rgba(104,216,168,0.1); }
+  .ev-party-badge.dm  { color: rgba(224,104,104,0.9); background: rgba(224,104,104,0.1); }
+
+  /* Lock indicator on grid dot */
+  .ev-lock {
+    font-size: 6px;
+    vertical-align: middle;
+    margin-left: 1px;
+  }
+
+  .popup-clear-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--sub);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .popup-clear-btn:hover { border-color: #e06868; color: #e06868; }
+
+  /* Event list */
+  .popup-ev-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+  .popup-ev-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    animation: popup-ev-in 0.18s ease;
+  }
+  @keyframes popup-ev-in {
+    from { opacity:0; transform:translateX(-6px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  .popup-ev-icon { font-size: 14px; flex-shrink:0; }
+  .popup-ev-text {
+    flex: 1;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .popup-ev-edit, .popup-ev-del {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--sub);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.12s;
+  }
+  .popup-ev-edit:active { background: rgba(232,200,122,0.15); color: var(--gold); border-color: rgba(232,200,122,0.4); }
+  .popup-ev-del:active  { background: rgba(224,104,104,0.15); color: #e06868;     border-color: rgba(224,104,104,0.4); }
+  .popup-ev-empty {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--sub);
+    font-style: italic;
+    padding: 4px 0 6px;
+  }
+
+  /* Add row */
+  .popup-add-row {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .popup-save-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: rgba(155,26,26,0.2);
+    border: 1px solid rgba(155,26,26,0.4);
+    border-radius: 8px;
+    color: var(--gold);
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .popup-save-btn:active { background: var(--blood); }
+  .popup-add-section { padding-bottom: 4px !important; }
+
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 7px 14px 10px;
+    border-top: 1px solid var(--border);
+    background: var(--raised);
+  }
+  .cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    color: var(--sub);
+  }
+  .cal-legend-jump {
+    cursor: pointer;
+    padding: 3px 7px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .cal-legend-jump:hover {
+    background: var(--raised);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .cal-legend-jump:active {
+    transform: scale(0.93);
+    background: rgba(155,26,26,0.15);
+    border-color: rgba(155,26,26,0.4);
+  }
+  .leg-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
+  .leg-box { width:10px;height:10px;border-radius:3px;border:1px solid rgba(232,200,122,0.4);flex-shrink:0; }
+  .leg-sq  { width:8px;height:8px;border-radius:2px;background:#68d8c8;opacity:0.7;flex-shrink:0; }
+
+  .wx-gen-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: rgba(155,26,26,0.15);
+    border: 1px solid rgba(155,26,26,0.35);
+    border-radius: 8px;
+    color: var(--gold);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .wx-gen-btn:active {
+    background: rgba(155,26,26,0.35);
+    transform: scale(0.96);
+  }
+
   .wx-header {
     background-color: var(--surface);
     background-image:
@@ -1536,40 +2319,7 @@
   }
   .wx-sub { font-size: 14px; color: var(--sub); font-style: italic; }
 
-  .wx-date-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding: 10px 16px 8px;
-    background-color: var(--bg);
-    background-image:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.009) 0px, rgba(255,255,255,0.009) 1px, transparent 1px, transparent 12px),
-      linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 40%);
-    border-bottom: 1px solid var(--border);
-  }
-  .wx-date-lbl {
-    font-family: 'Rajdhani', sans-serif; font-size: 10px;
-    color: var(--sub); text-transform: uppercase; letter-spacing: 0.6px;
-    white-space: nowrap;
-  }
-  .wx-date-sel {
-    font-family: 'Nunito', sans-serif; font-size: 15px;
-    background: var(--raised); color: var(--text);
-    border: 1px solid var(--border); border-radius: 6px;
-    padding: 7px 8px; outline: none; cursor: pointer;
-    -webkit-appearance: none; appearance: none; flex: 1;
-  }
-  .wx-day-sel { max-width: 64px; flex: none; }
-  .wx-year-input {
-    font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 600;
-    background: var(--raised); color: var(--gold);
-    border: 1px solid var(--border); border-radius: 6px;
-    padding: 7px 8px; text-align: center; outline: none; width: 72px;
-  }
-  .wx-year-input:focus { border-color: var(--gold); }
-
-  .wx-roll-bar {
+    .wx-roll-bar {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 16px; background: var(--bg);
     border-bottom: 1px solid var(--border);
@@ -1977,33 +2727,38 @@
   .bestiary-search { flex:1;min-width:120px;background:var(--raised);border:1px solid var(--border);color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;padding:8px 12px;border-radius:8px;outline:none; }
   .bestiary-search:focus { border-color:var(--gold); }
   .bestiary-filter { background:var(--raised);border:1px solid var(--border);color:var(--sub);font-family:'Rajdhani',sans-serif;font-size:13px;padding:8px 10px;border-radius:8px;outline:none;cursor:pointer; }
-  .bestiary-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 10px 80px; }
+  .bestiary-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:8px 10px 80px; }
   /* card flip */
-  .bcard-wrap { perspective:900px;cursor:pointer;height:150px;position:relative; }
-  .bcard-inner { position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 0.65s cubic-bezier(0.23,1,0.32,1);border-radius:10px; }
+  .bcard-wrap { perspective:900px;cursor:pointer;height:180px;position:relative; }
+  .bcard-inner { position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 0.65s cubic-bezier(0.23,1,0.32,1);border-radius:14px; }
   .bcard-wrap.flipped .bcard-inner { transform:rotateY(180deg); }
   /* card back */
-  .bcard-back { position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;overflow:hidden;border:1px solid rgba(232,200,122,0.2);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px; }
-  .bcard-back::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(155,26,26,0.15) 0%,transparent 70%),repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(232,200,122,0.03) 18px,rgba(232,200,122,0.03) 19px),repeating-linear-gradient(-45deg,transparent,transparent 18px,rgba(232,200,122,0.03) 18px,rgba(232,200,122,0.03) 19px);border-radius:10px; }
+  .bcard-back { position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;overflow:hidden;border:1px solid rgba(232,200,122,0.2);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px; }
+  .bcard-back::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(155,26,26,0.15) 0%,transparent 70%),repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(232,200,122,0.03) 18px,rgba(232,200,122,0.03) 19px),repeating-linear-gradient(-45deg,transparent,transparent 18px,rgba(232,200,122,0.03) 18px,rgba(232,200,122,0.03) 19px);border-radius:14px; }
   .bcard-back-sigil { font-size:38px;position:relative;z-index:1;filter:drop-shadow(0 0 12px rgba(232,200,122,0.5));animation:sigil-breathe 6s ease-in-out infinite; }
-  .bcard-back-label { font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:2px;color:rgba(232,200,122,0.4);text-transform:uppercase;position:relative;z-index:1; }
-  .bcard-back-name { font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.8px;color:rgba(232,200,122,0.75);text-transform:uppercase;position:relative;z-index:1;text-align:center;padding:0 6px; }
-  .bcard-back-cr { font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(232,200,122,0.35);text-transform:uppercase;position:relative;z-index:1; }
-  .bcard-back::after { content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.05) 50%,transparent 60%);background-size:200% 100%;animation:card-sheen 9s ease-in-out infinite;border-radius:10px; }
+  .bcard-back-label { font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:2px;color:rgba(232,200,122,0.4);text-transform:uppercase;position:relative;z-index:1; }
+  .bcard-back-name { font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;color:rgba(232,200,122,0.75);text-transform:uppercase;position:relative;z-index:1;text-align:center;padding:0 8px; }
+  .bcard-back-cr { font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:1px;color:rgba(232,200,122,0.35);text-transform:uppercase;position:relative;z-index:1; }
+  .bcard-back::after { content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.05) 50%,transparent 60%);background-size:200% 100%;animation:card-sheen 9s ease-in-out infinite;border-radius:14px; }
   @keyframes sigil-breathe { 0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(232,200,122,0.4))} 50%{transform:scale(1.08);filter:drop-shadow(0 0 20px rgba(232,200,122,0.8))} }
   @keyframes card-sheen { 0%{background-position:200% 0} 70%,100%{background-position:-200% 0} }
   /* card front */
-  .bcard-front { position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);border-radius:10px;overflow:hidden;border:1px solid rgba(232,200,122,0.25);background:var(--surface); }
-  .bcard-emoji-hero { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:0.18;filter:drop-shadow(0 0 24px rgba(232,200,122,0.3));pointer-events:none; }
-  .bcard-portrait-overlay { position:absolute;inset:0;background:linear-gradient(to top,var(--surface) 0%,rgba(18,18,26,0.55) 60%,transparent 100%); }
-  .bcard-info { position:absolute;bottom:0;left:0;right:0;padding:6px 8px 8px; }
-  .bcard-name { font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);line-height:1.1;text-shadow:0 1px 8px rgba(0,0,0,0.8); }
-  .bcard-meta { display:flex;align-items:center;gap:4px;margin-top:2px; }
-  .bcard-cr { font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(155,26,26,0.7);color:#ff8888;border:1px solid rgba(155,26,26,0.5); }
-  .bcard-type { font-family:'Nunito',sans-serif;font-size:9px;color:rgba(221,216,204,0.6); }
-  .bcard-feeding { font-size:9px;margin-left:auto;font-family:'Rajdhani',sans-serif;color:rgba(221,216,204,0.85);font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.9); }
+  .bcard-front { position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);border-radius:14px;overflow:hidden;border:1px solid rgba(232,200,122,0.25);background:var(--surface); }
+  .bcard-emoji-bg {
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:80px;opacity:0.18;pointer-events:none;
+    filter:drop-shadow(0 0 20px rgba(232,200,122,0.3));
+    transition:opacity 0.3s;
+  }
+  .bcard-wrap:hover .bcard-emoji-bg { opacity:0.28; }
+  .bcard-info { position:absolute;bottom:0;left:0;right:0;padding:10px 12px 12px; }
+  .bcard-name { font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--gold);line-height:1.1;text-shadow:0 1px 8px rgba(0,0,0,0.8); }
+  .bcard-meta { display:flex;align-items:center;gap:6px;margin-top:3px; }
+  .bcard-cr { font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(155,26,26,0.7);color:#ff8888;border:1px solid rgba(155,26,26,0.5); }
+  .bcard-type { font-family:'Nunito',sans-serif;font-size:11px;color:rgba(221,216,204,0.6); }
+  .bcard-feeding { font-size:11px;margin-left:auto;font-family:'Rajdhani',sans-serif;color:rgba(221,216,204,0.85);font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,0.9); }
   /* holo */
-  .bcard-wrap.flipped.holo .bcard-front::after { content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 20%,rgba(255,50,50,0.06) 30%,rgba(255,200,50,0.08) 40%,rgba(50,255,150,0.06) 50%,rgba(50,150,255,0.08) 60%,transparent 70%);background-size:300% 300%;animation:holo-sweep 4s linear infinite;pointer-events:none;border-radius:10px; }
+  .bcard-wrap.flipped.holo .bcard-front::after { content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 20%,rgba(255,50,50,0.06) 30%,rgba(255,200,50,0.08) 40%,rgba(50,255,150,0.06) 50%,rgba(50,150,255,0.08) 60%,transparent 70%);background-size:300% 300%;animation:holo-sweep 4s linear infinite;pointer-events:none;border-radius:14px; }
   @keyframes holo-sweep { 0%{background-position:0% 0%} 100%{background-position:300% 300%} }
   /* flip flash */
   .flip-flash { position:absolute;inset:-20px;pointer-events:none;z-index:10;opacity:0; }
@@ -2018,8 +2773,12 @@
   .bestiary-detail.open { opacity:1;pointer-events:all; }
   .detail-inner { max-width:480px;margin:0 auto;padding:0 0 100px; }
   .detail-hero { position:relative;width:100%;height:260px;overflow:hidden; }
-  .detail-emoji-hero { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;opacity:0.15;filter:drop-shadow(0 0 40px rgba(232,200,122,0.25));pointer-events:none; }
-  .detail-hero-overlay { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.95) 100%); }
+  .detail-hero-emoji {
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    font-size:96px;opacity:0.3;
+    filter:drop-shadow(0 0 30px rgba(232,200,122,0.4));
+  }
+  .detail-hero-overlay { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.95) 100%); }
   .detail-hero-info { position:absolute;bottom:16px;left:16px;right:16px; }
   .detail-name { font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--gold);text-shadow:0 2px 16px rgba(0,0,0,0.9);line-height:1; }
   .detail-subtitle { font-family:'Nunito',sans-serif;font-size:13px;color:rgba(221,216,204,0.7);margin-top:4px;font-style:italic; }
@@ -2083,27 +2842,27 @@
   .round-note.surprise-round { color:#e0a868 !important;font-weight:700;animation:surprise-text 1s ease-in-out infinite alternate; }
   @keyframes surprise-text { from{opacity:0.7} to{opacity:1} }
   /* enemy tracker */
-  .enemy-tracker { padding:3px 5px; }
-  .enemy-group { background:var(--raised);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden; }
-  .enemy-group-head { display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(155,26,26,0.15);border-bottom:1px solid var(--border); }
+  .enemy-tracker { padding:4px 6px; }
+  .enemy-group { background:var(--raised);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;overflow:hidden; }
+  .enemy-group-head { display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(155,26,26,0.15);border-bottom:1px solid var(--border); }
   .enemy-group-name { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);flex:1; }
-  .enemy-group-cr { font-family:'Rajdhani',sans-serif;font-size:10px;color:#ff8888;background:rgba(155,26,26,0.4);padding:1px 6px;border-radius:4px; }
-  .enemy-dismiss-all { font-family:'Rajdhani',sans-serif;font-size:10px;color:var(--sub);background:transparent;border:1px solid var(--border);border-radius:5px;padding:2px 6px;cursor:pointer; }
+  .enemy-group-cr { font-family:'Rajdhani',sans-serif;font-size:11px;color:#ff8888;background:rgba(155,26,26,0.4);padding:2px 7px;border-radius:4px; }
+  .enemy-dismiss-all { font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--sub);background:transparent;border:1px solid var(--border);border-radius:5px;padding:3px 8px;cursor:pointer; }
   .enemy-row { display:flex;align-items:center;gap:5px;padding:5px 10px;border-bottom:1px solid rgba(42,42,58,0.5); }
   .enemy-row:last-of-type { border-bottom:none; }
   .enemy-row.downed { opacity:0.4; }
-  .enemy-row-name { font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--text);min-width:58px; }
-  .enemy-hp-bar-wrap { flex:1;height:5px;background:var(--border);border-radius:3px; }
+  .enemy-row-name { font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--text);min-width:68px; }
+  .enemy-hp-bar-wrap { flex:1;height:6px;background:var(--border);border-radius:3px; }
   .enemy-hp-bar { height:100%;border-radius:3px;background:var(--blood);transition:width 0.3s; }
-  .enemy-hp-text { font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--sub);min-width:42px;text-align:right; }
-  .enemy-hp-input { width:36px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;padding:2px 3px;border-radius:5px;text-align:center; }
-  .enemy-hp-btn { width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--raised);color:var(--text);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+  .enemy-hp-text { font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--sub);min-width:48px;text-align:right; }
+  .enemy-hp-input { width:40px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;padding:3px 4px;border-radius:5px;text-align:center; }
+  .enemy-hp-btn { width:24px;height:24px;border-radius:5px;border:1px solid var(--border);background:var(--raised);color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
   .enemy-hp-btn.dmg { border-color:rgba(155,26,26,0.4);color:#ff8888; }
   .enemy-hp-btn.heal { border-color:rgba(42,154,114,0.4);color:#88ddaa; }
-  .enemy-skull { font-size:13px;cursor:pointer;opacity:0.5;transition:opacity 0.15s;padding:0 1px; }
+  .enemy-skull { font-size:15px;cursor:pointer;opacity:0.5;transition:opacity 0.15s;padding:0 2px; }
   .enemy-skull:hover { opacity:1; }
-  .enemy-reminders { padding:4px 10px 6px;display:flex;flex-wrap:wrap;gap:3px; }
-  .enemy-reminder-chip { font-family:'Nunito',sans-serif;font-size:10px;padding:2px 6px;border-radius:12px;line-height:1.3; }
+  .enemy-reminders { padding:6px 12px 8px;display:flex;flex-wrap:wrap;gap:4px; }
+  .enemy-reminder-chip { font-family:'Nunito',sans-serif;font-size:10px;padding:3px 7px;border-radius:12px;line-height:1.3; }
   .enemy-reminder-chip.passive { background:rgba(42,106,170,0.15);color:rgba(150,180,230,0.85);border:1px solid rgba(42,106,170,0.2); }
   .enemy-reminder-chip.triggered { background:rgba(155,26,26,0.15);color:rgba(230,150,150,0.9);border:1px solid rgba(155,26,26,0.3);animation:reminder-pulse 3s ease-in-out infinite; }
 
@@ -2334,12 +3093,12 @@
      ENEMY CONDITION TAGS — per instance
   ══════════════════════════════ */
   .enemy-cond-row {
-    display: flex; flex-wrap: wrap; gap: 3px;
-    padding: 3px 10px 5px;
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 4px 12px 6px;
   }
   .enemy-cond-tag {
-    font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 600;
-    padding: 2px 6px; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 10px;
     border: 1px solid var(--border); color: var(--sub);
     cursor: pointer; transition: all 0.13s; user-select: none;
   }
@@ -2417,15 +3176,18 @@
   .bcard-wrap:not(.flipped) .bcard-back {
     cursor: pointer;
   }
-  /* Enemy group — emoji sigil + stats strip */
-  .enemy-portrait-emoji {
-    width:34px;height:34px;border-radius:6px;flex-shrink:0;
-    border:1px solid rgba(232,200,122,0.2);background:rgba(0,0,0,0.2);
-    display:flex;align-items:center;justify-content:center;font-size:19px;
+  /* Enemy group — portrait + stats strip */
+  .enemy-group-head { display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(155,26,26,0.15);border-bottom:1px solid var(--border); }
+  .enemy-group-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+    filter: drop-shadow(0 0 4px rgba(232,200,122,0.2));
   }
   .enemy-group-info { flex:1;min-width:0; }
-  .enemy-group-name { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--gold);line-height:1.1; }
-  .enemy-group-sub { font-family:'Nunito',sans-serif;font-size:10px;color:var(--sub);margin-top:1px; }
+  .enemy-group-name { font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--gold);line-height:1.1; }
+  .enemy-group-sub { font-family:'Nunito',sans-serif;font-size:11px;color:var(--sub);margin-top:1px; }
   .enemy-stats-strip {
     display:flex;gap:0;border-top:1px solid rgba(42,42,58,0.6);border-bottom:1px solid rgba(42,42,58,0.6);
     background:rgba(0,0,0,0.2);
@@ -2435,8 +3197,8 @@
     padding:3px 2px;border-right:1px solid rgba(42,42,58,0.5);
   }
   .enemy-stat-cell:last-child { border-right:none; }
-  .enemy-stat-val { font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text);line-height:1; }
-  .enemy-stat-lbl { font-family:'Rajdhani',sans-serif;font-size:8px;letter-spacing:0.6px;color:var(--sub);text-transform:uppercase;margin-top:1px; }
+  .enemy-stat-val { font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1; }
+  .enemy-stat-lbl { font-family:'Rajdhani',sans-serif;font-size:9px;letter-spacing:0.8px;color:var(--sub);text-transform:uppercase;margin-top:2px; }
   .enemy-stat-cell.highlight .enemy-stat-val { color:#ff9966; }
 
   /* Gertie note */
@@ -3474,6 +4236,19 @@
   .grimoire-result-cat.cat-thread    { color: #ff7a2f; border-color: rgba(255,122,47,0.35); background: rgba(255,122,47,0.08); }
   .grimoire-result-cat.cat-world     { color: #68a8d8; border-color: rgba(104,168,216,0.35); background: rgba(104,168,216,0.08); }
   .grimoire-result-cat.cat-rules     { color: #a8c8a8; border-color: rgba(168,200,168,0.35); background: rgba(168,200,168,0.08); }
+
+  /* Grimoire section open: subtle gold glow on the body */
+  .c-body.open .grimoire-entry-row:first-child {
+    border-top: none;
+  }
+  /* Rules category entries get a faint green-tint left border */
+  [id^="grimoire-rules"] .grimoire-entry-row {
+    border-left: 2px solid rgba(168,200,168,0.2);
+  }
+  [id^="grimoire-rules"] .grimoire-entry-row:active {
+    border-left-color: rgba(168,200,168,0.7);
+    background: rgba(168,200,168,0.05);
+  }
   .grimoire-result-name {
     font-family: 'Rajdhani', sans-serif;
     font-size: 16px;
@@ -3511,6 +4286,7 @@
     transition: background 0.12s;
     animation: grimoire-row-in 0.18s cubic-bezier(0.4,0,0.2,1) both;
   }
+  .grimoire-entry-row:active { background: rgba(232,200,122,0.06); }
   /* Stagger rows within each open section */
   .grimoire-entry-row:nth-child(1)  { animation-delay: 0.02s; }
   .grimoire-entry-row:nth-child(2)  { animation-delay: 0.05s; }
@@ -3525,6 +4301,15 @@
   .grimoire-entry-row:active { background: rgba(255,255,255,0.045); }
   .grimoire-entry-row:active .grimoire-entry-icon {
     animation: nav-tap 0.22s ease-out;
+    font-size: 20px;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+    filter: drop-shadow(0 0 0px transparent);
+    transition: filter 0.2s, transform 0.15s;
+  }
+  .grimoire-entry-row:active .grimoire-entry-icon {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 6px rgba(232,200,122,0.6));
   }
   .grimoire-entry-row:active::after { opacity: 1; transform: translateX(3px); }
   .grimoire-entry-row::after {
@@ -3549,6 +4334,7 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--text);
+    transition: color 0.15s;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3834,8 +4620,8 @@
     animation: heart-pulse 2.4s ease-in-out infinite;
     pointer-events: none;
     z-index: 10;
-    filter: drop-shadow(0 0 3px rgba(100,80,180,0.35));
-    transition: filter 1.2s ease, opacity 1.2s ease;
+    filter: drop-shadow(0 0 3px rgba(180,40,40,0.4));
+    transition: filter 1s ease, opacity 1s ease;
   }
   .loved-heart.midnight {
     animation: heart-midnight 1.8s ease-in-out infinite;
@@ -3844,7 +4630,7 @@
   }
   @keyframes heart-pulse {
     0%   { transform: scale(1);    opacity: 0.28; }
-    40%  { transform: scale(1.28); opacity: 0.58; }
+    40%  { transform: scale(1.28); opacity: 0.55; }
     55%  { transform: scale(1.18); opacity: 0.48; }
     100% { transform: scale(1);    opacity: 0.28; }
   }
@@ -4395,45 +5181,18 @@
     <div class="tab-panel" id="tab-settings">
 
       <div class="wx-header">
-        <div class="wx-title">🌩 Weather</div>
-        <div class="wx-sub">Set the in-world date — weather is tracked per day</div>
+        <div class="wx-title">🌏 Calendar</div>
+        <div class="wx-sub">Navigate dates, track weather, and manage events</div>
       </div>
 
-      <!-- DATE PICKER -->
-      <div class="wx-date-bar">
-        <span class="wx-date-lbl">📅 Date</span>
-        <select class="wx-date-sel" id="wx-month-sel" onchange="onDateChange()">
-          <option value="1">1 · Awakening</option>
-          <option value="2">2 · Devotion</option>
-          <option value="3" selected>3 · Joy</option>
-          <option value="4">4 · Kindred</option>
-          <option value="5">5 · Medial</option>
-          <option value="6">6 · Harvest</option>
-          <option value="7">7 · Resolute</option>
-          <option value="8">8 · Solace</option>
-          <option value="9">9 · Sacrifice</option>
-          <option value="10">10 · Silence</option>
-        </select>
-        <select class="wx-date-sel wx-day-sel" id="wx-day-sel" onchange="onDateChange()">
-          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-          <option value="13">13</option><option value="14">14</option><option value="15">15</option>
-          <option value="16">16</option><option value="17">17</option><option value="18">18</option>
-          <option value="19">19</option><option value="20">20</option><option value="21">21</option>
-          <option value="22">22</option><option value="23">23</option><option value="24">24</option>
-          <option value="25">25</option><option value="26">26</option><option value="27" selected>27</option>
-          <option value="28">28</option><option value="29">29</option><option value="30">30</option>
-        </select>
-        <span class="wx-date-lbl" style="min-width:0">I.D.</span>
-        <input class="wx-year-input" type="number" id="wx-year-input" value="1219" min="1" onchange="onDateChange()">
-      </div>
+      <!-- CAELOS CALENDAR -->
+      <div id="cal-widget"></div>
 
-      <!-- 7-DAY STRIP -->
-      <div class="wx-pre-rolls">
-        <span class="wx-pre-title">7-Day View</span>
-        <div class="wx-pre-grid" id="wx-week-strip"></div>
+      <!-- GENERATE WEATHER BUTTON -->
+      <div style="padding:8px 14px 0;display:flex;justify-content:flex-end;">
+        <button class="wx-gen-btn" onclick="generateWeatherDays()" title="Auto-roll weather for the next 10 days from current party date">
+          🎲 Generate next 10 days
+        </button>
       </div>
 
       <!-- ROLL INPUT -->
@@ -4511,8 +5270,8 @@
       <span class="nav-label">Prep</span>
     </button>
     <button class="nav-btn" onclick="switchTab('settings', this)">
-      <span class="nav-icon">🌩</span>
-      <span class="nav-label">Weather</span>
+      <span class="nav-icon">🌏</span>
+      <span class="nav-label">Calendar</span>
     </button>
   </nav>
 
@@ -5421,7 +6180,11 @@
   function toggleParty() {
     party = party === 'A' ? 'B' : 'A';
     document.getElementById('partyBadge').textContent = partyName();
+    _activeParty = party; // keep calendar in sync
+    _newEventParty = party; // default new events to current party
     renderPCs();
+    // Re-render calendar so event dots and filters update
+    if (typeof renderCalendar === 'function') renderCalendar();
     const lbl = document.getElementById('aoeTargetCount');
     if (lbl) lbl.textContent = '';
     aoeSelected.pc.clear();
@@ -5446,6 +6209,10 @@
       document.getElementById('bestiarySearch')?.value || '',
       document.getElementById('bestiaryTypeFilter')?.value || ''
     );
+    if (name === 'settings') {
+      // Init or re-render calendar when weather tab opens
+      if (typeof calInit === 'function') calInit();
+    }
   }
 
   // ── ROUND COUNTER ──
@@ -6033,17 +6800,19 @@
   }
 
   function onDateChange() {
-    const m = parseInt(document.getElementById('wx-month-sel').value);
-    const d = parseInt(document.getElementById('wx-day-sel').value);
-    const y = parseInt(document.getElementById('wx-year-input').value) || 1219;
+    // Now driven by calState — calendar calls this after selectDay
+    const m = calState ? calState.month : 1;
+    const d = calState ? calState.selectedDay : 1;
+    const y = calState ? calState.year : 1219;
     if (m >= 1 && m <= 10 && d >= 1 && d <= 30 && y > 0) {
       wxMonth = m; wxDay = d; wxYear = y;
-      renderWeekStrip();
       loadDateWeather();
     }
   }
 
   function renderWeekStrip() {
+    // 7-day strip removed — calendar handles date display now
+    return;
     const strip = document.getElementById('wx-week-strip');
     if (!strip) return;
     // Show 7 days centered on current day
@@ -6075,24 +6844,28 @@
   }
 
   function loadDateWeather() {
-    const key = wxDateKey(wxYear, wxMonth, wxDay);
-    const entry = weatherSchedule[key];
+    // Check calendar weatherData first (new system), fall back to weatherSchedule
+    const calKey  = typeof dayKey === 'function'
+      ? dayKey('I.D.', wxYear, wxMonth, wxDay) : null;
+    const calEntry = calKey ? weatherData[calKey] : null;
+    const schedKey = wxDateKey(wxYear, wxMonth, wxDay);
+    const schedEntry = weatherSchedule[schedKey];
+
+    const entry = calEntry || schedEntry;
+    const dropdown  = document.getElementById('wx-dropdown');
+    const rollInput = document.getElementById('wx-roll-input');
+
     if (entry) {
-      currentWeather = entry.weather;
-      const rollInput = document.getElementById('wx-roll-input');
-      const dropdown = document.getElementById('wx-dropdown');
-      if (rollInput) rollInput.value = entry.roll || '';
-      if (dropdown) dropdown.value = entry.weather;
-      renderWeatherCard();
-      syncBFWeather();
+      currentWeather = calEntry ? calEntry.type : schedEntry.weather;
+      if (dropdown)  dropdown.value  = currentWeather;
+      if (rollInput) rollInput.value = schedEntry?.roll || '';
     } else {
       currentWeather = 'none';
-      const dropdown = document.getElementById('wx-dropdown');
-      if (dropdown) dropdown.value = 'none';
-      const rollInput = document.getElementById('wx-roll-input');
+      if (dropdown)  dropdown.value  = 'none';
       if (rollInput) rollInput.value = '';
-      renderWeatherCard();
     }
+    renderWeatherCard();
+    syncBFWeather();
   }
 
   function applyRollToWeather(val) {
@@ -6103,9 +6876,16 @@
     weatherSchedule[dateKey] = { roll, weather: key };
     saveSchedule();
     currentWeather = key;
-    document.getElementById('wx-dropdown').value = key;
+    const dd = document.getElementById('wx-dropdown');
+    if (dd) dd.value = key;
+    // Also write to calendarData
+    if (typeof dayKey === 'function') {
+      const calKey = dayKey('I.D.', wxYear, wxMonth, wxDay);
+      weatherData[calKey] = { type: key, manual: true };
+      if (typeof saveCalendarData === 'function') saveCalendarData();
+      if (typeof renderCalendar   === 'function') renderCalendar();
+    }
     renderWeatherCard();
-    renderWeekStrip();
     syncBFWeather();
   }
 
@@ -6122,8 +6902,15 @@
     const existingRoll = weatherSchedule[dateKey]?.roll || null;
     weatherSchedule[dateKey] = { roll: existingRoll, weather: currentWeather };
     saveSchedule();
+    // Also write to calendarData so the calendar grid shows it
+    if (typeof dayKey === 'function' && key && key !== 'none') {
+      const calKey = dayKey('I.D.', wxYear, wxMonth, wxDay);
+      weatherData[calKey] = { type: currentWeather, manual: true };
+      if (typeof saveCalendarData === 'function') saveCalendarData();
+      if (typeof renderCalendar === 'function') renderCalendar();
+    }
     renderWeatherCard();
-    renderWeekStrip();
+    syncBFWeather();
     syncBFWeather();
   }
 
@@ -6319,12 +7106,10 @@
 
   // Init weather tab
   renderDatePicker();
-  renderWeekStrip();
   renderWeatherCard();
 </script>
 
-<script>const PORTRAITS = {};
-
+<script>
 
 const BESTIARY = [
   {
@@ -7510,8 +8295,7 @@ function renderBestiaryGrid(filter, typeFilter) {
           <div class="bcard-back-cr">CR ${c.cr}</div>
         </div>
         <div class="bcard-front">
-          <div class="bcard-emoji-hero">${c.portraitEmoji||'⚔️'}</div>
-          <div class="bcard-portrait-overlay"></div>
+          ${`<div class="bcard-emoji-bg">${c.portraitEmoji||'⚔️'}</div>`}
           <div class="bcard-info">
             <div class="bcard-name">${c.name}</div>
             <div class="bcard-meta">
@@ -7594,7 +8378,7 @@ function openDetail(id) {
       <div style="width:60px"></div>
     </div>
     <div class="detail-hero">
-      <div class="detail-emoji-hero">${c.portraitEmoji||'⚔️'}</div>
+      ${`<div class="detail-hero-emoji">${c.portraitEmoji||'⚔️'}</div>`}
       <div class="detail-hero-overlay"></div>
       <div class="detail-hero-info">
         <div class="detail-name">${c.name}</div>
@@ -7714,9 +8498,11 @@ function renderEnemyTracker() {
     return;
   }
 
+  // Build portrait positions lookup (same as card grid)
+  
+
   container.innerHTML=activeEnemies.map((group,gi)=>{
     const c=group.creature;
-
     // Key stats strip — AC, HP max, PP (passive perception), top saves/bonuses
     const pp=10+(c.stats&&c.stats.wis?Math.floor((c.stats.wis-10)/2):0)+(c.saves&&c.saves.wis?parseInt(c.saves.wis)||0:0);
     const strMod=c.stats&&c.stats.str?Math.floor((c.stats.str-10)/2):0;
@@ -7769,7 +8555,7 @@ function renderEnemyTracker() {
 
     return `<div class="enemy-group" id="egroup-${gi}">
       <div class="enemy-group-head">
-        <div class="enemy-portrait-emoji">${c.portraitEmoji||'⚔️'}</div>
+        <span class="enemy-group-emoji">${c.portraitEmoji||'⚔️'}</span>
         <div class="enemy-group-info">
           <div class="enemy-group-name">${c.name}</div>
           <div class="enemy-group-sub">${c.size} ${c.type} · CR ${c.cr}</div>
@@ -8676,73 +9462,67 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
       ]
     },
 
-  // ══════════════════════════════════════════════════════
-  // RULES REFERENCE — Conditions
-  // ══════════════════════════════════════════════════════
+
+  // === RULES REFERENCE ===
 
   { id:'rules_conditions', name:'Conditions', category:'rules', icon:'⚡', subtitle:'All 14 standard conditions at a glance',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Blinded', color:'st-red', body:'Cannot see. Automatically fails any check requiring sight. Attack rolls against it have advantage. Its attack rolls have disadvantage.' },
-      { title:'Charmed', color:'st-purple', body:'Cannot attack the charmer or target them with harmful abilities or effects. The charmer has advantage on any ability check to interact socially with it.' },
-      { title:'Deafened', color:'st-gold', body:'Cannot hear. Automatically fails any check requiring hearing.' },
-      { title:'Exhaustion', color:'st-orange', body:'Cumulative levels 1–6. <strong>1:</strong> Disadvantage on ability checks. <strong>2:</strong> Speed halved. <strong>3:</strong> Disadvantage on attack rolls and saving throws. <strong>4:</strong> HP max halved. <strong>5:</strong> Speed reduced to 0. <strong>6:</strong> Death. Long rest removes one level. Finishing a long rest also removes one level.' },
-      { title:'Frightened', color:'st-red', body:'Disadvantage on ability checks and attack rolls while the source of fear is within line of sight. Cannot willingly move closer to the source.' },
-      { title:'Grappled', color:'st-teal', body:'Speed becomes 0, can\'t benefit from speed bonuses. Ends if grappler is incapacitated, or if an effect removes the grappled creature from grappler\'s reach. <strong>Escape:</strong> Action, Athletics or Acrobatics vs grappler\'s Athletics.' },
+      { title:'Blinded', color:'st-red', body:'Cannot see. Auto-fails checks requiring sight. Attack rolls against it have advantage. Its attack rolls have disadvantage.' },
+      { title:'Charmed', color:'st-purple', body:'Cannot attack the charmer. Charmer has advantage on social checks vs it.' },
+      { title:'Deafened', color:'st-gold', body:'Cannot hear. Auto-fails checks requiring hearing.' },
+      { title:'Exhaustion', color:'st-orange', body:'Cumulative levels 1–6. 1: Disadv on ability checks. 2: Speed halved. 3: Disadv on attacks and saves. 4: HP max halved. 5: Speed reduced to 0. 6: Death. Long rest removes one level.' },
+      { title:'Frightened', color:'st-red', body:'Disadvantage on ability checks and attack rolls while source of fear is in line of sight. Cannot willingly move closer to the source.' },
+      { title:'Grappled', color:'st-teal', body:"Speed becomes 0. Escape: Action, Athletics or Acrobatics vs grappler's Athletics. Ends if grappler incapacitated or effect removes grappled creature from reach." },
       { title:'Incapacitated', color:'st-red', body:'Cannot take actions or reactions.' },
-      { title:'Invisible', color:'st-blue', body:'Impossible to see without special sense. Heavily obscured for hiding. Attack rolls against it have disadvantage. Its attack rolls have advantage. Location can still be detected by noise or tracks.' },
-      { title:'Paralyzed', color:'st-red', body:'Incapacitated, can\'t move or speak. Automatically fails STR and DEX saving throws. Attack rolls against it have advantage. Any attack from within 5 ft that hits is a critical hit.' },
-      { title:'Petrified', color:'st-gray', body:'Transformed into solid inanimate substance (typically stone). Weight increases ×10, ceases aging. Incapacitated, can\'t move or speak, unaware of surroundings. Attack rolls against it have advantage. Automatically fails STR and DEX saves. Resistance to all damage. Immune to poison and disease (existing poisons/diseases suspended, not neutralized).' },
+      { title:'Invisible', color:'st-blue', body:"Impossible to see without special sense. Attack rolls against it have disadvantage. Its attack rolls have advantage. Location detectable by noise or tracks." },
+      { title:'Paralyzed', color:'st-red', body:"Incapacitated, can't move or speak. Auto-fails STR and DEX saves. Attack rolls against it have advantage. Any attack from within 5 ft that hits is a critical hit." },
+      { title:'Petrified', color:'st-gray', body:"Turned to solid inanimate substance. Incapacitated, unaware of surroundings. Auto-fails STR and DEX saves. Resistance to all damage. Immune to poison and disease." },
       { title:'Poisoned', color:'st-teal', body:'Disadvantage on attack rolls and ability checks.' },
-      { title:'Prone', color:'st-orange', body:'Only movement option is crawling (costs 1 extra ft per ft moved) or standing up (costs half speed). Disadvantage on attack rolls. Attack rolls against it: advantage if attacker within 5 ft, disadvantage if attacker further away.' },
-      { title:'Restrained', color:'st-red', body:'Speed becomes 0, can\'t benefit from speed bonuses. Attack rolls against it have advantage. Its attack rolls have disadvantage. Disadvantage on DEX saving throws.' },
-      { title:'Stunned', color:'st-red', body:'Incapacitated, can\'t move, can only speak falteringly. Automatically fails STR and DEX saving throws. Attack rolls against it have advantage.' },
-      { title:'Unconscious', color:'st-gray', body:'Incapacitated, can\'t move or speak, unaware of surroundings. Drops whatever it\'s holding and falls prone. Automatically fails STR and DEX saving throws. Attack rolls against it have advantage. Any attack from within 5 ft that hits is a critical hit.' },
+      { title:'Prone', color:'st-orange', body:"Crawling costs 1 extra ft per ft moved. Standing up costs half speed. Disadvantage on attack rolls. Attacks against it: advantage if attacker within 5 ft, disadvantage if farther away." },
+      { title:'Restrained', color:'st-red', body:"Speed becomes 0. Attack rolls against it have advantage. Its attack rolls have disadvantage. Disadvantage on DEX saving throws." },
+      { title:'Stunned', color:'st-red', body:"Incapacitated, can't move, can only speak falteringly. Auto-fails STR and DEX saves. Attack rolls against it have advantage." },
+      { title:'Unconscious', color:'st-gray', body:"Incapacitated, can't move or speak, unaware of surroundings. Drops held items, falls prone. Auto-fails STR and DEX saves. Attack rolls against it have advantage. Any attack from within 5 ft that hits is a critical hit." },
     ]
   },
-
-  // ══════════════════════════════════════════════════════
-  // RULES REFERENCE — Combat Situations
-  // ══════════════════════════════════════════════════════
 
   { id:'rules_cover', name:'Cover', category:'rules', icon:'🛡️', subtitle:'Half, Three-Quarters, Total',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Half Cover', color:'st-gold', body:'+2 bonus to AC and DEX saving throws. A target has half cover if an obstacle blocks at least half of its body. Examples: low wall, large furniture, another creature.' },
-      { title:'Three-Quarters Cover', color:'st-orange', body:'+5 bonus to AC and DEX saving throws. A target has three-quarters cover if about three-quarters of it is covered. Examples: arrow slit, tree trunk, corner of a building.' },
-      { title:'Total Cover', color:'st-red', body:'Cannot be targeted directly by an attack or spell, though area effects may still reach it. A target has total cover if it is completely concealed by an obstacle.' },
-      { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Cover is about what\'s between the attacker and the target, not what the target is standing behind. If a player says "I\'m hiding behind this pillar" — does the pillar actually block the attack angle? Use your judgment, not just the player\'s description.</div>' },
+      { title:'Half Cover', color:'st-gold', body:'+2 bonus to AC and DEX saves. Obstacle blocks at least half of target. Examples: low wall, large furniture, another creature.' },
+      { title:'Three-Quarters Cover', color:'st-orange', body:'+5 bonus to AC and DEX saves. About three-quarters of target is covered. Examples: arrow slit, tree trunk, corner of a building.' },
+      { title:'Total Cover', color:'st-red', body:'Cannot be targeted directly by an attack or spell, though area effects may still reach it.' },
+      { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Cover is about the attack angle, not just what the player says they are behind. Use your judgment.</div>' },
     ]
   },
 
   { id:'rules_grappling', name:'Grappling', category:'rules', icon:'🤼', subtitle:'Initiate, Escape, Drag',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Initiating a Grapple', color:'st-teal', body:'Replace one attack in the Attack action. Make a STR (Athletics) check contested by the target\'s STR (Athletics) or DEX (Acrobatics) — target\'s choice. On success, target is Grappled. Target must be no more than one size larger than you.' },
-      { title:'Escaping a Grapple', color:'st-blue', body:'Use your action. Make STR (Athletics) or DEX (Acrobatics) check contested by grappler\'s STR (Athletics). On success, you escape and the Grappled condition ends.' },
-      { title:'Moving a Grappled Target', color:'st-gold', body:'You can drag or carry the grappled creature when you move, but your speed is halved unless the creature is two or more sizes smaller than you.' },
-      { title:'Grapple + Shove Combo', color:'st-orange', body:'Grapple a target first, then use a second attack to shove them prone. Prone + Grappled = target stuck on the ground, disadvantage on attacks, you have advantage on all melee attacks against them within 5 ft. Classic lockdown.' },
-      { title:'Grapple Ends When', color:'st-red', body:'The grappler is incapacitated, OR an effect moves the grappled creature out of the grappler\'s reach.' },
+      { title:'Initiating a Grapple', color:'st-teal', body:"Replace one attack. STR (Athletics) vs target's STR (Athletics) or DEX (Acrobatics) — target's choice. Target must be no more than one size larger." },
+      { title:'Escaping a Grapple', color:'st-blue', body:"Use your action. STR (Athletics) or DEX (Acrobatics) vs grappler's STR (Athletics). Success ends the Grappled condition." },
+      { title:'Moving a Grappled Target', color:'st-gold', body:'Can drag or carry grappled creature when you move, but speed is halved unless creature is two or more sizes smaller than you.' },
+      { title:'Grapple + Shove Combo', color:'st-orange', body:'Grapple first, then shove them prone. Prone + Grappled = stuck on ground, they have disadv on attacks, you have advantage on all melee attacks within 5 ft.' },
+      { title:'Grapple Ends When', color:'st-red', body:"Grappler is incapacitated, OR an effect moves the grappled creature out of grappler's reach." },
     ]
   },
 
   { id:'rules_shoving', name:'Shoving', category:'rules', icon:'💥', subtitle:'Knock Prone or Push Away',
     tags:[], tagLabels:[],
     sections:[
-      { title:'How It Works', color:'st-teal', body:'Replace one attack in the Attack action. Make STR (Athletics) check contested by target\'s STR (Athletics) or DEX (Acrobatics). Target must be no more than one size larger than you.' },
+      { title:'How It Works', color:'st-teal', body:"Replace one attack. STR (Athletics) vs target's STR (Athletics) or DEX (Acrobatics). Target must be no more than one size larger." },
       { title:'On Success', color:'st-gold', body:'Choose: knock the target <strong>Prone</strong>, OR push them <strong>5 ft away</strong> from you.' },
-      { title:'Tactical Note', color:'st-blue', body:'Shove prone into a grapple = stuck and helpless. Shove off a ledge = potentially lethal. Shove through a doorway = closes a tactical option. Shove as the last attack in a multiattack while still having a bonus action open = setup for bonus action attacks next turn.' },
+      { title:'Tactical Note', color:'st-blue', body:'Shove prone into a grapple = stuck and helpless. Shove off a ledge = potentially lethal. Classic setup for multiattack combos.' },
     ]
   },
 
   { id:'rules_underwater', name:'Underwater Combat', category:'rules', icon:'🌊', subtitle:'Resistance, Disadvantage, Breath',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Melee Attacks', color:'st-blue', body:'A creature has disadvantage on melee attack rolls with weapons other than daggers, javelins, shortswords, spears, and tridents — unless it has a swimming speed.' },
-      { title:'Ranged Attacks', color:'st-red', body:'Ranged weapon attacks automatically miss targets beyond the weapon\'s normal range. Even within normal range, attack roll has disadvantage unless the weapon is a crossbow, net, or thrown weapon like a javelin.' },
-      { title:'Fire Damage', color:'st-orange', body:'Creatures and objects fully submerged in water have resistance to fire damage.' },
-      { title:'Holding Breath', color:'st-teal', body:'Can hold breath for CON modifier + 1 minutes (minimum 30 seconds). After that, drops to 0 HP and can\'t regain HP or be stabilized until it can breathe.' },
-      { title:'Suffocating (no breath)', color:'st-red', body:'If a creature can\'t hold its breath (e.g. mouth full of water), it can survive for 1 round. At the start of its next turn, it drops to 0 HP and can\'t regain HP or be stabilized until it can breathe again.' },
+      { title:'Melee Attacks', color:'st-blue', body:'Disadvantage on melee attack rolls with weapons other than daggers, javelins, shortswords, spears, and tridents — unless the creature has a swimming speed.' },
+      { title:'Ranged Attacks', color:'st-red', body:'Ranged weapon attacks automatically miss targets beyond normal range. Within normal range, disadvantage unless weapon is a crossbow, net, or thrown weapon.' },
+      { title:'Fire Damage', color:'st-orange', body:'Creatures and objects fully submerged have resistance to fire damage.' },
+      { title:'Holding Breath', color:'st-teal', body:"Can hold breath for CON modifier + 1 minutes (minimum 30 seconds). After that, drops to 0 HP and can't be stabilized until able to breathe." },
     ]
   },
 
@@ -8750,63 +9530,59 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
     tags:[], tagLabels:[],
     sections:[
       { title:'Mounting & Dismounting', color:'st-gold', body:'Costs half movement speed to mount or dismount. If movement is 0, cannot mount.' },
-      { title:'Controlled vs Independent Mounts', color:'st-teal', body:'<strong>Controlled:</strong> trained for combat. Acts on rider\'s initiative, rider chooses its movement and one of: Dash, Disengage, Dodge. <strong>Independent:</strong> acts on its own initiative, moves and acts as it wishes. DM controls independent mounts.' },
-      { title:'If the Mount is Knocked Prone', color:'st-red', body:'Rider must succeed on DC 10 DEX save or fall off, landing prone within 5 ft of the mount. If rider succeeds or mount stands up, rider isn\'t dismounted.' },
-      { title:'If the Rider is Knocked Prone', color:'st-orange', body:'Rider must succeed on DC 10 DEX save or fall off mount, landing prone within 5 ft.' },
-      { title:'Forced Dismount', color:'st-red', body:'If an effect moves the mount against its will, rider must succeed on DC 10 DEX save or fall off, landing prone within 5 ft. If rider is physically moved off the mount, same result.' },
-      { title:'Charging', color:'st-blue', body:'No official "charge" action in 5e. Common homebrew: if you move 20+ ft in a straight line toward a target and attack, +1d6 damage. Confirm with DM before assuming this applies.' },
+      { title:'Controlled vs Independent', color:'st-teal', body:"<strong>Controlled:</strong> acts on rider's initiative, rider chooses: Dash, Disengage, or Dodge. <strong>Independent:</strong> acts on its own initiative. DM controls independent mounts." },
+      { title:'Mount Knocked Prone', color:'st-red', body:'Rider must succeed on DC 10 DEX save or fall off, landing prone within 5 ft.' },
+      { title:'Rider Knocked Prone', color:'st-orange', body:'Rider must succeed on DC 10 DEX save or fall off mount, landing prone within 5 ft.' },
     ]
   },
 
   { id:'rules_suffocation', name:'Suffocation & Drowning', category:'rules', icon:'💨', subtitle:'Breath tracking, survival timers',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Holding Breath', color:'st-teal', body:'A creature can hold its breath for a number of minutes equal to <strong>1 + its CON modifier</strong> (minimum 30 seconds).' },
-      { title:'Running Out of Breath', color:'st-orange', body:'When a creature runs out of breath or is choking, it can survive for a number of rounds equal to its <strong>CON modifier</strong> (minimum 1 round). At the start of its next turn, it drops to <strong>0 HP</strong> and is dying, and cannot regain HP or be stabilized until it can breathe again.' },
-      { title:'Drowning', color:'st-red', body:'Same rules as suffocation. A creature that cannot swim and falls into water is considered to be holding its breath immediately. The DM may require Athletics checks to stay afloat.' },
-      { title:'Quick Tracking', color:'st-gold', body:'CON modifier is the number of "grace rounds" after breath runs out. Con +2 = 2 rounds before hitting 0 HP. Con -1 = 1 round minimum.' },
+      { title:'Holding Breath', color:'st-teal', body:'Can hold breath for <strong>1 + CON modifier</strong> minutes (minimum 30 seconds).' },
+      { title:'Running Out of Breath', color:'st-orange', body:'Can survive for a number of rounds equal to <strong>CON modifier</strong> (minimum 1). At the start of its next turn, drops to <strong>0 HP</strong> and cannot be stabilized until it can breathe.' },
+      { title:'Quick Tracking', color:'st-gold', body:'CON modifier = grace rounds after breath runs out. Con +2 = 2 rounds. Con -1 = 1 round minimum.' },
     ]
   },
 
   { id:'rules_size', name:'Size & Space', category:'rules', icon:'📏', subtitle:'How size affects combat and movement',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Size Categories', color:'st-gold', body:'<strong>Tiny:</strong> 2½ ft (occupies 2½×2½, can share space). <strong>Small/Medium:</strong> 5 ft. <strong>Large:</strong> 10 ft. <strong>Huge:</strong> 15 ft. <strong>Gargantuan:</strong> 20 ft or more.' },
-      { title:'Squeezing', color:'st-teal', body:'A creature can squeeze through a space one size smaller than it. While squeezing: movement costs 1 extra ft per ft moved, disadvantage on attack rolls and DEX saves, attack rolls against it have advantage.' },
-      { title:'Moving Through Other Creatures', color:'st-blue', body:'You can move through a nonhostile creature\'s space. You can move through a hostile creature\'s space only if it is at least two sizes larger or smaller than you. Another creature\'s space is difficult terrain. You cannot end your move in another creature\'s space.' },
-      { title:'Size vs Grapple/Shove', color:'st-orange', body:'You can only grapple or shove a creature that is <strong>no more than one size larger</strong> than you. A Medium creature can grapple up to Large. A Small creature can only grapple Small or Medium.' },
-      { title:'Reach by Size', color:'st-purple', body:'<strong>Tiny/Small/Medium:</strong> 5 ft reach. <strong>Large:</strong> 5 ft (natural weapons may be 10 ft). <strong>Huge:</strong> 10 ft typically. <strong>Gargantuan:</strong> 15–20 ft typically. Always check the stat block.' },
+      { title:'Size Categories', color:'st-gold', body:'<strong>Tiny:</strong> 2½ ft. <strong>Small/Medium:</strong> 5 ft. <strong>Large:</strong> 10 ft. <strong>Huge:</strong> 15 ft. <strong>Gargantuan:</strong> 20 ft or more.' },
+      { title:'Squeezing', color:'st-teal', body:'Can squeeze through a space one size smaller. Movement costs 1 extra ft per ft. Disadvantage on attack rolls and DEX saves. Attack rolls against it have advantage.' },
+      { title:'Moving Through Creatures', color:'st-blue', body:"Can move through nonhostile creature's space. Can move through hostile creature's space only if it is at least two sizes larger or smaller. Cannot end move in another creature's space." },
+      { title:'Size vs Grapple/Shove', color:'st-orange', body:'Can only grapple or shove a creature no more than <strong>one size larger</strong>. Medium can grapple up to Large. Small can only grapple Small or Medium.' },
     ]
   },
 
   { id:'rules_opportunity', name:'Opportunity Attacks', category:'rules', icon:'⚠️', subtitle:'When they trigger and how to avoid them',
     tags:[], tagLabels:[],
     sections:[
-      { title:'When It Triggers', color:'st-red', body:'When a hostile creature you can see moves out of your reach. Uses your <strong>reaction</strong>. You make one melee attack against the provoking creature.' },
-      { title:'When It Does NOT Trigger', color:'st-teal', body:'Teleportation. Being moved involuntarily (shoved, grabbed, thrown). Using the <strong>Disengage</strong> action. Moving creatures that you have grappled (they move with you, not away from you).' },
-      { title:'Disengage Action', color:'st-gold', body:'Your movement doesn\'t provoke opportunity attacks for the rest of the turn. Costs your full action.' },
-      { title:'Sentinel Feat Exception', color:'st-orange', body:'Creatures with Sentinel can make an opportunity attack against creatures that use Disengage. Also: when you hit with an OA, the target\'s speed becomes 0 for the rest of the turn.' },
+      { title:'When It Triggers', color:'st-red', body:'When a hostile creature you can see moves out of your reach. Uses your <strong>reaction</strong>. Make one melee attack against the provoking creature.' },
+      { title:'When It Does NOT Trigger', color:'st-teal', body:'Teleportation. Being moved involuntarily. Using the <strong>Disengage</strong> action. Moving grappled creatures with you.' },
+      { title:'Disengage Action', color:'st-gold', body:"Your movement doesn't provoke opportunity attacks for the rest of the turn. Costs your full action." },
+      { title:'Sentinel Feat', color:'st-orange', body:"Can make an OA against creatures that Disengage. When you hit with an OA, the target's speed becomes 0 for the rest of the turn." },
     ]
   },
 
   { id:'rules_two_weapon', name:'Two-Weapon Fighting', category:'rules', icon:'⚔️', subtitle:'Bonus action off-hand, no modifier',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Requirements', color:'st-gold', body:'Both weapons must be <strong>light</strong> (unless you have the Dual Wielder feat). The off-hand attack is made as a <strong>bonus action</strong>.' },
-      { title:'Off-Hand Attack', color:'st-teal', body:'You don\'t add your ability modifier to the damage of the bonus attack — unless the modifier is negative. You still add relevant attack bonuses.' },
-      { title:'Two-Weapon Fighting Style', color:'st-blue', body:'If you have this fighting style (Fighter, Ranger), you <strong>do</strong> add your ability modifier to the off-hand attack damage.' },
-      { title:'Dual Wielder Feat', color:'st-purple', body:'+1 AC when wielding a weapon in each hand. Can use two-weapon fighting even when the weapons aren\'t light. Can draw or stow two weapons when you could normally draw or stow one.' },
+      { title:'Requirements', color:'st-gold', body:'Both weapons must be <strong>light</strong> (unless you have Dual Wielder feat). Off-hand attack is a <strong>bonus action</strong>.' },
+      { title:'Off-Hand Attack', color:'st-teal', body:'You do NOT add your ability modifier to the damage of the bonus attack — unless the modifier is negative.' },
+      { title:'Two-Weapon Fighting Style', color:'st-blue', body:'Fighter, Ranger: you DO add your ability modifier to the off-hand attack damage.' },
+      { title:'Dual Wielder Feat', color:'st-purple', body:'+1 AC when wielding a weapon in each hand. Can use two-weapon fighting even when weapons are not light.' },
     ]
   },
 
   { id:'rules_concentration', name:'Concentration', category:'rules', icon:'🎯', subtitle:'Maintaining spells, damage DCs',
     tags:[], tagLabels:[],
     sections:[
-      { title:'Basics', color:'st-gold', body:'Only one concentration spell active at a time. Casting another concentration spell ends the first. Concentration continues until the spell\'s duration ends, you cast another concentration spell, you are incapacitated or killed, or you choose to end it (no action required).' },
-      { title:'Damage & Concentration Saves', color:'st-red', body:'When you take damage while concentrating, you must make a <strong>CON saving throw</strong>. DC = 10 or half the damage taken, whichever is higher. Failure = spell ends.' },
-      { title:'War Caster Feat', color:'st-teal', body:'Advantage on concentration saves. Can perform somatic components with hands full of weapons/shield. Can cast certain spells as opportunity attacks.' },
-      { title:'Resilient (CON) Feat', color:'st-blue', body:'+1 CON. Proficiency in CON saving throws — the most efficient pure concentration protection for most classes.' },
-      { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Multiple instances of damage in one round = multiple concentration checks. Flanked by archers peppering someone = potentially brutal. Always track when casters get hit mid-combat. Easy thing to forget.</div>' },
+      { title:'Basics', color:'st-gold', body:"Only one concentration spell active at a time. Casting another ends the first. Also ends when incapacitated, killed, or you choose to end it." },
+      { title:'Damage & Saves', color:'st-red', body:'When you take damage while concentrating, make a <strong>CON saving throw</strong>. DC = 10 or half the damage taken, whichever is higher. Failure = spell ends.' },
+      { title:'War Caster Feat', color:'st-teal', body:'Advantage on concentration saves. Can perform somatic components with hands full. Can cast certain spells as opportunity attacks.' },
+      { title:'Resilient (CON) Feat', color:'st-blue', body:'+1 CON. Proficiency in CON saving throws — most efficient concentration protection for most classes.' },
+      { title:'DM Notes', color:'st-red', body:'<div class="dm-note">Multiple hits in one round = multiple concentration checks. Track when casters get hit. Easy to forget mid-combat.</div>' },
     ]
   },
 
@@ -8819,29 +9595,29 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
       { title:'Level 4', color:'st-red', body:'Hit point maximum halved.' },
       { title:'Level 5', color:'st-red', body:'Speed reduced to 0.' },
       { title:'Level 6', color:'st-red', body:'Death.' },
-      { title:'Recovery', color:'st-teal', body:'Finishing a long rest reduces exhaustion level by 1, provided the creature has also eaten and drunk. Effects are cumulative — level 3 means disadv on ability checks AND halved speed AND disadv on attacks/saves.' },
+      { title:'Recovery', color:'st-teal', body:'Finishing a long rest reduces exhaustion level by 1, provided the creature has also eaten and drunk. Effects are cumulative — level 3 includes all of 1 + 2 + 3.' },
     ]
   },
 
   { id:'rules_death_saves', name:'Death Saving Throws', category:'rules', icon:'💀', subtitle:'Stabilizing, dying, and instant death',
     tags:[], tagLabels:[],
     sections:[
-      { title:'At 0 HP', color:'st-red', body:'You fall unconscious and start making death saving throws at the start of each of your turns. Roll a d20 — no modifiers apply.' },
-      { title:'Success', color:'st-teal', body:'Roll 10 or higher = success. 3 successes = stable (unconscious but no longer dying). Stable at 0 HP regains 1 HP after 1d4 hours, or another creature can stabilize them with a DC 10 Medicine check or healing magic.' },
+      { title:'At 0 HP', color:'st-red', body:'You fall unconscious and make death saving throws at the start of each of your turns. Roll a d20 — no modifiers apply.' },
+      { title:'Success', color:'st-teal', body:'Roll 10 or higher = success. 3 successes = stable. Stable creatures regain 1 HP after 1d4 hours, or can be stabilized with DC 10 Medicine check or healing magic.' },
       { title:'Failure', color:'st-red', body:'Roll 9 or lower = failure. 3 failures = death. Rolling a <strong>1</strong> = two failures. Rolling a <strong>20</strong> = regain 1 HP immediately.' },
-      { title:'Taking Damage at 0 HP', color:'st-orange', body:'Equals 1 death save failure. If the damage is from a critical hit, 2 failures. If damage equals or exceeds your HP maximum, instant death.' },
-      { title:'Instant Death', color:'st-red', body:'Massive damage that reduces HP to the negative of your HP maximum in one blow = instant death, no death saves. Also: certain monster abilities or spells.' },
+      { title:'Taking Damage at 0 HP', color:'st-orange', body:'Equals 1 death save failure. Critical hit = 2 failures. Damage equal to or exceeding your HP maximum = instant death.' },
+      { title:'Instant Death', color:'st-red', body:'Massive damage that reduces HP to the negative of your HP maximum in one blow = instant death, no death saves.' },
     ]
   },
 
   { id:'rules_hiding', name:'Hiding & Stealth', category:'rules', icon:'👁️', subtitle:'When you can hide, what breaks it',
     tags:[], tagLabels:[],
     sections:[
-      { title:'When Can You Hide?', color:'st-teal', body:'When you are heavily obscured OR out of an enemy\'s line of sight. Being behind cover is not always enough — if an enemy saw where you went, they can still pinpoint your general location.' },
-      { title:'Making the Check', color:'st-gold', body:'Dexterity (Stealth) check. The DM sets a DC or has enemies make passive Perception vs your roll. Success = hidden.' },
-      { title:'What Breaks Hiding', color:'st-red', body:'Making a sound louder than a whisper. Attacking (breaks hiding after the attack). Moving out of cover into a visible area. Being detected by a perception check. Moving more than half speed without Skulker feat may incur disadvantage (DM call).' },
-      { title:'Unseen Attacker', color:'st-blue', body:'Attacking while hidden: advantage on the attack roll. You give away your location after the attack regardless of whether you hit — but not necessarily your exact position if concealed.' },
-      { title:'Passive Perception', color:'st-purple', body:'10 + WIS modifier (+ proficiency if proficient). This is what beats a stealth check without active effort. Always know your players\' passive perception values.' },
+      { title:'When Can You Hide?', color:'st-teal', body:"When heavily obscured OR out of an enemy's line of sight. Being behind cover is not always enough — if an enemy saw where you went, they can still pinpoint your general location." },
+      { title:'Making the Check', color:'st-gold', body:'DEX (Stealth) check. DM sets a DC or has enemies make passive Perception vs your roll. Success = hidden.' },
+      { title:'What Breaks Hiding', color:'st-red', body:'Making a sound louder than a whisper. Attacking. Moving out of cover into a visible area. Being detected by a Perception check.' },
+      { title:'Unseen Attacker', color:'st-blue', body:'Attacking while hidden: advantage on the attack roll. You give away your location after the attack regardless of hit or miss.' },
+      { title:'Passive Perception', color:'st-purple', body:"10 + WIS modifier (+ proficiency if proficient). Always know your players' passive perception values." },
     ]
   },
 
@@ -8849,14 +9625,14 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
     tags:[], tagLabels:[],
     sections:[
       { title:'Action', color:'st-gold', body:'Attack, Cast a Spell, Dash, Disengage, Dodge, Help, Hide, Ready, Search, Use an Object, Improvise. One per turn.' },
-      { title:'Bonus Action', color:'st-teal', body:'Only usable if a feature, spell, or ability explicitly says it uses a bonus action. One per turn. Cannot "save" an unused bonus action for later in the same turn.' },
-      { title:'Reaction', color:'st-blue', body:'One per round (resets at the start of YOUR turn, not the end of a round). Opportunity attacks, Readied actions, Shield spell, Counterspell, and various class features. Key: reactions reset at the START of your turn — someone can still trigger your OA after you use your reaction, but you won\'t get one until your next turn starts.' },
-      { title:'Free Actions / Object Interaction', color:'st-orange', body:'One free object interaction per turn (draw a weapon, open a door, pick up an item). Additional object interactions cost your action. Talking is free — the DM decides how much.' },
-      { title:'Ready an Action', color:'st-purple', body:'Declare a trigger and a response. Use your reaction when the trigger occurs before the start of your next turn. A readied spell requires concentration until it fires. Unused readied actions expire at the start of your next turn.' },
+      { title:'Bonus Action', color:'st-teal', body:"Only usable if a feature, spell, or ability explicitly says it uses a bonus action. One per turn. Can't save an unused bonus action." },
+      { title:'Reaction', color:'st-blue', body:"One per round. Resets at the START of YOUR turn. Opportunity attacks, Readied actions, Shield spell, Counterspell, and various class features." },
+      { title:'Free Actions', color:'st-orange', body:'One free object interaction per turn (draw a weapon, open a door, pick up an item). Additional object interactions cost your action.' },
+      { title:'Ready an Action', color:'st-purple', body:"Declare a trigger and a response. Use your reaction when the trigger occurs before the start of your next turn. A readied spell requires concentration. Unused readied actions expire." },
     ]
   },
 
-];
+  ];
 
   // ─── GRIMOIRE STATE ───
   let grimoire_initialized = false;
@@ -9065,6 +9841,713 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
     `).join('');
   }
 
+
+
+  // ═══════════════════════════════════════
+  // CALENDAR SYSTEM
+  // ═══════════════════════════════════════
+// ── CAELOS CALENDAR DATA ──
+  const MONTHS = [
+    { num:1,  name:'Awakening', season:'Spring begins', festDay:28, festName:'Bloom Festival' },
+    { num:2,  name:'Devotion',  season:'Spring',        festDay:12, festName:'Devotion Day' },
+    { num:3,  name:'Joy',       season:'Summer begins', festDay:9,  festName:'Charm Day' },
+    { num:4,  name:'Kindred',   season:'Summer',        festDay:1,  festName:'Net Day' },
+    { num:5,  name:'Medial',    season:'Peak summer',   festDay:15, festName:'Antirium' },
+    { num:6,  name:'Harvest',   season:'Autumn begins', festDay:19, festName:'The Gathering' },
+    { num:7,  name:'Resolute',  season:'Autumn',        festDay:27, festName:'Ancestor Day' },
+    { num:8,  name:'Solace',    season:'Winter begins', festDay:13, festName:'Lots' },
+    { num:9,  name:'Sacrifice', season:'Deep winter',   festDay:20, festName:'Immolation Day' },
+    { num:10, name:'Silence',   season:'Late winter',   festDay:5,  festName:'The Silence' },
+  ];
+
+  const WHELK_DAYS = [1, 11, 21];
+
+  // ── ERAS ──
+  const ERAS = [
+    { abbr:'P.H.E.', name:'Pre-Historic Era',         defaultYear: 1 },
+    { abbr:'C.D.',   name:'C.D.',                     defaultYear: 1 },
+    { abbr:'A.D.',   name:'Arcania-Dominatia',         defaultYear: 1 },
+    { abbr:'I.D.',   name:'Industrialis Developmentia', defaultYear: 1219 },
+  ];
+
+  // Party dates — live reference, persisted via localStorage
+  const PARTY_DATES = {
+    A: { era:'I.D.', month:1,  day:25, year:1219 },
+    B: { era:'I.D.', month:2,  day:22, year:1219 },
+  };
+  function savePartyDates() {
+    try { localStorage.setItem('caelos_party_dates', JSON.stringify(PARTY_DATES)); } catch(e){}
+  }
+  function loadPartyDates() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('caelos_party_dates'));
+      if (saved?.A) Object.assign(PARTY_DATES.A, saved.A);
+      if (saved?.B) Object.assign(PARTY_DATES.B, saved.B);
+    } catch(e){}
+  }
+  // Weather emoji map
+  const WEATHER_EMOJI = {
+    'clear':'☀️','overcast':'🌥️','hazy':'🌫️','fog':'🌁','modrain':'🌧️',
+    'exheat':'🔥','excold':'❄️','thunder':'⛈️','tornado':'🌪️','blizzard':'🌨️',
+    'acid':'☠️','petrify':'🪨','freeze':'🧊','hurricane':'🌀','sleepfog':'😴','veilstars':'✨',
+  };
+  const WEATHER_NAMES = {
+    'clear':'Sunny / Clear','overcast':'Overcast / Light Rain','hazy':'Warm & Hazy',
+    'fog':'Foggy','modrain':'Moderate Rain','exheat':'Extreme Heat','excold':'Extreme Cold',
+    'thunder':'Thunderstorm','tornado':'Tornado','blizzard':'Blizzard','acid':'Acid Rain',
+    'petrify':'Petrifying Rain','freeze':'Freezing Rain','hurricane':'Hurricane',
+    'sleepfog':'Sleeping Fog','veilstars':'Veil of Stars',
+  };
+  const WEATHER_KEYS = Object.keys(WEATHER_EMOJI);
+
+  // Event categories
+  const EVENT_CATS = [
+    { key:'goal',   icon:'🎯', label:'Goal',    color:'rgba(104,216,168,0.7)' },
+    { key:'warn',   icon:'⚠️', label:'Warning', color:'rgba(255,122,47,0.7)'  },
+    { key:'note',   icon:'📌', label:'Note',    color:'rgba(232,200,122,0.7)' },
+    { key:'combat', icon:'⚔️', label:'Combat',  color:'rgba(224,104,104,0.7)' },
+    { key:'travel', icon:'🗺️', label:'Travel',  color:'rgba(104,168,216,0.7)' },
+  ];
+
+  // Storage: keyed by "era-year-month-day"
+  // weatherData[key] = { type: 'clear', manual: false }
+  // eventData[key]   = [ { id, cat, text }, ... ]  — array, multiple events per day
+  const weatherData = {};
+  const eventData   = {};
+
+  function getEvents(dk, forDisplay) {
+    const all = eventData[dk] || [];
+    if (!forDisplay) return all; // raw — no filter
+    // Filter: show active party's events + DM events
+    return all.filter(ev => {
+      const p = ev.party || 'A';
+      return p === _activeParty || p === 'DM';
+    });
+  }
+  function nextEventId(dk) {
+    const evs = getEvents(dk);
+    return evs.length ? Math.max(...evs.map(e=>e.id)) + 1 : 1;
+  }
+
+  function dayKey(era, year, month, day) {
+    return era + '-' + year + '-' + month + '-' + day;
+  }
+
+  // weatherData and eventData loaded from localStorage on init
+
+  // ── STATE ──
+  let calState = {
+    era:   'I.D.',
+    month: 1,
+    year:  1219,
+    selectedDay: 25,
+  };
+
+  function renderCalendar() {
+    const widget = document.getElementById('cal-widget');
+    if (!widget) return;
+    const m   = MONTHS[calState.month - 1];
+    const sel = calState.selectedDay;
+    const yr  = calState.year;
+    const era = calState.era;
+    const eraObj = ERAS.find(e => e.abbr === era);
+
+    // Era select options
+    const eraOptions = ERAS.map(e =>
+      `<option value="${e.abbr}" ${e.abbr === era ? 'selected' : ''}>${e.abbr} — ${e.name}</option>`
+    ).join('');
+
+    // Day grid
+    let dayCells = '';
+    for (let d = 1; d <= 30; d++) {
+      const isSelected = d === sel;
+      const isWhelk    = WHELK_DAYS.includes(d);
+      const isFest     = d === m.festDay;
+
+      const isPartyA = era === 'I.D.' && calState.month === PARTY_DATES.A.month
+                       && yr === PARTY_DATES.A.year && d === PARTY_DATES.A.day;
+      const isPartyB = era === 'I.D.' && calState.month === PARTY_DATES.B.month
+                       && yr === PARTY_DATES.B.year && d === PARTY_DATES.B.day;
+      const isBoth   = isPartyA && isPartyB;
+      let cls = 'cal-day';
+      if (isSelected)          cls += ' cal-day-selected';
+      else if (isWhelk)        cls += ' cal-day-whelk';
+      if (isFest && !isSelected) cls += ' cal-day-festival';
+      if (isBoth)              cls += ' cal-day-party-both';
+      else if (isPartyA)       cls += ' cal-day-party-a';
+      else if (isPartyB)       cls += ' cal-day-party-b';
+
+      // Weather emoji and event dot for this day
+      const dk = dayKey(era, yr, calState.month, d);
+      const wx = weatherData[dk];
+      const ev = eventData[dk];
+      const wxEmoji = wx ? `<span class="cal-day-wx">${WEATHER_EMOJI[wx.type]||''}</span>` : '';
+      const evs        = getEvents(dk, true); // filtered for active party
+      const evsAll     = getEvents(dk);        // all events for DM lock check
+      const hasDmOnly  = evsAll.some(e => (e.party||'A') === 'DM') && evs.filter(e=>(e.party||'A')!=='DM').length === 0;
+      const hasLock    = evsAll.some(e => (e.party||'A') === 'DM');
+      const evDot      = evs.length > 0
+        ? `<span class="cal-day-ev-dot">${evs.length > 1 ? evs.length : ''}${hasLock ? '<span class="ev-lock">🔒</span>' : ''}</span>`
+        : (hasLock && _activeParty !== 'DM' ? '' : '');
+
+      dayCells += `<div class="${cls}" onclick="selectDay(${d})">${d}${wxEmoji}${evDot}</div>`;
+    }
+
+    // Event banner
+    let eventText  = `${m.name} · ${m.season}`;
+    let eventClass = '';
+    if (sel === m.festDay) {
+      eventText  = `✦ ${m.festName}`;
+      eventClass = 'ev-festival';
+    } else if (WHELK_DAYS.includes(sel)) {
+      eventText  = `📰 Word of the Whelk publishes`;
+      eventClass = 'ev-whelk';
+    } else if (era === 'I.D.' && sel === PARTY_DATES.A.day && calState.month === PARTY_DATES.A.month && yr === PARTY_DATES.A.year) {
+      eventText  = `🌀 PA current date`;
+      eventClass = 'ev-party';
+    } else if (era === 'I.D.' && sel === PARTY_DATES.B.day && calState.month === PARTY_DATES.B.month && yr === PARTY_DATES.B.year) {
+      eventText  = `✨ PB current date`;
+      eventClass = 'ev-party';
+    }
+
+    // Readout
+    const dayNum = (calState.month - 1) * 30 + sel;
+
+    widget.innerHTML = `
+      <div class="cal-readout">
+        <div class="cal-readout-inner">
+          <div>
+            <div class="cal-readout-label">Selected Date</div>
+            <div class="cal-readout-date" id="cal-readout-date">${sel}<sup style="font-size:13px;opacity:0.6;vertical-align:super">${ordinal(sel)}</sup> of ${m.name}</div>
+            <div class="cal-readout-sub">
+              <span>${yr} ${era}</span>
+              <span>·</span>
+              <span>Day ${dayNum} of year</span>
+            </div>
+          </div>
+          <div class="cal-readout-step-btns">
+            <button class="cal-step-btn step-fwd" onclick="stepActiveParty(1, this)" title="Advance party date +1 day">+</button>
+            <button class="cal-step-btn step-bwd" onclick="stepActiveParty(-1, this)" title="Move party date -1 day">−</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cal-controls">
+        <div class="cal-era-row">
+          <span class="cal-era-label">Era</span>
+          <select class="cal-era-select" onchange="changeEra(this.value)">${eraOptions}</select>
+        </div>
+        <div class="cal-month-bar">
+          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+          <div>
+            <div class="cal-month-name">${m.name}</div>
+            <span class="cal-month-sub">${calState.month}/10 · ${m.season}</span>
+          </div>
+          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="cal-year-bar">
+          <button class="cal-year-btn" onclick="changeYear(-1)">−</button>
+          <span class="cal-year-display">${yr}</span>
+          <span class="cal-year-era-lbl">${era}</span>
+          <button class="cal-year-btn" onclick="changeYear(1)">+</button>
+        </div>
+      </div>
+
+      <div class="cal-grid">${dayCells}</div>
+
+      <div class="cal-event-banner ${eventClass}">${eventText}</div>
+
+
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="leg-box"></div>Whelk</div>
+        <div class="cal-legend-item"><div class="leg-sq"></div>Festival</div>
+        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('A')" title="Jump to PA current date">
+          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,168,216,0.8);flex-shrink:0"></div>PA
+        </div>
+        <div class="cal-legend-item cal-legend-jump" onclick="jumpToParty('B')" title="Jump to PB current date">
+          <div style="width:10px;height:10px;border-radius:3px;border:2px solid rgba(104,216,168,0.8);flex-shrink:0"></div>PB
+        </div>
+      </div>
+    `;
+  }
+
+  function selectDay(d) {
+    calState.selectedDay = d;
+    // Sync weather tab to selected date
+    wxMonth = calState.month; wxDay = d; wxYear = calState.year;
+    loadDateWeather(); // this now calls syncBFWeather internally
+    renderCalendar();
+    openDayPopup(d);
+  }
+
+  // Track which event is being edited in the popup (null = adding new)
+  let _editingEventId = null;
+
+  function openDayPopup(d) {
+    const era = calState.era;
+    const yr  = calState.year;
+    const m   = MONTHS[calState.month - 1];
+    const dk  = dayKey(era, yr, calState.month, d);
+    _editingEventId = null;
+
+    const existing = document.getElementById('day-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'day-popup';
+    document.body.appendChild(popup);
+    refreshPopup(dk, d, m, yr, era);
+  }
+
+  function refreshPopup(dk, d, m, yr, era) {
+    const popup = document.getElementById('day-popup');
+    if (!popup) return;
+
+    const wx  = weatherData[dk];
+    const evs    = getEvents(dk, true); // filtered for active party
+    const evsAll = getEvents(dk);        // all for edit access
+
+    // Weather
+    const wxName    = wx ? (WEATHER_NAMES[wx.type]||wx.type) : 'No weather set';
+    const wxEmoji   = wx ? (WEATHER_EMOJI[wx.type]||'') : '—';
+    const manualTag = wx?.manual ? '<span class="popup-manual-tag">✎ Manual</span>' : '';
+    const wxOptions = '<option value="">— Set weather —</option>' +
+      WEATHER_KEYS.map(k =>
+        `<option value="${k}" ${wx?.type===k?'selected':''}>${WEATHER_EMOJI[k]} ${WEATHER_NAMES[k]}</option>`
+      ).join('');
+
+    // Events list
+    const evList = evs.length
+      ? evs.map(ev => {
+          const cat   = EVENT_CATS.find(c=>c.key===ev.cat) || EVENT_CATS[2];
+          const evP    = ev.party || 'A';
+          const pBadge = evP === 'DM'
+            ? `<span class="ev-party-badge dm">🔒 Both</span>`
+            : '';
+          return `<div class="popup-ev-item">
+            <span class="popup-ev-icon" style="color:${cat.color}">${cat.icon}</span>
+            <span class="popup-ev-text">${ev.text||'<em style="opacity:0.4">No text</em>'}</span>
+            ${pBadge}
+            <button class="popup-ev-edit" onclick="editEvent('${dk}',${ev.id})">✎</button>
+            <button class="popup-ev-del"  onclick="deleteEvent('${dk}',${ev.id})">✕</button>
+          </div>`;
+        }).join('')
+      : '<div class="popup-ev-empty">No events — add one below</div>';
+
+    // Add / edit form
+    const editing = _editingEventId !== null ? evs.find(e=>e.id===_editingEventId) : null;
+    const catBtns = EVENT_CATS.map(c => {
+      const isActive = editing ? editing.cat===c.key : false;
+      return `<button class="popup-cat-btn${isActive?' active':''}"
+        style="${isActive?'border-color:'+c.color+';color:'+c.color:''}"
+        onclick="setNewEventCat('${dk}',${editing?editing.id:'null'},'${c.key}')"
+        title="${c.label}">${c.icon}</button>`;
+    }).join('');
+
+    popup.innerHTML = `
+      <div class="popup-backdrop" onclick="closeDayPopup()"></div>
+      <div class="popup-card">
+        <div class="popup-header">
+          <span class="popup-date">${d}<sup>${ordinal(d)}</sup> ${m.name}, ${yr} ${era}</span>
+          <button class="popup-close" onclick="closeDayPopup()">✕</button>
+        </div>
+
+        <div class="popup-section">
+          <div class="popup-section-label">Weather ${manualTag}</div>
+          <div class="popup-wx-row">
+            <span class="popup-wx-emoji">${wxEmoji}</span>
+            <span class="popup-wx-name">${wxName}</span>
+          </div>
+          <select class="popup-wx-select" onchange="setWeather('${dk}',this.value)">${wxOptions}</select>
+          ${wx ? `<button class="popup-clear-btn" onclick="clearWeather('${dk}')">Clear weather</button>` : ''}
+        </div>
+
+        <div class="popup-section">
+          <div class="popup-section-label">Events</div>
+          <div class="popup-ev-list" id="popup-ev-list">${evList}</div>
+        </div>
+
+        <div class="popup-section popup-add-section">
+          <div class="popup-section-label">${editing ? '✎ Edit Event' : '+ Add Event'}</div>
+          <div class="popup-cat-row">${catBtns}</div>
+          <div class="popup-dm-row${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}"
+            onclick="toggleEventDM('${dk}',${editing?editing.id:'null'})">
+            <div class="popup-dm-checkbox${(editing?(editing.party==='DM'):_newEventParty==='DM')?' checked':''}">
+              ${(editing?(editing.party==='DM'):_newEventParty==='DM') ? '🔒' : ''}
+            </div>
+            <span class="popup-dm-label">🔒 DM Event — visible to both parties</span>
+          </div>
+          <div class="popup-add-row">
+            <input class="popup-event-input" id="popup-ev-input" type="text" maxlength="80"
+              placeholder="Goal, note, reminder…"
+              value="${editing?.text||''}"
+              onkeydown="if(event.key==='Enter')saveEvent('${dk}')">
+            <button class="popup-save-btn" onclick="saveEvent('${dk}')">${editing?'Save':'Add'}</button>
+          </div>
+          ${editing ? `<button class="popup-clear-btn" style="margin-top:4px" onclick="cancelEdit('${dk}')">Cancel edit</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function closeDayPopup() {
+    const p = document.getElementById('day-popup');
+    if (p) { p.classList.add('popup-closing'); setTimeout(() => p.remove(), 200); }
+  }
+
+  function setWeather(dk, type) {
+    if (!type) return;
+    weatherData[dk] = { type, manual:true };
+    saveCalendarData();
+    // Sync to main weather card if this day is currently selected
+    if (calState.month === wxMonth && calState.year === wxYear &&
+        calState.selectedDay === wxDay) {
+      currentWeather = type;
+      if (typeof renderWeatherCard === 'function') renderWeatherCard();
+      if (typeof updateBFWeather   === 'function') updateBFWeather();
+    }
+    renderCalendar();
+    const d   = calState.selectedDay;
+    const m   = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function clearWeather(dk) {
+    delete weatherData[dk];
+    saveCalendarData();
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  // New event cat selection — updates the button row live
+  let _newEventCat   = 'note';
+  let _newEventParty = 'A'; // 'A', 'B', or 'DM'
+
+  function setNewEventCat(dk, editId, cat) {
+    _newEventCat = cat;
+    if (editId !== 'null') {
+      const evs = getEvents(dk);
+      const ev  = evs.find(e=>e.id===editId);
+      if (ev) { ev.cat = cat; renderCalendar(); }
+    }
+    const popup = document.getElementById('day-popup');
+    if (!popup) return;
+    popup.querySelectorAll('.popup-cat-btn').forEach((btn,i) => {
+      const c = EVENT_CATS[i];
+      const isActive = c.key === cat;
+      btn.classList.toggle('active', isActive);
+      btn.style.borderColor = isActive ? c.color : '';
+      btn.style.color       = isActive ? c.color : '';
+    });
+  }
+
+  function toggleEventDM(dk, editId) {
+    const isDM = _newEventParty === 'DM';
+    _newEventParty = isDM ? _activeParty : 'DM';
+
+    if (editId !== 'null') {
+      const evs = getEvents(dk);
+      const ev  = evs.find(e=>e.id===editId);
+      if (ev) { ev.party = _newEventParty; saveCalendarData(); renderCalendar(); }
+    }
+    // Update checkbox UI
+    const row      = document.querySelector('.popup-dm-row');
+    const checkbox = document.querySelector('.popup-dm-checkbox');
+    const nowDM    = _newEventParty === 'DM';
+    if (row)      row.classList.toggle('checked', nowDM);
+    if (checkbox) { checkbox.classList.toggle('checked', nowDM); checkbox.textContent = nowDM ? '🔒' : ''; }
+  }
+
+  function saveEvent(dk) {
+    const input = document.getElementById('popup-ev-input');
+    const text  = input ? input.value.trim() : '';
+    if (!eventData[dk]) eventData[dk] = [];
+
+    if (_editingEventId !== null) {
+      const ev = eventData[dk].find(e=>e.id===_editingEventId);
+      if (ev) { ev.text = text; ev.cat = _newEventCat; ev.party = _newEventParty; }
+      _editingEventId = null;
+    } else {
+      eventData[dk].push({ id: nextEventId(dk), cat: _newEventCat, party: _newEventParty, text });
+    }
+    _newEventCat   = 'note';
+    _newEventParty = _activeParty; // default next event to current party
+    saveCalendarData();
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function editEvent(dk, id) {
+    _editingEventId = id;
+    const ev = getEvents(dk).find(e=>e.id===id);
+    if (ev) { _newEventCat = ev.cat; _newEventParty = ev.party || _activeParty; }
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+    setTimeout(() => document.getElementById('popup-ev-input')?.focus(), 30);
+  }
+
+  function deleteEvent(dk, id) {
+    if (!eventData[dk]) return;
+    eventData[dk] = eventData[dk].filter(e=>e.id!==id);
+    if (eventData[dk].length === 0) delete eventData[dk];
+    renderCalendar();
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function cancelEdit(dk) {
+    _editingEventId = null;
+    _newEventCat   = 'note';
+    _newEventParty = _activeParty;
+    const d = calState.selectedDay;
+    const m = MONTHS[calState.month-1];
+    refreshPopup(dk, d, m, calState.year, calState.era);
+  }
+
+  function changeMonth(dir) {
+    calState.month += dir;
+    if (calState.month < 1)  { calState.month = 10; calState.year--; }
+    if (calState.month > 10) { calState.month = 1;  calState.year++; }
+    wxMonth = calState.month; wxYear = calState.year;
+    renderCalendar();
+  }
+
+  function changeYear(dir) {
+    calState.year = Math.max(1, calState.year + dir);
+    renderCalendar();
+  }
+
+  function changeEra(era) {
+    const eraObj = ERAS.find(e => e.abbr === era);
+    calState.era = era;
+    calState.year = eraObj ? eraObj.defaultYear : 1;
+    calState.month = 1;
+    calState.selectedDay = 1;
+    renderCalendar();
+  }
+
+  function ordinal(n) {
+    const s = ['th','st','nd','rd'];
+    const v = n % 100;
+    return s[(v-20)%10] || s[v] || s[0];
+  }
+
+  function jumpToParty(p) {
+    const pd = PARTY_DATES[p];
+    if (!pd) return;
+    calState.era         = pd.era;
+    calState.year        = pd.year;
+    calState.month       = pd.month;
+    calState.selectedDay = pd.day;
+    _activeParty = p;
+    // Switch the main party badge if it's different
+    if (typeof party !== 'undefined' && party !== p) {
+      party = p;
+      const badge = document.getElementById('partyBadge');
+      if (badge && typeof partyName === 'function') badge.textContent = partyName();
+      if (typeof renderPCs === 'function') renderPCs();
+      const lbl = document.getElementById('aoeTargetCount');
+      if (lbl) lbl.textContent = '';
+      if (typeof aoeSelected !== 'undefined') aoeSelected.pc.clear();
+    }
+    renderCalendar();
+
+    // Bubble the readout date text
+    setTimeout(() => {
+      const readout = document.querySelector('.cal-readout-date');
+      if (readout) {
+        readout.classList.remove('readout-jump');
+        void readout.offsetWidth;
+        readout.classList.add('readout-jump');
+        setTimeout(() => readout.classList.remove('readout-jump'), 650);
+      }
+    }, 20);
+
+    // Bubble the party date cell — find by day number in the grid
+    setTimeout(() => {
+      const cells = document.querySelectorAll('.cal-day');
+      cells.forEach(c => {
+        if (parseInt(c.textContent) === pd.day &&
+            c.classList.contains(party === 'A' ? 'cal-day-party-a' : 'cal-day-party-b')) {
+          // Temporarily override animation with jump-land
+          const originalAnim = c.style.animation;
+          c.style.animation = 'day-jump-land 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards';
+          c.addEventListener('animationend', () => {
+            c.style.animation = originalAnim;
+          }, { once: true });
+        }
+      });
+    }, 40);
+  }
+
+  // _activeParty mirrors the dashboard party variable
+  // Updated by toggleParty() hook below
+  let _activeParty = 'A';
+
+  function stepActiveParty(dir, btn) {
+    // Fire burst — appended to body over the button so DOM rebuild can't kill it
+    if (btn) {
+      const rect = btn.getBoundingClientRect();
+      const burst = document.createElement('div');
+      burst.style.cssText = `
+        position:fixed;
+        left:${rect.left + rect.width/2}px;
+        top:${rect.top + rect.height/2}px;
+        width:12px; height:12px;
+        border-radius:50%;
+        transform:translate(-50%,-50%) scale(0);
+        pointer-events:none;
+        z-index:9999;
+        background:${dir > 0 ? 'rgba(232,200,122,0.7)' : 'rgba(200,200,220,0.5)'};
+        animation:step-burst 0.38s ease-out forwards;
+      `;
+      document.body.appendChild(burst);
+      burst.addEventListener('animationend', () => burst.remove(), { once: true });
+    }
+    const pd = PARTY_DATES[_activeParty];
+    pd.day += dir;
+
+    // Roll over month boundaries — both directions
+    if (pd.day > 30) {
+      pd.day = 1;
+      pd.month++;
+      if (pd.month > 10) { pd.month = 1; pd.year++; }
+    } else if (pd.day < 1) {
+      pd.month--;
+      if (pd.month < 1) { pd.month = 10; pd.year--; }
+      pd.day = 30;
+    }
+
+    // Animate the readout date
+    const readout = document.getElementById('cal-readout-date');
+    if (readout) {
+      const animClass = dir > 0 ? 'stepper-anim-fwd' : 'stepper-anim-bwd';
+      readout.classList.remove('stepper-anim-fwd', 'stepper-anim-bwd');
+      void readout.offsetWidth;
+      readout.classList.add(animClass);
+      readout.addEventListener('animationend', () => readout.classList.remove(animClass), { once: true });
+    }
+
+    // Jump calendar view to follow the party date
+    calState.month = pd.month;
+    calState.year  = pd.year;
+    calState.selectedDay = pd.day;
+    savePartyDates();
+    wxMonth = pd.month; wxDay = pd.day; wxYear = pd.year;
+    // Update currentWeather if weatherData has this day
+    const stepDk = dayKey(pd.era, pd.year, pd.month, pd.day);
+    if (weatherData[stepDk]) {
+      currentWeather = weatherData[stepDk].type;
+      renderWeatherCard();
+      updateBFWeather();
+    }
+    renderCalendar();
+    loadDateWeather();
+  }
+
+  // ── GENERATE NEXT 10 DAYS OF WEATHER ──
+  function generateWeatherDays() {
+    const pd  = PARTY_DATES[_activeParty];
+    if (!pd) return;
+    const weatherKeys = Object.keys(WEATHER_EMOJI);
+
+    let month = pd.month;
+    let day   = pd.day;
+    let year  = pd.year;
+    let era   = pd.era;
+    let generated = 0;
+
+    for (let i = 0; i < 10; i++) {
+      const dk = dayKey(era, year, month, day);
+      // Only roll if not already set
+      if (!weatherData[dk]) {
+        // Use the same weighted roll table as the manual roller
+        const roll   = Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*100)+1 + Math.floor(Math.random()*20)+1;
+        const rolled = rollToWeather(roll, month);
+        weatherData[dk] = { type: rolled, manual: false };
+        generated++;
+      }
+      // Advance one day
+      day++;
+      if (day > 30) { day = 1; month++; }
+      if (month > 10) { month = 1; year++; }
+    }
+
+    saveCalendarData();
+    renderCalendar();
+
+    // Brief confirmation flash on the button
+    const btn = document.querySelector('.wx-gen-btn');
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = `✓ ${generated} days rolled`;
+      btn.style.borderColor = 'rgba(104,216,168,0.5)';
+      btn.style.color = '#68d8a8';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    }
+  }
+
+  // Purge weather older than 3 days behind whichever party is furthest BEHIND
+  function purgeOldWeather() {
+    // Find the earlier party date (lower day-of-year)
+    const pdA   = PARTY_DATES['A'];
+    const pdB   = PARTY_DATES['B'];
+    const doyA  = (pdA.year - 1) * 300 + (pdA.month - 1) * 30 + pdA.day;
+    const doyB  = (pdB.year - 1) * 300 + (pdB.month - 1) * 30 + pdB.day;
+    const earlierDoy = Math.min(doyA, doyB);
+
+    Object.keys(weatherData).forEach(dk => {
+      const parts = dk.split('-');
+      const day   = parseInt(parts[parts.length-1]);
+      const month = parseInt(parts[parts.length-2]);
+      const year  = parseInt(parts[parts.length-3]);
+      const keyDoy = (year - 1) * 300 + (month - 1) * 30 + day;
+      if (earlierDoy - keyDoy > 3) {
+        delete weatherData[dk];
+      }
+    });
+    saveCalendarData();
+  }
+
+  // ── CALENDAR INIT ──
+  function calInit() {
+    loadPartyDates();
+    loadCalendarData();
+    _activeParty = party; // sync to current dashboard party
+    purgeOldWeather(); // clean up old weather data
+    calState.era   = 'I.D.';
+    calState.month = PARTY_DATES[party].month;
+    calState.year  = PARTY_DATES[party].year;
+    calState.selectedDay = PARTY_DATES[party].day;
+    renderCalendar();
+  }
+
+  function loadCalendarData() {
+    try {
+      const wd = JSON.parse(localStorage.getItem('caelos_weather_data'));
+      const ed = JSON.parse(localStorage.getItem('caelos_event_data'));
+      if (wd) Object.assign(weatherData, wd);
+      if (ed) Object.assign(eventData, ed);
+    } catch(e){}
+  }
+
+  function saveCalendarData() {
+    try {
+      localStorage.setItem('caelos_weather_data', JSON.stringify(weatherData));
+      localStorage.setItem('caelos_event_data',   JSON.stringify(eventData));
+    } catch(e){}
+  }
+
 </script>
 
   <!-- ══ ROUND TRANSITION MODAL ══ -->
@@ -9089,50 +10572,31 @@ document.addEventListener('DOMContentLoaded',()=>{ renderBestiaryGrid(); renderE
     </div>
   </div>
 <script>
-  // ── Heart — alternates 🖤 ↔ 🩵 in sync with pulse beat; 💜 at midnight ──
-  let _heartState = false; // false = 🖤, true = 🩵
-  let _heartMidnight = false;
-  const HEART_CYCLE = 2400; // matches heart-pulse animation duration (ms)
-
+  // ── Midnight heart ──
   function checkMidnightHeart() {
     const h = new Date().getHours();
     const heart = document.querySelector('.loved-heart');
     if (!heart) return;
-    _heartMidnight = (h >= 0 && h < 5);
-    if (_heartMidnight) {
+    if (h >= 0 && h < 5) {
       heart.classList.add('midnight');
       heart.textContent = '💜';
     } else {
       heart.classList.remove('midnight');
-      heart.textContent = _heartState ? '🩵' : '🖤';
+      heart.textContent = '🖤';
     }
   }
-
-  function tickHeart() {
-    if (_heartMidnight) return;
-    const heart = document.querySelector('.loved-heart');
-    if (!heart) return;
-    // Dissolve: fade down → swap emoji → fade back up
-    // Uses inline opacity so it rides on top of the CSS animation's own opacity
-    const FADE = 280; // ms each way
-    heart.style.transition = `opacity ${FADE}ms ease-in`;
-    heart.style.opacity = '0.04';
-    setTimeout(() => {
-      _heartState = !_heartState;
-      heart.textContent = _heartState ? '🩵' : '🖤';
-      heart.style.transition = `opacity ${FADE}ms ease-out`;
-      heart.style.opacity = '';   // hand control back to CSS animation
-    }, FADE);
-  }
-
   checkMidnightHeart();
   setInterval(checkMidnightHeart, 60000);
-  // Fire near the END of the cycle (2050ms in) when the heart is already small and dim.
-  // The CSS animation's own low opacity at that point masks the dissolve naturally.
-  setTimeout(() => {
-    tickHeart();
-    setInterval(tickHeart, HEART_CYCLE);
-  }, 2050);
+
+  // 🖤↔🩵 alternating heart swap (every 2.4s, synced to pulse animation)
+  let _heartToggle = false;
+  function swapHeart() {
+    const heart = document.querySelector('.loved-heart');
+    if (!heart || heart.classList.contains('midnight')) return;
+    _heartToggle = !_heartToggle;
+    heart.textContent = _heartToggle ? '🩵' : '🖤';
+  }
+  setInterval(swapHeart, 2400);
 
 </script>
 </body>
