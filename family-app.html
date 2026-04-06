@@ -8,7 +8,7 @@
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
 html,body { background:#1C0F00; }
-.app { font-family:'Nunito',sans-serif; max-width:420px; margin:0 auto; background:#1C0F00; min-height:100vh; padding-bottom:130px; }
+.app { font-family:'Nunito',sans-serif; max-width:420px; margin:0 auto; background:#1C0F00; min-height:100vh; padding-bottom:160px; }
 
 .header { background:#C97A3A; padding:16px 20px 20px; border-radius:0 0 28px 28px; position:relative; overflow:hidden; }
 .header::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.12); }
@@ -22,10 +22,15 @@ html,body { background:#1C0F00; }
 .sync-dot.error { background:#FF8A80; }
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
-.nav-tabs { display:flex; margin:12px 16px 0; gap:5px; }
-.nav-tab { flex:1; padding:8px 2px; border-radius:12px; font-family:'Nunito',sans-serif; font-size:11px; font-weight:800; border:2px solid #C97A3A; cursor:pointer; text-align:center; }
-.nav-tab.active { background:#C97A3A; color:#fff; }
-.nav-tab:not(.active) { background:#2E1800; color:#FFB870; }
+.nav-tabs { display:none; }
+
+/* BOTTOM NAV */
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; max-width:420px; margin:0 auto; background:#1C0F00; border-top:2px solid #C97A3A; display:flex; z-index:50; }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 2px 10px; cursor:pointer; gap:3px; border:none; background:none; }
+.nav-item .nav-icon { font-size:20px; line-height:1; }
+.nav-item .nav-label { font-family:'Nunito',sans-serif; font-size:10px; font-weight:800; color:#7A5030; letter-spacing:0.3px; }
+.nav-item.active .nav-label { color:#FFD9A0; }
+.nav-item.active .nav-icon { filter:drop-shadow(0 0 4px rgba(201,122,58,0.8)); }
 
 .panel { display:none; }
 .panel.active { display:block; }
@@ -145,7 +150,7 @@ html,body { background:#1C0F00; }
 .meal-event-pill { border-radius:8px; padding:5px 10px; font-size:11px; font-weight:700; color:#FFD9A0; background:#3E2000; border:1px solid #C97A3A; margin-top:2px; }
 
 /* BOTTOM */
-.bottom-bar { position:fixed; bottom:0; left:0; right:0; background:#2E1800; border-top:3px solid #C97A3A; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; max-width:420px; margin:0 auto; }
+.bottom-bar { position:fixed; bottom:62px; left:0; right:0; background:#2E1800; border-top:2px solid #C97A3A; padding:8px 20px; display:flex; justify-content:space-between; align-items:center; max-width:420px; margin:0 auto; }
 .bottom-count { font-size:13px; color:#FFD9A0; font-weight:700; }
 .clear-btn { font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; color:#3E2000; background:#FFD9A0; border:none; border-radius:20px; padding:8px 18px; cursor:pointer; }
 
@@ -173,6 +178,35 @@ html,body { background:#1C0F00; }
 .level-btn.out{background:#C62828;color:#fff;border-color:#E53935;}
 .level-btn.sel{outline:3px solid #FFD9A0;outline-offset:2px;}
 
+/* TO-DO */
+.todo-item { background:#2E1800; border:2px solid #C97A3A; border-radius:14px; padding:12px 14px; display:flex; align-items:flex-start; gap:10px; }
+.todo-item.done { opacity:0.6; }
+.todo-check { width:22px; height:22px; border-radius:6px; border:2px solid #C97A3A; background:transparent; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; margin-top:1px; }
+.todo-item.done .todo-check { background:#C97A3A; }
+.todo-body { flex:1; min-width:0; cursor:pointer; }
+.todo-title { font-size:14px; font-weight:700; color:#FFD9A0; }
+.todo-item.done .todo-title { text-decoration:line-through; color:#7A5030; }
+.todo-meta { display:flex; align-items:center; gap:6px; margin-top:4px; flex-wrap:wrap; }
+.todo-del { background:none; border:none; color:#7A5030; font-size:16px; cursor:pointer; flex-shrink:0; padding:0 2px; }
+.priority-pill { font-size:10px; font-weight:800; padding:2px 8px; border-radius:20px; }
+.priority-high { background:#C62828; color:#fff; }
+.priority-mid  { background:#E65100; color:#FFF8E1; }
+.priority-low  { background:#1B5E20; color:#C8E6C9; }
+.person-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* REMINDERS */
+.reminder-item { background:#2E1800; border:2px solid #C97A3A; border-radius:14px; padding:12px 14px; display:flex; align-items:flex-start; gap:10px; }
+.reminder-item.done { opacity:0.6; }
+.reminder-check { width:22px; height:22px; border-radius:50%; border:2px solid #C97A3A; background:transparent; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; margin-top:1px; }
+.reminder-item.done .reminder-check { background:#C97A3A; }
+.reminder-body { flex:1; min-width:0; cursor:pointer; }
+.reminder-title { font-size:14px; font-weight:700; color:#FFD9A0; }
+.reminder-item.done .reminder-title { text-decoration:line-through; color:#7A5030; }
+.reminder-datetime { font-size:11px; color:#A07040; font-weight:600; margin-top:3px; }
+.reminder-del { background:none; border:none; color:#7A5030; font-size:16px; cursor:pointer; flex-shrink:0; padding:0 2px; }
+.reminder-item.overdue .reminder-datetime { color:#FF8A80; }
+.reminder-item.overdue { border-color:#C62828; }
+
 /* PERSON SELECTOR */
 .person-selector { display:flex; gap:6px; flex-wrap:wrap; }
 .person-sel-btn { font-family:'Nunito',sans-serif; font-size:12px; font-weight:800; padding:6px 12px; border-radius:20px; border:2px solid transparent; cursor:pointer; }
@@ -196,7 +230,9 @@ html,body { background:#1C0F00; }
     <div class="nav-tab active" id="tab-grocery" onclick="switchTab('grocery')">🛒 Grocery</div>
     <div class="nav-tab" id="tab-pantry" onclick="switchTab('pantry')">🫙 Pantry</div>
     <div class="nav-tab" id="tab-meals" onclick="switchTab('meals')">🍽️ Meals</div>
-    <div class="nav-tab" id="tab-cal" onclick="switchTab('cal')">📅 Calendar</div>
+    <div class="nav-tab" id="tab-cal" onclick="switchTab('cal')">📅 Cal</div>
+    <div class="nav-tab" id="tab-todo" onclick="switchTab('todo')">✅ To-Do</div>
+    <div class="nav-tab" id="tab-reminders" onclick="switchTab('reminders')">🔔 Remind</div>
   </div>
 
   <!-- GROCERY -->
@@ -280,12 +316,63 @@ html,body { background:#1C0F00; }
     <div class="person-legend" id="person-legend"></div>
     <div id="cal-grid"></div>
   </div>
+
+  <!-- TO-DO -->
+  <div class="panel" id="panel-todo">
+    <div class="add-bar">
+      <div class="add-row">
+        <input class="add-input" id="todo-input" placeholder="Add a to-do..." />
+        <button class="add-btn" id="todo-add-btn" onclick="addTodo()">+</button>
+      </div>
+    </div>
+    <div class="filter-tabs" id="todo-filters"></div>
+    <div class="list" id="todo-list" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div class="panel" id="panel-reminders">
+    <div class="add-bar">
+      <div class="add-row">
+        <input class="add-input" id="reminder-input" placeholder="Add a reminder..." />
+        <button class="add-btn" id="reminder-add-btn" onclick="addReminder()">+</button>
+      </div>
+    </div>
+    <div class="filter-tabs" id="reminder-filters"></div>
+    <div class="list" id="reminder-list" style="margin-top:8px;"></div>
+  </div>
 </div>
 
 <div class="bottom-bar">
   <span class="bottom-count" id="bottom-count">Loading...</span>
   <button class="clear-btn" id="action-btn" onclick="bottomAction()">Clear checked</button>
 </div>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" id="tab-grocery" onclick="switchTab('grocery')">
+    <span class="nav-icon">🛒</span>
+    <span class="nav-label">Grocery</span>
+  </button>
+  <button class="nav-item" id="tab-pantry" onclick="switchTab('pantry')">
+    <span class="nav-icon">🫙</span>
+    <span class="nav-label">Pantry</span>
+  </button>
+  <button class="nav-item" id="tab-meals" onclick="switchTab('meals')">
+    <span class="nav-icon">🍽️</span>
+    <span class="nav-label">Meals</span>
+  </button>
+  <button class="nav-item" id="tab-cal" onclick="switchTab('cal')">
+    <span class="nav-icon">📅</span>
+    <span class="nav-label">Calendar</span>
+  </button>
+  <button class="nav-item" id="tab-todo" onclick="switchTab('todo')">
+    <span class="nav-icon">✅</span>
+    <span class="nav-label">To-Do</span>
+  </button>
+  <button class="nav-item" id="tab-reminders" onclick="switchTab('reminders')">
+    <span class="nav-icon">🔔</span>
+    <span class="nav-label">Reminders</span>
+  </button>
+</nav>
 
 <!-- GROCERY EDIT -->
 <div class="overlay" id="grocery-overlay" onclick="closeGroceryDrawer(event)">
@@ -364,6 +451,47 @@ html,body { background:#1C0F00; }
   </div>
 </div>
 
+<!-- TO-DO EDIT -->
+<div class="overlay" id="todo-overlay" onclick="closeTodoDrawer(event)">
+  <div class="edit-drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title" id="todo-drawer-title">Edit To-Do</div>
+    <div class="drawer-field"><div class="drawer-label">Task</div><input class="drawer-input" id="td-edit-name" placeholder="What needs doing?" /></div>
+    <div class="drawer-field"><div class="drawer-label">Priority</div>
+      <div class="level-btns">
+        <button class="level-btn" id="td-pri-high" style="background:#C62828;color:#fff;border-color:#E53935;" onclick="selectTodoPriority('high')">🔴 High</button>
+        <button class="level-btn" id="td-pri-mid"  style="background:#E65100;color:#FFF8E1;border-color:#FF6D00;" onclick="selectTodoPriority('mid')">🟠 Mid</button>
+        <button class="level-btn" id="td-pri-low"  style="background:#1B5E20;color:#C8E6C9;border-color:#2E7D32;" onclick="selectTodoPriority('low')">🟢 Low</button>
+      </div>
+    </div>
+    <div class="drawer-field"><div class="drawer-label">Assign to</div><div class="person-selector" id="td-person-selector"></div></div>
+    <div class="drawer-field"><div class="drawer-label">Notes (optional)</div><textarea class="drawer-textarea" id="td-edit-notes" placeholder="Any extra details..."></textarea></div>
+    <div class="drawer-actions" id="todo-drawer-actions">
+      <button class="btn-delete" id="td-delete-btn" onclick="deleteTodo()">Delete</button>
+      <button class="btn-cancel" onclick="closeTodoDrawer()">Cancel</button>
+      <button class="btn-save" onclick="saveTodoEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- REMINDER EDIT -->
+<div class="overlay" id="reminder-overlay" onclick="closeReminderDrawer(event)">
+  <div class="edit-drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title" id="reminder-drawer-title">Edit Reminder</div>
+    <div class="drawer-field"><div class="drawer-label">Reminder</div><input class="drawer-input" id="rm-edit-name" placeholder="What to remember?" /></div>
+    <div class="drawer-field"><div class="drawer-label">Date (optional)</div><input class="drawer-input" id="rm-edit-date" type="date" /></div>
+    <div class="drawer-field"><div class="drawer-label">Time (optional)</div><input class="drawer-input" id="rm-edit-time" type="time" /></div>
+    <div class="drawer-field"><div class="drawer-label">Assign to</div><div class="person-selector" id="rm-person-selector"></div></div>
+    <div class="drawer-field"><div class="drawer-label">Notes (optional)</div><textarea class="drawer-textarea" id="rm-edit-notes" placeholder="Any extra details..."></textarea></div>
+    <div class="drawer-actions" id="reminder-drawer-actions">
+      <button class="btn-delete" id="rm-delete-btn" onclick="deleteReminder()">Delete</button>
+      <button class="btn-cancel" onclick="closeReminderDrawer()">Cancel</button>
+      <button class="btn-save" onclick="saveReminderEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -390,11 +518,14 @@ const DEFAULT_MEALS=[
   {id:1003,name:'Cheeseburger Soup',difficulty:'medium',ingredients:'ground beef,potatoes,chicken broth,velveeta,onion,celery,carrots,sour cream,butter,flour',recipeLink:'',recipeText:'Brown beef with onion, celery, carrots. Add potatoes and broth, simmer 15min. Stir in velveeta, sour cream, flour-butter roux. Serve warm.'},
 ];
 
-let groceryItems=[],pantryItems=[],mealLibrary=[],weekPlan=[],calEvents=[];
-let gFilter='all',pFilter='all',gEditId=null,pEditId=null,pEditLevel='full';
+let groceryItems=[],pantryItems=[],mealLibrary=[],weekPlan=[],calEvents=[],todoItems=[],reminderItems=[];
+let gFilter='all',pFilter='all',tdFilter='all',rmFilter='all';
+let gEditId=null,pEditId=null,pEditLevel='full';
 let mealViewId=null,dayPickerIdx=null,currentTab='grocery',showMealForm=false;
 let calView='month',calDate=new Date(),hiddenPeople=new Set();
 let evEditId=null,evPersonSel=[];
+let tdEditId=null,tdPrioritySel='mid',tdPersonSel=[];
+let rmEditId=null,rmPersonSel=[];
 
 const today=new Date();today.setHours(0,0,0,0);
 
@@ -409,14 +540,17 @@ function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-
 async function fetchAll(){
   setSyncStatus('syncing','Syncing...');
   try{
-    const [gr,pa,ml,pl,ev]=await Promise.all([
+    const [gr,pa,ml,pl,ev,td,rm]=await Promise.all([
       fetch(SCRIPT_URL+'?type=grocery&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=pantry&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=meals&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=plan&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=events&t='+Date.now()).then(r=>r.json()),
+      fetch(SCRIPT_URL+'?type=todos&t='+Date.now()).then(r=>r.json()),
+      fetch(SCRIPT_URL+'?type=reminders&t='+Date.now()).then(r=>r.json()),
     ]);
     groceryItems=gr;pantryItems=pa;mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];calEvents=ev;
+    todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm:[];
     setSyncStatus('ok','Up to date');renderAll();
     if(!ml.length)pushData('meals',mealLibrary);
   }catch{setSyncStatus('error','Sync failed');}
@@ -432,8 +566,11 @@ async function categorize(name){
 
 function switchTab(tab){
   currentTab=tab;
-  ['grocery','pantry','meals','cal'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});
-  document.getElementById('header-title').textContent={grocery:'🛒 Shopping List',pantry:'🫙 Pantry',meals:'🍽️ Meal Planner',cal:'📅 Family Calendar'}[tab];
+  ['grocery','pantry','meals','cal','todo','reminders'].forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  document.getElementById('header-title').textContent={grocery:'🛒 Shopping List',pantry:'🫙 Pantry',meals:'🍽️ Meal Planner',cal:'📅 Family Calendar',todo:'✅ To-Do List',reminders:'🔔 Reminders'}[tab];
   renderAll();
 }
 
@@ -649,7 +786,7 @@ function getEventsForDate(dk){
 }
 
 // ── RENDER ──
-function renderAll(){renderGrocery();renderPantry();renderMeals();renderCal();renderBottomBar();}
+function renderAll(){renderGrocery();renderPantry();renderMeals();renderCal();renderTodos();renderReminders();renderBottomBar();}
 
 function renderGrocery(){
   if(currentTab==='grocery')document.getElementById('count-badge').textContent=groceryItems.length===0?'Empty':groceryItems.length+' item'+(groceryItems.length!==1?'s':'');
@@ -817,12 +954,227 @@ function renderBottomBar(){
   if(currentTab==='grocery'){const t=groceryItems.length,c=groceryItems.filter(i=>i.checked).length;document.getElementById('bottom-count').textContent=t===0?'Nothing on the list!':c+' of '+t+' got';document.getElementById('action-btn').style.display='block';}
   else if(currentTab==='pantry'){const l=pantryItems.filter(i=>i.level==='low').length,o=pantryItems.filter(i=>i.level==='out').length;document.getElementById('bottom-count').textContent=pantryItems.length+' items · '+l+' low · '+o+' out';document.getElementById('action-btn').style.display='none';}
   else if(currentTab==='meals'){document.getElementById('bottom-count').textContent=weekPlan.filter(p=>p.mealId).length+'/7 days planned';document.getElementById('action-btn').style.display='none';}
-  else{document.getElementById('bottom-count').textContent=calEvents.length+' event'+(calEvents.length!==1?'s':', ')+' this month';document.getElementById('action-btn').style.display='none';}
+  else if(currentTab==='todo'){const done=todoItems.filter(i=>i.done).length,total=todoItems.length;document.getElementById('bottom-count').textContent=total===0?'All clear! ✅':done+' of '+total+' done';document.getElementById('action-btn').style.display='none';}
+  else if(currentTab==='reminders'){const overdue=reminderItems.filter(i=>!i.done&&isOverdue(i.date,i.time)).length;document.getElementById('bottom-count').textContent=overdue>0?overdue+' overdue ⚠️':reminderItems.filter(i=>!i.done).length+' active reminders';document.getElementById('action-btn').style.display='none';}
+  else{document.getElementById('bottom-count').textContent=calEvents.length+' event'+(calEvents.length!==1?'s':'')+' this month';document.getElementById('action-btn').style.display='none';}
 }
 
 fetchAll();
 setInterval(fetchAll,10*60*1000);
 updateRatioLabel();
+
+// ── TO-DO ──
+const TODO_PRIORITIES={high:{label:'High',cls:'priority-high'},mid:{label:'Mid',cls:'priority-mid'},low:{label:'Low',cls:'priority-low'}};
+
+function addTodo(){
+  const input=document.getElementById('todo-input');
+  const name=input.value.trim();if(!name)return;
+  todoItems.unshift({id:Date.now(),name,priority:'mid',person:'',notes:'',done:false});
+  input.value='';renderAll();pushData('todos',todoItems);
+}
+document.getElementById('todo-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo();});
+
+function toggleTodo(id){
+  const item=todoItems.find(i=>i.id==id);if(!item)return;
+  item.done=!item.done;renderAll();pushData('todos',todoItems);
+}
+
+function openTodoDrawer(id){
+  const item=todoItems.find(i=>i.id==id);if(!item)return;
+  tdEditId=id;tdPrioritySel=item.priority||'mid';
+  tdPersonSel=item.person?item.person.split(',').filter(Boolean):[];
+  document.getElementById('td-edit-name').value=item.name;
+  document.getElementById('td-edit-notes').value=item.notes||'';
+  document.getElementById('todo-drawer-title').textContent='Edit To-Do';
+  ['high','mid','low'].forEach(p=>document.getElementById('td-pri-'+p).classList.toggle('sel',p===tdPrioritySel));
+  document.getElementById('td-person-selector').innerHTML=PEOPLE.map(p=>
+    `<button class="person-sel-btn${tdPersonSel.includes(p.id)?' sel':''}" style="background:${p.bg};color:${p.color};" onclick="toggleTdPerson('${p.id}')">${p.name}</button>`
+  ).join('');
+  document.getElementById('todo-overlay').classList.add('open');
+}
+
+function toggleTdPerson(pid){
+  if(tdPersonSel.includes(pid))tdPersonSel=tdPersonSel.filter(p=>p!==pid);else tdPersonSel.push(pid);
+  document.getElementById('td-person-selector').innerHTML=PEOPLE.map(p=>
+    `<button class="person-sel-btn${tdPersonSel.includes(p.id)?' sel':''}" style="background:${p.bg};color:${p.color};" onclick="toggleTdPerson('${p.id}')">${p.name}</button>`
+  ).join('');
+}
+
+function selectTodoPriority(p){
+  tdPrioritySel=p;
+  ['high','mid','low'].forEach(x=>document.getElementById('td-pri-'+x).classList.toggle('sel',x===p));
+}
+
+function saveTodoEdit(){
+  const item=todoItems.find(i=>i.id==tdEditId);if(!item)return;
+  item.name=document.getElementById('td-edit-name').value.trim()||item.name;
+  item.priority=tdPrioritySel;
+  item.person=tdPersonSel.join(',');
+  item.notes=document.getElementById('td-edit-notes').value.trim();
+  closeTodoDrawer();renderAll();pushData('todos',todoItems);
+}
+
+function deleteTodo(){
+  todoItems=todoItems.filter(i=>i.id!=tdEditId);
+  closeTodoDrawer();renderAll();pushData('todos',todoItems);
+}
+
+function closeTodoDrawer(e){
+  if(e&&e.target!==document.getElementById('todo-overlay'))return;
+  document.getElementById('todo-overlay').classList.remove('open');tdEditId=null;
+}
+
+function renderTodos(){
+  const filters=[{id:'all',label:'All'},{id:'high',label:'🔴 High'},{id:'mid',label:'🟠 Mid'},{id:'low',label:'🟢 Low'},{id:'done',label:'✅ Done'}];
+  document.getElementById('todo-filters').innerHTML=filters.map(f=>
+    `<div class="ftab${tdFilter===f.id?' active':''}" onclick="setTdFilter('${f.id}')">${f.label}</div>`
+  ).join('');
+  let items=todoItems;
+  if(tdFilter==='done')items=items.filter(i=>i.done);
+  else if(tdFilter!=='all')items=items.filter(i=>i.priority===tdFilter&&!i.done);
+  else items=items.filter(i=>!i.done).concat(items.filter(i=>i.done));
+
+  if(!items.length){document.getElementById('todo-list').innerHTML=`<div class="empty-state">Nothing to do! 🎉</div>`;return;}
+
+  document.getElementById('todo-list').innerHTML=items.map(item=>{
+    const pri=TODO_PRIORITIES[item.priority]||TODO_PRIORITIES.mid;
+    const persons=item.person?item.person.split(',').filter(p=>p&&PERSON_MAP[p]):[];
+    const personDots=persons.map(pid=>`<div class="person-dot" style="background:${PERSON_MAP[pid].bg};"></div>`).join('');
+    const personNames=persons.map(pid=>PERSON_MAP[pid]?.name).filter(Boolean).join(', ');
+    return `<div class="todo-item${item.done?' done':''}" >
+      <div class="todo-check" onclick="toggleTodo(${item.id})">${item.done?'✓':''}</div>
+      <div class="todo-body" onclick="openTodoDrawer(${item.id})">
+        <div class="todo-title">${item.name}</div>
+        <div class="todo-meta">
+          <span class="priority-pill ${pri.cls}">${pri.label}</span>
+          ${personDots}
+          ${personNames?`<span style="font-size:10px;color:#A07040;font-weight:600;">${personNames}</span>`:''}
+          ${item.notes?`<span style="font-size:10px;color:#7A5030;font-style:italic;">📝</span>`:''}
+        </div>
+      </div>
+      <button class="todo-del" onclick="quickDeleteTodo(${item.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function quickDeleteTodo(id){todoItems=todoItems.filter(i=>i.id!=id);renderAll();pushData('todos',todoItems);}
+function setTdFilter(f){tdFilter=f;renderTodos();}
+
+// ── REMINDERS ──
+function addReminder(){
+  const input=document.getElementById('reminder-input');
+  const name=input.value.trim();if(!name)return;
+  reminderItems.unshift({id:Date.now(),name,date:'',time:'',person:'',notes:'',done:false});
+  input.value='';renderAll();pushData('reminders',reminderItems);
+}
+document.getElementById('reminder-input').addEventListener('keydown',e=>{if(e.key==='Enter')addReminder();});
+
+function toggleReminder(id){
+  const item=reminderItems.find(i=>i.id==id);if(!item)return;
+  item.done=!item.done;renderAll();pushData('reminders',reminderItems);
+}
+
+function openReminderDrawer(id){
+  const item=reminderItems.find(i=>i.id==id);if(!item)return;
+  rmEditId=id;rmPersonSel=item.person?item.person.split(',').filter(Boolean):[];
+  document.getElementById('rm-edit-name').value=item.name;
+  document.getElementById('rm-edit-date').value=item.date||'';
+  document.getElementById('rm-edit-time').value=item.time||'';
+  document.getElementById('rm-edit-notes').value=item.notes||'';
+  document.getElementById('reminder-drawer-title').textContent='Edit Reminder';
+  document.getElementById('rm-person-selector').innerHTML=PEOPLE.map(p=>
+    `<button class="person-sel-btn${rmPersonSel.includes(p.id)?' sel':''}" style="background:${p.bg};color:${p.color};" onclick="toggleRmPerson('${p.id}')">${p.name}</button>`
+  ).join('');
+  document.getElementById('reminder-overlay').classList.add('open');
+}
+
+function toggleRmPerson(pid){
+  if(rmPersonSel.includes(pid))rmPersonSel=rmPersonSel.filter(p=>p!==pid);else rmPersonSel.push(pid);
+  document.getElementById('rm-person-selector').innerHTML=PEOPLE.map(p=>
+    `<button class="person-sel-btn${rmPersonSel.includes(p.id)?' sel':''}" style="background:${p.bg};color:${p.color};" onclick="toggleRmPerson('${p.id}')">${p.name}</button>`
+  ).join('');
+}
+
+function saveReminderEdit(){
+  const item=reminderItems.find(i=>i.id==rmEditId);if(!item)return;
+  item.name=document.getElementById('rm-edit-name').value.trim()||item.name;
+  item.date=document.getElementById('rm-edit-date').value;
+  item.time=document.getElementById('rm-edit-time').value;
+  item.person=rmPersonSel.join(',');
+  item.notes=document.getElementById('rm-edit-notes').value.trim();
+  closeReminderDrawer();renderAll();pushData('reminders',reminderItems);
+}
+
+function deleteReminder(){
+  reminderItems=reminderItems.filter(i=>i.id!=rmEditId);
+  closeReminderDrawer();renderAll();pushData('reminders',reminderItems);
+}
+
+function closeReminderDrawer(e){
+  if(e&&e.target!==document.getElementById('reminder-overlay'))return;
+  document.getElementById('reminder-overlay').classList.remove('open');rmEditId=null;
+}
+
+function formatReminderDatetime(date,time){
+  if(!date&&!time)return '';
+  let str='';
+  if(date){const[y,m,d]=date.split('-').map(Number);str+=MONTHS[m-1]+' '+d+', '+y;}
+  if(time)str+=(str?' at ':'')+formatTime(time);
+  return str;
+}
+
+function isOverdue(date,time){
+  if(!date)return false;
+  const[y,m,d]=date.split('-').map(Number);
+  const dt=time?new Date(y,m-1,d,...time.split(':').map(Number)):new Date(y,m-1,d,23,59);
+  return dt<new Date();
+}
+
+function renderReminders(){
+  const filters=[{id:'all',label:'All'},{id:'upcoming',label:'📅 Dated'},{id:'undated',label:'📌 Undated'},{id:'done',label:'✅ Done'}];
+  document.getElementById('reminder-filters').innerHTML=filters.map(f=>
+    `<div class="ftab${rmFilter===f.id?' active':''}" onclick="setRmFilter('${f.id}')">${f.label}</div>`
+  ).join('');
+  let items=reminderItems;
+  if(rmFilter==='done')items=items.filter(i=>i.done);
+  else if(rmFilter==='upcoming')items=items.filter(i=>!i.done&&i.date);
+  else if(rmFilter==='undated')items=items.filter(i=>!i.done&&!i.date);
+  else items=items.filter(i=>!i.done).concat(items.filter(i=>i.done));
+
+  // Sort: overdue first, then by date, then undated
+  items.sort((a,b)=>{
+    if(a.done!==b.done)return a.done?1:-1;
+    if(a.date&&b.date)return a.date.localeCompare(b.date);
+    if(a.date)return -1;if(b.date)return 1;
+    return 0;
+  });
+
+  if(!items.length){document.getElementById('reminder-list').innerHTML=`<div class="empty-state">No reminders! 🌟</div>`;return;}
+
+  document.getElementById('reminder-list').innerHTML=items.map(item=>{
+    const overdue=!item.done&&isOverdue(item.date,item.time);
+    const persons=item.person?item.person.split(',').filter(p=>p&&PERSON_MAP[p]):[];
+    const personDots=persons.map(pid=>`<div class="person-dot" style="background:${PERSON_MAP[pid].bg};"></div>`).join('');
+    const personNames=persons.map(pid=>PERSON_MAP[pid]?.name).filter(Boolean).join(', ');
+    const dt=formatReminderDatetime(item.date,item.time);
+    return `<div class="reminder-item${item.done?' done':''}${overdue?' overdue':''}">
+      <div class="reminder-check" onclick="toggleReminder(${item.id})">${item.done?'✓':''}</div>
+      <div class="reminder-body" onclick="openReminderDrawer(${item.id})">
+        <div class="reminder-title">${item.name}</div>
+        <div class="todo-meta" style="margin-top:4px;">
+          ${dt?`<span class="reminder-datetime">${overdue?'⚠️ ':''} ${dt}</span>`:''}
+          ${personDots}
+          ${personNames?`<span style="font-size:10px;color:#A07040;font-weight:600;">${personNames}</span>`:''}
+          ${item.notes?`<span style="font-size:10px;color:#7A5030;font-style:italic;">📝</span>`:''}
+        </div>
+      </div>
+      <button class="reminder-del" onclick="quickDeleteReminder(${item.id})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function quickDeleteReminder(id){reminderItems=reminderItems.filter(i=>i.id!=id);renderAll();pushData('reminders',reminderItems);}
+function setRmFilter(f){rmFilter=f;renderReminders();}
 </script>
 </body>
 </html>
