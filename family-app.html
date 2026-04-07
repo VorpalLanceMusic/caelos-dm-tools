@@ -661,7 +661,17 @@ function openMealDrawer(id){
 function closeMealDrawer(e){if(e&&e.target!==document.getElementById('meal-overlay'))return;document.getElementById('meal-overlay').classList.remove('open');mealViewId=null;}
 function deleteMeal(id){mealLibrary=mealLibrary.filter(m=>m.id!=id);weekPlan=weekPlan.map(p=>p.mealId==id?{...p,mealId:null}:p);closeMealDrawer();renderAll();pushData('meals',mealLibrary);pushData('plan',weekPlan);}
 
-function getOrInitPlan(){if(weekPlan.length!==7)weekPlan=DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,mealId:null,locked:false}));return weekPlan;}
+function getOrInitPlan(){
+  const base=DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,mealId:null,locked:false}));
+  if(!weekPlan.length){weekPlan=base;return weekPlan;}
+  // Merge saved data into base structure — preserve mealId and locked even if rows are missing
+  weekPlan=base.map(b=>{
+    const saved=weekPlan.find(p=>p.day===b.day);
+    if(!saved)return b;
+    return{...b,mealId:saved.mealId?Number(saved.mealId):null,locked:saved.locked==='TRUE'||saved.locked===true||saved.locked==='true'};
+  });
+  return weekPlan;
+}
 function autoPlan(){
   const btn=document.getElementById('auto-plan-btn');btn.disabled=true;btn.textContent='Planning...';
   const ec=parseInt(document.getElementById('ratio-slider').value);
