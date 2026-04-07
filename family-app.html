@@ -549,8 +549,9 @@ async function fetchAll(){
       fetch(SCRIPT_URL+'?type=todos&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=reminders&t='+Date.now()).then(r=>r.json()),
     ]);
-    groceryItems=gr;pantryItems=pa;mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];calEvents=ev;
-    todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm:[];
+    groceryItems=gr;pantryItems=pa;mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
+    calEvents=ev.map(e=>({...e,date:normalizeDate(e.date)}));
+    todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm.map(r=>({...r,date:normalizeDate(r.date)})):[];
     setSyncStatus('ok','Up to date');renderAll();
     if(!ml.length)pushData('meals',mealLibrary);
   }catch{setSyncStatus('error','Sync failed');}
@@ -824,7 +825,7 @@ function openDayEvents(dk){
   document.getElementById('ev-view-actions').innerHTML=`<button class="btn-save" onclick="closeEventView();openEventDrawer('${dk}')">+ Add Event</button><button class="btn-cancel" onclick="closeEventView()">Close</button>`;
   document.getElementById('event-view-overlay').classList.add('open');
 }
-function formatDateDisplay(s){const d=parseDate(s);return MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
+function formatDateDisplay(s){if(!s)return'';const nd=normalizeDate(s);if(!nd)return s;const d=parseDate(nd);if(isNaN(d))return s;return MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
 function formatTime(t){if(!t)return'';const[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';return((h%12)||12)+':'+pad2(m)+' '+ap;}
 
 function normalizeDate(raw){
