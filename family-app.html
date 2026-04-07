@@ -685,20 +685,32 @@ function autoPlan(){
     const pool=(idx<ec&&easy.length)?easy:(med.length?med:easy);
     if(pool.length)pd.mealId=pool[Math.floor(Math.random()*pool.length)].id;
   });
-  let added=0;
-  weekPlan.forEach(p=>{
-    const meal=mealLibrary.find(m=>m.id==p.mealId);if(!meal||!meal.ingredients)return;
-    meal.ingredients.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).forEach(ing=>{
-      if(!pantryItems.find(p=>p.name.toLowerCase()===ing&&p.level==='full')&&!groceryItems.find(g=>g.name.toLowerCase()===ing)){groceryItems.push({id:Date.now()+Math.random(),name:ing,cat:'other',qty:'1',checked:false});added++;}
-    });
-  });
   btn.disabled=false;btn.textContent='Plan My Week';renderAll();
-  Promise.all([pushData('plan',weekPlan),pushData('grocery',groceryItems)]);
-  if(added>0)showToast(added+' ingredient'+(added!==1?'s':'')+' added to grocery list!');
+  pushData('plan',weekPlan);
+  showToast('Week planned!');
 }
 function rerollDay(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length)return;const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
 function setDayDiff(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length){showToast('No '+diff+' meals in library!');return;}const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
-function toggleLock(dayId){const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.locked=!p.locked;renderAll();pushData('plan',weekPlan);}
+function toggleLock(dayId){
+  const p=weekPlan.find(d=>d.id==dayId);if(!p)return;
+  p.locked=!p.locked;
+  if(p.locked&&p.mealId){
+    const meal=mealLibrary.find(m=>m.id==p.mealId);
+    if(meal&&meal.ingredients){
+      let added=0;
+      meal.ingredients.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).forEach(ing=>{
+        const pantryMatch=pantryItems.find(pi=>pi.name.toLowerCase()===ing);
+        const alreadyOnList=groceryItems.find(g=>g.name.toLowerCase()===ing&&!g.checked);
+        if(alreadyOnList)return;
+        if(pantryMatch&&pantryMatch.level==='full')return;
+        groceryItems.push({id:Date.now()+Math.random(),name:ing,cat:'other',qty:'1',checked:false});
+        added++;
+      });
+      if(added>0){pushData('grocery',groceryItems);showToast(added+' ingredient'+(added!==1?'s':'')+' added to grocery list!');}
+    }
+  }
+  renderAll();pushData('plan',weekPlan);
+}
 function openDayPicker(dayId){
   dayPickerIdx=dayId;let html='';
   ['easy','medium','hard'].forEach(diff=>{
