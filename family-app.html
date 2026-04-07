@@ -561,7 +561,7 @@ async function pushData(type,items){
   catch{setSyncStatus('error','Save failed');}
 }
 async function categorize(name){
-  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:50,system:'You are a grocery categorization assistant. Given a grocery item name, respond with ONLY a single category key from this exact list: produce, dairy, meat, bakery, frozen, pantry, snacks, drinks, household, other. No explanation, no punctuation, just the single word.',messages:[{role:'user',content:name}]})});const data=await res.json();const raw=data?.content?.[0]?.text?.trim().toLowerCase().replace(/[^a-z]/g,'');return VALID_CATS.includes(raw)?raw:'other';}catch{return'other';}
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:50,system:'You are a grocery categorization assistant. Given a grocery item name, respond with ONLY a single category key from this exact list: produce, dairy, meat, bakery, frozen, pantry, snacks, drinks, household, other. No explanation, no punctuation, just the single word.',messages:[{role:'user',content:name}]})});const data=await res.json();const raw=data?.content?.[0]?.text?.trim().toLowerCase().replace(/[^a-z]/g,'');return VALID_CATS.includes(raw)?raw:'other';}catch{return'other';}
 }
 
 function switchTab(tab){
@@ -778,6 +778,30 @@ function openEventView(id){
   document.getElementById('event-view-overlay').classList.add('open');
 }
 function closeEventView(e){if(e&&e.target!==document.getElementById('event-view-overlay'))return;document.getElementById('event-view-overlay').classList.remove('open');}
+
+function openDayEvents(dk){
+  const evs=getEventsForDate(dk);
+  const d=parseDate(dk);
+  const label=MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+  document.getElementById('ev-view-title').textContent=label;
+  let html=`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">`;
+  evs.forEach(ev=>{
+    const persons=ev.person?ev.person.split(',').filter(Boolean):[];
+    const bg=persons.length&&PERSON_MAP[persons[0]]?PERSON_MAP[persons[0]].bg:'#C97A3A';
+    const tc=persons.length&&PERSON_MAP[persons[0]]?PERSON_MAP[persons[0]].color:'#fff';
+    const personLabels=persons.map(pid=>PERSON_MAP[pid]?.name).filter(Boolean).join(', ');
+    html+=`<div class="event-pill" style="background:${bg};" onclick="closeEventView();openEventView(${ev.id})">
+      <div class="event-pill-left">
+        <div class="event-pill-title" style="color:${tc};">${ev.title}</div>
+        <div class="event-pill-meta" style="color:${tc};">${ev.time?formatTime(ev.time)+' · ':''}${personLabels}</div>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('ev-view-content').innerHTML=html;
+  document.getElementById('ev-view-actions').innerHTML=`<button class="btn-save" onclick="closeEventView();openEventDrawer('${dk}')">+ Add Event</button><button class="btn-cancel" onclick="closeEventView()">Close</button>`;
+  document.getElementById('event-view-overlay').classList.add('open');
+}
 function formatDateDisplay(s){const d=parseDate(s);return MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
 function formatTime(t){if(!t)return'';const[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';return((h%12)||12)+':'+pad2(m)+' '+ap;}
 
@@ -898,7 +922,8 @@ function monthCell(date,dk,otherMonth){
     return `<div class="month-dot" style="background:${bg};"></div>`;
   }).join('');
   const mealDot=meal?`<div class="month-dot" style="background:#5A3010;"></div>`:'';
-  return `<div class="month-cell${otherMonth?' other-month':''}${isToday?' today':''}" onclick="openEventDrawer('${dk}')">
+  const clickAction=evs.length===1?`openEventView(${evs[0].id})`:evs.length>1?`openDayEvents('${dk}')`:`openEventDrawer('${dk}')`;
+  return `<div class="month-cell${otherMonth?' other-month':''}${isToday?' today':''}" onclick="${clickAction}">
     <div class="month-cell-num">${date.getDate()}</div>
     ${dots}${mealDot}
   </div>`;
