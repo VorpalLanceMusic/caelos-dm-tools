@@ -805,8 +805,20 @@ function openDayEvents(dk){
 function formatDateDisplay(s){const d=parseDate(s);return MONTHS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();}
 function formatTime(t){if(!t)return'';const[h,m]=t.split(':').map(Number);const ap=h>=12?'PM':'AM';return((h%12)||12)+':'+pad2(m)+' '+ap;}
 
+function normalizeDate(raw){
+  if(!raw)return'';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(String(raw).trim()))return String(raw).trim();
+  try{const d=new Date(raw);if(!isNaN(d))return dateKey(d);}catch{}
+  return String(raw).trim();
+}
 function getEventsForDate(dk){
-  return calEvents.filter(e=>e.date===dk&&!e.person.split(',').every(p=>hiddenPeople.has(p)));
+  return calEvents.filter(e=>{
+    const evDate=normalizeDate(e.date);
+    if(evDate!==dk)return false;
+    const persons=(e.person||'').split(',').filter(Boolean);
+    if(!persons.length)return true;
+    return !persons.every(p=>hiddenPeople.has(p));
+  });
 }
 
 // ── RENDER ──
@@ -867,7 +879,11 @@ function renderMeals(){
 }
 
 function renderCal(){
-  if(currentTab==='cal')document.getElementById('count-badge').textContent=calEvents.length+' event'+(calEvents.length!==1?'s':'');
+  if(currentTab==='cal'){
+    const y=calDate.getFullYear(),m=calDate.getMonth();
+    const monthEvents=calEvents.filter(e=>{const nd=normalizeDate(e.date);if(!nd)return false;const d=parseDate(nd);return d.getFullYear()===y&&d.getMonth()===m;});
+    document.getElementById('count-badge').textContent=monthEvents.length+' event'+(monthEvents.length!==1?'s':'')+' this month';
+  }
 
   // legend
   document.getElementById('person-legend').innerHTML=PEOPLE.map(p=>
