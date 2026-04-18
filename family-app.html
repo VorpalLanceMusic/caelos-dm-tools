@@ -521,7 +521,7 @@ const DEFAULT_MEALS=[
 let groceryItems=[],pantryItems=[],mealLibrary=[],weekPlan=[],calEvents=[],todoItems=[],reminderItems=[];
 let gFilter='all',pFilter='all',tdFilter='all',rmFilter='all';
 let gEditId=null,pEditId=null,pEditLevel='full';
-let mealViewId=null,dayPickerIdx=null,currentTab='grocery',showMealForm=false;
+let mealViewId=null,mealEditId=null,dayPickerIdx=null,currentTab='grocery',showMealForm=false;
 let calView='month',calDate=new Date(),hiddenPeople=new Set();
 let evEditId=null,evPersonSel=[];
 let tdEditId=null,tdPrioritySel='mid',tdPersonSel=[];
@@ -640,12 +640,51 @@ function addSuggestedToGrocery(pid){
 }
 
 // ── MEALS ──
-function toggleMealForm(){showMealForm=!showMealForm;document.getElementById('meal-form').classList.toggle('open',showMealForm);document.getElementById('toggle-form-btn').textContent=showMealForm?'✕ Cancel':'+ Add a Meal';}
+function toggleMealForm(){
+  showMealForm=!showMealForm;
+  document.getElementById('meal-form').classList.toggle('open',showMealForm);
+  if(!showMealForm){
+    mealEditId=null;
+    ['meal-name-input','meal-ing-input','meal-link-input','meal-text-input'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('meal-diff-input').value='easy';
+    document.getElementById('toggle-form-btn').textContent='+ Add a Meal';
+    document.querySelector('#meal-form .form-save').textContent='Save Meal';
+  }else{
+    document.getElementById('toggle-form-btn').textContent='✕ Cancel';
+  }
+}
 function saveMeal(){
   const name=document.getElementById('meal-name-input').value.trim();if(!name)return;
-  mealLibrary.push({id:Date.now(),name,difficulty:document.getElementById('meal-diff-input').value,ingredients:document.getElementById('meal-ing-input').value.trim(),recipeLink:document.getElementById('meal-link-input').value.trim(),recipeText:document.getElementById('meal-text-input').value.trim()});
-  ['meal-name-input','meal-ing-input','meal-link-input','meal-text-input'].forEach(id=>document.getElementById(id).value='');
+  const data={
+    name,
+    difficulty:document.getElementById('meal-diff-input').value,
+    ingredients:document.getElementById('meal-ing-input').value.trim(),
+    recipeLink:document.getElementById('meal-link-input').value.trim(),
+    recipeText:document.getElementById('meal-text-input').value.trim()
+  };
+  if(mealEditId!=null){
+    const meal=mealLibrary.find(m=>m.id==mealEditId);
+    if(meal)Object.assign(meal,data);
+    showToast('Meal updated!');
+  }else{
+    mealLibrary.push({id:Date.now(),...data});
+  }
   toggleMealForm();renderAll();pushData('meals',mealLibrary);
+}
+function editMeal(id){
+  const meal=mealLibrary.find(m=>m.id==id);if(!meal)return;
+  closeMealDrawer();
+  mealEditId=id;
+  document.getElementById('meal-name-input').value=meal.name||'';
+  document.getElementById('meal-diff-input').value=meal.difficulty||'easy';
+  document.getElementById('meal-ing-input').value=meal.ingredients||'';
+  document.getElementById('meal-link-input').value=meal.recipeLink||'';
+  document.getElementById('meal-text-input').value=meal.recipeText||'';
+  showMealForm=true;
+  document.getElementById('meal-form').classList.add('open');
+  document.getElementById('toggle-form-btn').textContent='✕ Cancel';
+  document.querySelector('#meal-form .form-save').textContent='Update Meal';
+  document.getElementById('meal-form').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function openMealDrawer(id){
   const meal=mealLibrary.find(m=>m.id==id);if(!meal)return;mealViewId=id;
@@ -656,7 +695,7 @@ function openMealDrawer(id){
   if(meal.recipeLink)html+=`<div class="drawer-label">Recipe Link</div><a class="recipe-link" href="${meal.recipeLink}" target="_blank">${meal.recipeLink}</a>`;
   if(meal.recipeText)html+=`<div class="drawer-label" style="margin-top:12px;">Recipe Notes</div><div class="recipe-text-display">${meal.recipeText}</div>`;
   document.getElementById('meal-drawer-content').innerHTML=html;
-  document.getElementById('meal-drawer-actions').innerHTML=`<button class="btn-delete" onclick="deleteMeal(${id})">Delete</button><button class="btn-cancel" onclick="closeMealDrawer()">Close</button>`;
+  document.getElementById('meal-drawer-actions').innerHTML=`<button class="btn-delete" onclick="deleteMeal(${id})">Delete</button><button class="btn-save" onclick="editMeal(${id})">Edit</button><button class="btn-cancel" onclick="closeMealDrawer()">Close</button>`;
   document.getElementById('meal-overlay').classList.add('open');
 }
 function closeMealDrawer(e){if(e&&e.target!==document.getElementById('meal-overlay'))return;document.getElementById('meal-overlay').classList.remove('open');mealViewId=null;}
@@ -695,21 +734,6 @@ function setDayDiff(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===
 function toggleLock(dayId){
   const p=weekPlan.find(d=>d.id==dayId);if(!p)return;
   p.locked=!p.locked;
-  if(p.locked&&p.mealId){
-    const meal=mealLibrary.find(m=>m.id==p.mealId);
-    if(meal&&meal.ingredients){
-      let added=0;
-      meal.ingredients.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean).forEach(ing=>{
-        const pantryMatch=pantryItems.find(pi=>pi.name.toLowerCase()===ing);
-        const alreadyOnList=groceryItems.find(g=>g.name.toLowerCase()===ing&&!g.checked);
-        if(alreadyOnList)return;
-        if(pantryMatch&&pantryMatch.level==='full')return;
-        groceryItems.push({id:Date.now()+Math.random(),name:ing,cat:'other',qty:'1',checked:false});
-        added++;
-      });
-      if(added>0){pushData('grocery',groceryItems);showToast(added+' ingredient'+(added!==1?'s':'')+' added to grocery list!');}
-    }
-  }
   renderAll();pushData('plan',weekPlan);
 }
 function openDayPicker(dayId){
