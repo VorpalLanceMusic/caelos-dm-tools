@@ -624,7 +624,10 @@ async function fetchAll(){
     groceryItems=gr;pantryItems=pa;mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
     calEvents=ev.map(e=>({...e,date:normalizeDate(e.date)}));
     todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm.map(r=>({...r,date:normalizeDate(r.date)})):[];
-    checkinItems=Array.isArray(ci)?ci.map(c=>({...c,ts:parseInt(c.ts)||Date.now()})):[];
+    checkinItems=Array.isArray(ci)?ci.map(c=>{
+      const ts=parseInt(c.ts)||Date.now();
+      return {...c,ts,dateStr:dateKey(new Date(ts))};
+    }):[];
     setSyncStatus('ok','Up to date');
     syncCheckinUserButtons();
     updateCheckinBadge();
@@ -1343,7 +1346,14 @@ function setRmFilter(f){rmFilter=f;renderReminders();}
 // ── CHECK-IN ──
 function todayDateStr(){const d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 function formatCheckinTime(ts){const d=new Date(ts);let h=d.getHours(),m=pad2(d.getMinutes()),ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+m+' '+ap;}
-function formatArchiveDate(ds){const[y,m,d]=ds.split('-').map(Number);const dt=new Date(y,m-1,d);const wd=DAYS_OF_WEEK[dt.getDay()];const mo=MONTHS[m-1];return wd+', '+mo+' '+d;}
+function formatArchiveDate(ds){
+  if(!ds||typeof ds!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(ds))return 'Earlier';
+  const[y,m,d]=ds.split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  if(isNaN(dt))return 'Earlier';
+  const wd=DAYS_OF_WEEK[dt.getDay()];const mo=MONTHS[m-1];
+  return wd+', '+mo+' '+d;
+}
 
 function syncCheckinUserButtons(){
   const lucasBtn=document.getElementById('checkin-user-lucas');
