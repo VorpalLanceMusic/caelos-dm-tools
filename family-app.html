@@ -589,6 +589,7 @@ const DEFAULT_MEALS=[
 let groceryItems=[],pantryItems=[],mealLibrary=[],weekPlan=[],calEvents=[],todoItems=[],reminderItems=[],checkinItems=[];
 let gFilter='all',pFilter='all',tdFilter='all',rmFilter='all';
 let gEditId=null,pEditId=null,pEditLevel='full';
+let groceryToggleLock=false;
 let mealViewId=null,mealEditId=null,dayPickerIdx=null,currentTab='grocery',showMealForm=false;
 let calView='month',calDate=new Date(),hiddenPeople=new Set();
 let evEditId=null,evPersonSel=[];
@@ -621,7 +622,10 @@ async function fetchAll(){
       fetch(SCRIPT_URL+'?type=reminders&t='+Date.now()).then(r=>r.json()),
       fetch(SCRIPT_URL+'?type=checkins&t='+Date.now()).then(r=>r.json()).catch(()=>[]),
     ]);
-    groceryItems=gr;pantryItems=pa;mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
+    groceryItems=gr.map(i=>({...i,id:String(i.id)}));
+    // Deduplicate by id (belt-and-suspenders against existing sheet corruption)
+    const seenGrocery=new Set();groceryItems=groceryItems.filter(i=>{if(seenGrocery.has(i.id))return false;seenGrocery.add(i.id);return true;});
+    pantryItems=pa.map(i=>({...i,id:String(i.id)}));mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
     calEvents=ev.map(e=>({...e,date:normalizeDate(e.date)}));
     todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm.map(r=>({...r,date:normalizeDate(r.date)})):[];
     checkinItems=Array.isArray(ci)?ci.map(c=>{
@@ -661,26 +665,39 @@ async function addGrocery(){
   const btn=document.getElementById('grocery-add-btn');const badge=document.getElementById('thinking-badge');
   btn.disabled=true;badge.classList.add('visible');input.disabled=true;
   const cat=await categorize(name);btn.disabled=false;badge.classList.remove('visible');input.disabled=false;
-  groceryItems.unshift({id:Date.now(),name,cat,qty,checked:false});
+  groceryItems.unshift({id:String(Date.now()),name,cat,qty,checked:false});
   input.value='';document.getElementById('grocery-qty').value='1';input.focus();
   renderAll();pushData('grocery',groceryItems);
 }
 document.getElementById('grocery-input').addEventListener('keydown',e=>{if(e.key==='Enter')addGrocery();});
 function toggleGrocery(id){
-  const item=groceryItems.find(i=>i.id==id);if(!item)return;item.checked=!item.checked;
-  if(item.checked){const ex=pantryItems.find(p=>p.name.toLowerCase()===item.name.toLowerCase());if(!ex)pantryItems.unshift({id:Date.now()+1,name:item.name,cat:item.cat,qty:item.qty,checked:false,level:'full'});else ex.level='full';Promise.all([pushData('grocery',groceryItems),pushData('pantry',pantryItems)]);}else{pushData('grocery',groceryItems);}
+  if(groceryToggleLock)return;
+  groceryToggleLock=true;
+  const sid=String(id);
+  const item=groceryItems.find(i=>String(i.id)===sid);
+  if(!item){groceryToggleLock=false;return;}
+  item.checked=!item.checked;
   renderAll();
+  if(item.checked){
+    const ex=pantryItems.find(p=>p.name.toLowerCase()===item.name.toLowerCase());
+    if(!ex)pantryItems.unshift({id:String(Date.now()+1),name:item.name,cat:item.cat,qty:item.qty,checked:false,level:'full'});
+    else ex.level='full';
+    Promise.all([pushData('grocery',groceryItems),pushData('pantry',pantryItems)]).finally(()=>{groceryToggleLock=false;});
+  }else{
+    pushData('grocery',groceryItems).finally(()=>{groceryToggleLock=false;});
+  }
 }
-function removeGrocery(id){groceryItems=groceryItems.filter(i=>i.id!=id);closeGroceryDrawer();renderAll();pushData('grocery',groceryItems);}
+function removeGrocery(id){groceryItems=groceryItems.filter(i=>String(i.id)!==String(id));closeGroceryDrawer();renderAll();pushData('grocery',groceryItems);}
 function openGroceryDrawer(id){
-  const item=groceryItems.find(i=>i.id==id);if(!item)return;gEditId=id;
+  const sid=String(id);
+  const item=groceryItems.find(i=>String(i.id)===sid);if(!item)return;gEditId=sid;
   document.getElementById('g-edit-name').value=item.name;document.getElementById('g-edit-qty').value=item.qty;
   document.getElementById('g-edit-cat').innerHTML=VALID_CATS.map(c=>`<option value="${c}" ${c===item.cat?'selected':''}>${CATS[c].label}</option>`).join('');
   document.getElementById('grocery-drawer-title').textContent='Edit: '+item.name;document.getElementById('grocery-overlay').classList.add('open');
 }
 function closeGroceryDrawer(e){if(e&&e.target!==document.getElementById('grocery-overlay'))return;document.getElementById('grocery-overlay').classList.remove('open');gEditId=null;}
 function saveGroceryEdit(){
-  const item=groceryItems.find(i=>i.id==gEditId);if(!item)return;
+  const item=groceryItems.find(i=>String(i.id)===String(gEditId));if(!item)return;
   item.name=document.getElementById('g-edit-name').value.trim()||item.name;item.qty=document.getElementById('g-edit-qty').value.trim()||item.qty;item.cat=document.getElementById('g-edit-cat').value;
   document.getElementById('grocery-overlay').classList.remove('open');gEditId=null;renderAll();pushData('grocery',groceryItems);
 }
