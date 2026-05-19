@@ -466,7 +466,8 @@ html,body { background:#0A1C1F; }
     <div class="drawer-handle"></div>
     <div class="drawer-title" id="event-drawer-title">Add Event</div>
     <div class="drawer-field"><div class="drawer-label">Title</div><input class="drawer-input" id="ev-title" placeholder="Event name..." /></div>
-    <div class="drawer-field"><div class="drawer-label">Date</div><input class="drawer-input" id="ev-date" type="date" /></div>
+    <div class="drawer-field"><div class="drawer-label">From</div><input class="drawer-input" id="ev-date" type="date" /></div>
+    <div class="drawer-field"><div class="drawer-label">To (optional — for multi-day events)</div><input class="drawer-input" id="ev-end-date" type="date" /></div>
     <div class="drawer-field"><div class="drawer-label">Time (optional)</div><input class="drawer-input" id="ev-time" type="time" /></div>
     <div class="drawer-field"><div class="drawer-label">Notes (optional)</div><textarea class="drawer-textarea" id="ev-notes" placeholder="Any details..."></textarea></div>
     <div class="drawer-field"><div class="drawer-label">Who is this for?</div><div class="person-selector" id="ev-person-selector"></div></div>
@@ -626,7 +627,7 @@ async function fetchAll(){
     // Deduplicate by id (belt-and-suspenders against existing sheet corruption)
     const seenGrocery=new Set();groceryItems=groceryItems.filter(i=>{if(seenGrocery.has(i.id))return false;seenGrocery.add(i.id);return true;});
     pantryItems=pa.map(i=>({...i,id:String(i.id)}));mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
-    calEvents=ev.map(e=>({...e,date:normalizeDate(e.date)}));
+    calEvents=ev.map(e=>({...e,date:normalizeDate(e.date),endDate:e.endDate?normalizeDate(e.endDate):''}));
     todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm.map(r=>({...r,date:normalizeDate(r.date)})):[];
     checkinItems=Array.isArray(ci)?ci.map(c=>{
       const ts=parseInt(c.ts)||Date.now();
@@ -876,6 +877,7 @@ function openEventDrawer(dateStr,evId){
   document.getElementById('event-drawer-title').textContent=ev?'Edit Event':'Add Event';
   document.getElementById('ev-title').value=ev?ev.title:'';
   document.getElementById('ev-date').value=dateStr||(ev?ev.date:'');
+  document.getElementById('ev-end-date').value=ev?(ev.endDate||''):'';
   document.getElementById('ev-time').value=ev?ev.time:'';
   document.getElementById('ev-notes').value=ev?ev.notes:'';
   evPersonSel=ev?(ev.person?ev.person.split(','):[]):[];
@@ -898,7 +900,8 @@ function toggleEvPerson(id){
 }
 function saveEvent(){
   const title=document.getElementById('ev-title').value.trim();if(!title)return;
-  const ev={id:evEditId||Date.now(),title,date:document.getElementById('ev-date').value,time:document.getElementById('ev-time').value,notes:document.getElementById('ev-notes').value.trim(),person:evPersonSel.join(',')};
+  const rawEnd=document.getElementById('ev-end-date').value;
+  const ev={id:evEditId||Date.now(),title,date:document.getElementById('ev-date').value,endDate:rawEnd||'',time:document.getElementById('ev-time').value,notes:document.getElementById('ev-notes').value.trim(),person:evPersonSel.join(',')};
   if(evEditId){const idx=calEvents.findIndex(e=>e.id==evEditId);if(idx>=0)calEvents[idx]=ev;}else{calEvents.push(ev);}
   document.getElementById('event-overlay').classList.remove('open');evEditId=null;
   renderAll();pushData('events',calEvents);
@@ -909,7 +912,12 @@ function openEventView(id){
   document.getElementById('ev-view-title').textContent=ev.title;
   const persons=ev.person?ev.person.split(',').filter(Boolean):[];
   let html='';
-  if(ev.date)html+=`<div class="drawer-label">Date</div><div style="font-size:14px;color:#E0EEEC;margin-bottom:10px;">${formatDateDisplay(ev.date)}${ev.time?' at '+formatTime(ev.time):''}</div>`;
+  if(ev.date){
+    const dateDisplay=ev.endDate&&ev.endDate!==ev.date
+      ?`${formatDateDisplay(ev.date)} → ${formatDateDisplay(ev.endDate)}`
+      :`${formatDateDisplay(ev.date)}${ev.time?' at '+formatTime(ev.time):''}`;
+    html+=`<div class="drawer-label">Date</div><div style="font-size:14px;color:#E0EEEC;margin-bottom:10px;">${dateDisplay}</div>`;
+  }
   if(persons.length){
     html+=`<div class="drawer-label">Who</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">`;
     persons.forEach(pid=>{const p=PERSON_MAP[pid];if(p)html+=`<span style="background:${p.bg};color:${p.color};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:800;">${p.name}</span>`;});
@@ -933,10 +941,12 @@ function openDayEvents(dk){
     const bg=persons.length&&PERSON_MAP[persons[0]]?PERSON_MAP[persons[0]].bg:'#3A8A95';
     const tc=persons.length&&PERSON_MAP[persons[0]]?PERSON_MAP[persons[0]].color:'#fff';
     const personLabels=persons.map(pid=>PERSON_MAP[pid]?.name).filter(Boolean).join(', ');
+    const isMultiDay=ev.endDate&&ev.endDate!==ev.date;
+    const timeMeta=isMultiDay?`${formatDateDisplay(ev.date)} → ${formatDateDisplay(ev.endDate)}`:(ev.time?formatTime(ev.time):'');
     html+=`<div class="event-pill" style="background:${bg};" onclick="closeEventView();openEventView(${ev.id})">
       <div class="event-pill-left">
         <div class="event-pill-title" style="color:${tc};">${ev.title}</div>
-        <div class="event-pill-meta" style="color:${tc};">${ev.time?formatTime(ev.time)+' · ':''}${personLabels}</div>
+        <div class="event-pill-meta" style="color:${tc};">${timeMeta}${timeMeta&&personLabels?' · ':''}${personLabels}</div>
       </div>
     </div>`;
   });
@@ -956,8 +966,9 @@ function normalizeDate(raw){
 }
 function getEventsForDate(dk){
   return calEvents.filter(e=>{
-    const evDate=normalizeDate(e.date);
-    if(evDate!==dk)return false;
+    const evStart=normalizeDate(e.date);
+    const evEnd=e.endDate?normalizeDate(e.endDate):evStart;
+    if(dk<evStart||dk>evEnd)return false;
     const persons=(e.person||'').split(',').filter(Boolean);
     if(!persons.length)return true;
     return !persons.every(p=>hiddenPeople.has(p));
