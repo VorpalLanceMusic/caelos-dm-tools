@@ -591,6 +591,18 @@ let groceryItems=[],pantryItems=[],mealLibrary=[],weekPlan=[],calEvents=[],todoI
 let gFilter='all',pFilter='all',tdFilter='all',rmFilter='all';
 let gEditId=null,pEditId=null,pEditLevel='full';
 let groceryToggleLock=false;
+let grocerySaveTimer=null,groceryPantryDirty=false;
+function flushGrocerySave(){
+  if(grocerySaveTimer){clearTimeout(grocerySaveTimer);grocerySaveTimer=null;}
+  const jobs=[pushData('grocery',groceryItems)];
+  if(groceryPantryDirty){jobs.push(pushData('pantry',pantryItems));groceryPantryDirty=false;}
+  return Promise.all(jobs);
+}
+function scheduleGrocerySave(){
+  setSyncStatus('syncing','Saving…');
+  if(grocerySaveTimer)clearTimeout(grocerySaveTimer);
+  grocerySaveTimer=setTimeout(flushGrocerySave,12000);
+}
 let mealViewId=null,mealEditId=null,dayPickerIdx=null,currentTab='grocery',showMealForm=false;
 let calView='month',calDate=new Date(),hiddenPeople=new Set();
 let evEditId=null,evPersonSel=[];
@@ -605,12 +617,13 @@ const today=new Date();today.setHours(0,0,0,0);
 function setSyncStatus(s,l){document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');document.getElementById('sync-label').textContent=l;}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',2600);}
 function updateRatioLabel(){const v=parseInt(document.getElementById('ratio-slider').value);document.getElementById('ratio-val').textContent=v+' Easy / '+(7-v)+' Medium';}
-function bottomAction(){if(currentTab==='grocery'){groceryItems=groceryItems.filter(i=>!i.checked);renderAll();pushData('grocery',groceryItems);}}
+function bottomAction(){if(currentTab==='grocery'){if(grocerySaveTimer){clearTimeout(grocerySaveTimer);grocerySaveTimer=null;}groceryItems=groceryItems.filter(i=>!i.checked);renderAll();pushData('grocery',groceryItems);}}
 function pad2(n){return String(n).padStart(2,'0');}
 function dateKey(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
 
 async function fetchAll(){
+  if(grocerySaveTimer){await flushGrocerySave();}
   setSyncStatus('syncing','Syncing...');
   try{
     const [gr,pa,ml,pl,ev,td,rm,ci]=await Promise.all([
@@ -672,21 +685,18 @@ async function addGrocery(){
 }
 document.getElementById('grocery-input').addEventListener('keydown',e=>{if(e.key==='Enter')addGrocery();});
 function toggleGrocery(id){
-  if(groceryToggleLock)return;
-  groceryToggleLock=true;
   const sid=String(id);
   const item=groceryItems.find(i=>String(i.id)===sid);
-  if(!item){groceryToggleLock=false;return;}
+  if(!item)return;
   item.checked=!item.checked;
-  renderAll();
   if(item.checked){
     const ex=pantryItems.find(p=>p.name.toLowerCase()===item.name.toLowerCase());
     if(!ex)pantryItems.unshift({id:String(Date.now()+1),name:item.name,cat:item.cat,qty:item.qty,checked:false,level:'full'});
     else ex.level='full';
-    Promise.all([pushData('grocery',groceryItems),pushData('pantry',pantryItems)]).finally(()=>{groceryToggleLock=false;});
-  }else{
-    pushData('grocery',groceryItems).finally(()=>{groceryToggleLock=false;});
+    groceryPantryDirty=true;
   }
+  renderAll();
+  scheduleGrocerySave();
 }
 function removeGrocery(id){groceryItems=groceryItems.filter(i=>String(i.id)!==String(id));closeGroceryDrawer();renderAll();pushData('grocery',groceryItems);}
 function openGroceryDrawer(id){
@@ -1156,6 +1166,7 @@ function renderBottomBar(){
 
 fetchAll();
 setInterval(fetchAll,10*60*1000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&grocerySaveTimer){flushGrocerySave();}});
 updateRatioLabel();
 
 // ── TO-DO ──
