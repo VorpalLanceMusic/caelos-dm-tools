@@ -649,7 +649,8 @@ async function fetchAll(){
     groceryItems=gr.map(i=>({...i,id:String(i.id)}));
     // Deduplicate by id (belt-and-suspenders against existing sheet corruption)
     const seenGrocery=new Set();groceryItems=groceryItems.filter(i=>{if(seenGrocery.has(i.id))return false;seenGrocery.add(i.id);return true;});
-    pantryItems=pa.map(i=>({...i,id:String(i.id)}));mealLibrary=ml.length?ml:DEFAULT_MEALS;weekPlan=pl.length?pl:[];
+    pantryItems=pa.map(i=>({...i,id:String(i.id)}));mealLibrary=ml.length?ml:DEFAULT_MEALS;
+    weekPlan=pl.length?pl.map(p=>({...p,mealId:p.mealId?Number(p.mealId):null,locked:p.locked==='TRUE'||p.locked===true||p.locked==='true',cook:p.cook&&p.cook!==''?p.cook:null,week:p.week?Number(p.week):1})):[];
     calEvents=ev.map(e=>({...e,date:normalizeDate(e.date),endDate:e.endDate?normalizeDate(e.endDate):''}));
     todoItems=Array.isArray(td)?td:[];reminderItems=Array.isArray(rm)?rm.map(r=>({...r,date:normalizeDate(r.date)})):[];
     checkinItems=Array.isArray(ci)?ci.map(c=>{
