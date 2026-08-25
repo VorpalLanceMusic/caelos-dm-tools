@@ -819,14 +819,16 @@ function closeMealDrawer(e){if(e&&e.target!==document.getElementById('meal-overl
 function deleteMeal(id){mealLibrary=mealLibrary.filter(m=>m.id!=id);weekPlan=weekPlan.map(p=>p.mealId==id?{...p,mealId:null}:p);closeMealDrawer();renderAll();pushData('meals',mealLibrary);pushData('plan',weekPlan);}
 
 function getOrInitPlan(){
-  // 14 slots: ids 1-7 = week 1, ids 8-14 = week 2
+  // 14 slots: week 1 ids 1-7 (Mon-Sun), week 2 ids 8-14 (Mon-Sun)
   const base=[
-    ...DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,week:1,mealId:null,locked:false})),
-    ...DAYS_OF_WEEK.map((d,i)=>({id:i+8,day:d,week:2,mealId:null,locked:false})),
+    ...DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,week:1,mealId:null,locked:false,cook:null})),
+    ...DAYS_OF_WEEK.map((d,i)=>({id:i+8,day:d,week:2,mealId:null,locked:false,cook:null})),
   ];
   if(!weekPlan.length){weekPlan=base;return weekPlan;}
   weekPlan=base.map(b=>{
-    const saved=weekPlan.find(p=>p.id===b.id);
+    // Match by day name + week first (safe across ID scheme changes), fall back to id
+    const saved=weekPlan.find(p=>p.day===b.day&&(p.week===b.week||p.week===undefined&&b.week===1))
+               ||weekPlan.find(p=>p.id===b.id);
     if(!saved)return b;
     return{...b,mealId:saved.mealId?Number(saved.mealId):null,locked:saved.locked==='TRUE'||saved.locked===true||saved.locked==='true',cook:saved.cook||null};
   });
