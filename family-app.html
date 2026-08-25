@@ -80,6 +80,9 @@ html,body { background:#0A1C1F; }
 .auto-plan-btn { width:100%; padding:12px; background:#E0EEEC; border:none; border-radius:12px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; color:#1A4A52; cursor:pointer; }
 .auto-plan-btn:disabled { background:#204045; color:#4A7880; cursor:not-allowed; }
 .week-grid { padding:0 16px; margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+.week-section-header { font-family:'Caveat',cursive; font-size:20px; font-weight:600; padding:8px 4px 2px; margin-top:4px; }
+.week1-header { color:#E0EEEC; border-bottom:2px solid #3A8A95; margin-bottom:2px; }
+.week2-header { color:#8FC0BF; border-bottom:2px dashed #3A8A95; margin-bottom:2px; margin-top:12px; }
 .day-card { background:#12353A; border:2px solid #3A8A95; border-radius:14px; padding:12px 14px; }
 .day-card.locked { border-color:#E0EEEC; }
 .day-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
@@ -302,13 +305,16 @@ html,body { background:#0A1C1F; }
   <!-- MEALS -->
   <div class="panel" id="panel-meals">
     <div class="planner-controls">
-      <div class="planner-controls-title">Auto-Plan the Week</div>
+      <div class="planner-controls-title">Auto-Plan</div>
       <div class="ratio-row">
         <span class="ratio-label">Easy</span>
         <input type="range" class="ratio-slider" id="ratio-slider" min="0" max="7" value="3" step="1" oninput="updateRatioLabel()" />
         <span class="ratio-val" id="ratio-val">3 Easy / 4 Medium</span>
       </div>
-      <button class="auto-plan-btn" id="auto-plan-btn" onclick="autoPlan()">Plan My Week</button>
+      <div style="display:flex;gap:8px;margin-bottom:0;">
+        <button class="auto-plan-btn" id="auto-plan-btn" onclick="autoPlan(1)" style="flex:1;font-size:13px;">Plan Week 1</button>
+        <button class="auto-plan-btn" id="auto-plan-btn2" onclick="autoPlan(2)" style="flex:1;font-size:13px;">Plan Week 2</button>
+      </div>
     </div>
     <div class="week-grid" id="week-grid"></div>
     <div class="section-label" style="margin-top:8px;">Meal Library</div>
@@ -565,7 +571,7 @@ html,body { background:#0A1C1F; }
 
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxoh_j7mBOExWcr-miM3X1H_OcKjXMxU1kQQxyvT-PqeRM1XTfTchmLpR9FA_BAVWg/exec';
-const DAYS_OF_WEEK=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_OF_WEEK=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const VALID_CATS=['produce','dairy','meat','bakery','frozen','pantry','snacks','drinks','household','other'];
 const CATS={produce:{label:'🥦 Produce',bg:'#1B5E20',color:'#C8E6C9'},dairy:{label:'🥛 Dairy',bg:'#0D47A1',color:'#BBDEFB'},meat:{label:'🥩 Meat',bg:'#880E4F',color:'#FCE4EC'},bakery:{label:'🍞 Bakery',bg:'#E65100',color:'#EFF8F6'},frozen:{label:'🧊 Frozen',bg:'#006064',color:'#E0F7FA'},pantry:{label:'🫙 Pantry',bg:'#BF360C',color:'#FBE9E7'},snacks:{label:'🍿 Snacks',bg:'#4A148C',color:'#F3E5F5'},drinks:{label:'🧃 Drinks',bg:'#1A237E',color:'#E8EAF6'},household:{label:'🧹 Household',bg:'#33691E',color:'#F1F8E9'},other:{label:'📦 Other',bg:'#20383A',color:'#E4ECEB'}};
@@ -809,32 +815,36 @@ function closeMealDrawer(e){if(e&&e.target!==document.getElementById('meal-overl
 function deleteMeal(id){mealLibrary=mealLibrary.filter(m=>m.id!=id);weekPlan=weekPlan.map(p=>p.mealId==id?{...p,mealId:null}:p);closeMealDrawer();renderAll();pushData('meals',mealLibrary);pushData('plan',weekPlan);}
 
 function getOrInitPlan(){
-  const base=DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,mealId:null,locked:false}));
+  // 14 slots: ids 1-7 = week 1, ids 8-14 = week 2
+  const base=[
+    ...DAYS_OF_WEEK.map((d,i)=>({id:i+1,day:d,week:1,mealId:null,locked:false})),
+    ...DAYS_OF_WEEK.map((d,i)=>({id:i+8,day:d,week:2,mealId:null,locked:false})),
+  ];
   if(!weekPlan.length){weekPlan=base;return weekPlan;}
-  // Merge saved data into base structure — preserve mealId and locked even if rows are missing
   weekPlan=base.map(b=>{
-    const saved=weekPlan.find(p=>p.day===b.day);
+    const saved=weekPlan.find(p=>p.id===b.id);
     if(!saved)return b;
     return{...b,mealId:saved.mealId?Number(saved.mealId):null,locked:saved.locked==='TRUE'||saved.locked===true||saved.locked==='true'};
   });
   return weekPlan;
 }
-function autoPlan(){
-  const btn=document.getElementById('auto-plan-btn');btn.disabled=true;btn.textContent='Planning...';
+function autoPlan(week){
+  const btnId=week===2?'auto-plan-btn2':'auto-plan-btn';
+  const btn=document.getElementById(btnId);btn.disabled=true;btn.textContent='Planning...';
   const ec=parseInt(document.getElementById('ratio-slider').value);
   const easy=mealLibrary.filter(m=>m.difficulty==='easy'),med=mealLibrary.filter(m=>m.difficulty==='medium');
-  if(!easy.length&&!med.length){btn.disabled=false;btn.textContent='Plan My Week';showToast('Add meals to your library first!');return;}
+  if(!easy.length&&!med.length){btn.disabled=false;btn.textContent=week===2?'Plan Week 2':'Plan Week 1';showToast('Add meals to your library first!');return;}
   getOrInitPlan();
-  const slots=weekPlan.filter(p=>!p.locked);
+  const slots=weekPlan.filter(p=>p.week===week&&!p.locked);
   for(let i=slots.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[slots[i],slots[j]]=[slots[j],slots[i]];}
   slots.forEach((slot,idx)=>{
     const pd=weekPlan.find(p=>p.id===slot.id);
     const pool=(idx<ec&&easy.length)?easy:(med.length?med:easy);
     if(pool.length)pd.mealId=pool[Math.floor(Math.random()*pool.length)].id;
   });
-  btn.disabled=false;btn.textContent='Plan My Week';renderAll();
+  btn.disabled=false;btn.textContent=week===2?'Plan Week 2':'Plan Week 1';renderAll();
   pushData('plan',weekPlan);
-  showToast('Week planned!');
+  showToast('Week '+week+' planned!');
 }
 function rerollDay(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length)return;const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
 function setDayDiff(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length){showToast('No '+diff+' meals in library!');return;}const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
@@ -873,10 +883,17 @@ function togglePersonFilter(id){
 }
 
 function getMealEventsForDate(dk){
-  // Find which week day this date corresponds to in the meal plan
   const d=parseDate(dk);
   const dayName=DAYS_OF_WEEK[d.getDay()];
-  const planEntry=weekPlan.find(p=>p.day===dayName);
+  // Determine week offset from today's Sunday
+  const todayMonday=new Date(today);todayMonday.setDate(today.getDate()-((today.getDay()+6)%7));
+  const dMonday=new Date(d);dMonday.setDate(d.getDate()-((d.getDay()+6)%7));
+  const weekDiff=Math.round((dMonday-todayMonday)/(7*24*60*60*1000));
+  let week=null;
+  if(weekDiff===0)week=1;
+  else if(weekDiff===1)week=2;
+  if(!week)return null;
+  const planEntry=weekPlan.find(p=>p.day===dayName&&p.week===week);
   if(!planEntry||!planEntry.mealId)return null;
   return mealLibrary.find(m=>m.id==planEntry.mealId)||null;
 }
@@ -1017,10 +1034,10 @@ function pHTML(item){const cat=CATS[item.cat];return `<div style="background:#12
 function renderMeals(){
   if(currentTab==='meals')document.getElementById('count-badge').textContent=mealLibrary.length+' meals';
   getOrInitPlan();
-  document.getElementById('week-grid').innerHTML=weekPlan.map(p=>{
+  function dayCardHTML(p){
     const meal=mealLibrary.find(m=>m.id==p.mealId);const d=meal?DIFF[meal.difficulty]:null;
     return `<div class="day-card${p.locked?' locked':''}">
-      <div class="day-header"><span class="day-name">${p.day}</span><button class="day-lock" onclick="toggleLock(${p.id})">${p.locked?'Locked':'Lock'}</button></div>
+      <div class="day-header"><span class="day-name">${p.day}</span><button class="day-lock" onclick="toggleLock(${p.id})">${p.locked?'🔒 Locked':'Lock'}</button></div>
       <div class="day-meal${!meal?' empty':''}" onclick="openDayPicker(${p.id})">${meal?meal.name:'Tap to pick a meal'}</div>
       ${meal?`<div style="display:inline-block;margin-bottom:8px;" class="diff-pill ${d.cls}">${d.label}</div>`:''}
       <div class="day-actions">
@@ -1030,7 +1047,14 @@ function renderMeals(){
         ${meal?`<button class="reroll-btn" onclick="rerollDay(${p.id},'${meal.difficulty}')">Reroll</button>`:''}
       </div>
     </div>`;
-  }).join('');
+  }
+  const week1=weekPlan.filter(p=>p.week===1);
+  const week2=weekPlan.filter(p=>p.week===2);
+  document.getElementById('week-grid').innerHTML=
+    `<div class="week-section-header week1-header">📅 This Week</div>`+
+    week1.map(dayCardHTML).join('')+
+    `<div class="week-section-header week2-header">📅 Next Week</div>`+
+    week2.map(dayCardHTML).join('');
   const libEl=document.getElementById('meal-library');
   if(!mealLibrary.length){libEl.innerHTML='<div class="empty-state" style="font-size:16px;">No meals yet!</div>';return;}
   let html='';
@@ -1060,7 +1084,7 @@ function renderCal(){
 function renderMonthView(){
   const y=calDate.getFullYear(),m=calDate.getMonth();
   document.getElementById('cal-label').textContent=MONTHS[m]+' '+y;
-  const firstDay=new Date(y,m,1).getDay();
+  const firstDay=(new Date(y,m,1).getDay()+6)%7;
   const daysInMonth=new Date(y,m+1,0).getDate();
   const daysInPrev=new Date(y,m,0).getDate();
 
@@ -1087,7 +1111,7 @@ function renderMonthView(){
 
   document.getElementById('cal-grid').innerHTML=`
     <div class="month-grid">
-      <div class="month-dow">${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="month-dow-cell">${d}</div>`).join('')}</div>
+      <div class="month-dow">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="month-dow-cell">${d}</div>`).join('')}</div>
       <div class="month-cells">${cells}</div>
     </div>`;
 }
@@ -1112,7 +1136,7 @@ function monthCell(date,dk,otherMonth){
 function renderWeekView(){
   // Find Sunday of the week containing calDate
   const startOfWeek=new Date(calDate);
-  startOfWeek.setDate(calDate.getDate()-calDate.getDay());
+  startOfWeek.setDate(calDate.getDate()-((calDate.getDay()+6)%7));
   const endOfWeek=new Date(startOfWeek);endOfWeek.setDate(startOfWeek.getDate()+6);
   document.getElementById('cal-label').textContent=MONTHS[startOfWeek.getMonth()]+' '+startOfWeek.getDate()+'–'+endOfWeek.getDate();
 
@@ -1158,7 +1182,7 @@ function renderWeekView(){
 function renderBottomBar(){
   if(currentTab==='grocery'){const t=groceryItems.length,c=groceryItems.filter(i=>i.checked).length;document.getElementById('bottom-count').textContent=t===0?'Nothing on the list!':c+' of '+t+' got';document.getElementById('action-btn').style.display='block';}
   else if(currentTab==='pantry'){const l=pantryItems.filter(i=>i.level==='low').length,o=pantryItems.filter(i=>i.level==='out').length;document.getElementById('bottom-count').textContent=pantryItems.length+' items · '+l+' low · '+o+' out';document.getElementById('action-btn').style.display='none';}
-  else if(currentTab==='meals'){document.getElementById('bottom-count').textContent=weekPlan.filter(p=>p.mealId).length+'/7 days planned';document.getElementById('action-btn').style.display='none';}
+  else if(currentTab==='meals'){const w1=weekPlan.filter(p=>p.week===1&&p.mealId).length,w2=weekPlan.filter(p=>p.week===2&&p.mealId).length;document.getElementById('bottom-count').textContent='Wk1: '+w1+'/7 · Wk2: '+w2+'/7 planned';document.getElementById('action-btn').style.display='none';}
   else if(currentTab==='todo'){const done=todoItems.filter(i=>i.done).length,total=todoItems.length;document.getElementById('bottom-count').textContent=total===0?'All clear! ✅':done+' of '+total+' done';document.getElementById('action-btn').style.display='none';}
   else if(currentTab==='reminders'){const overdue=reminderItems.filter(i=>!i.done&&isOverdue(i.date,i.time)).length;document.getElementById('bottom-count').textContent=overdue>0?overdue+' overdue ⚠️':reminderItems.filter(i=>!i.done).length+' active reminders';document.getElementById('action-btn').style.display='none';}
   else{document.getElementById('bottom-count').textContent=calEvents.length+' event'+(calEvents.length!==1?'s':'')+' this month';document.getElementById('action-btn').style.display='none';}
