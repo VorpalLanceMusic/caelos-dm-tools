@@ -79,7 +79,11 @@ html,body { background:#0A1C1F; }
 .ratio-val { font-size:12px; font-weight:800; color:#E0EEEC; min-width:90px; text-align:right; }
 .auto-plan-btn { width:100%; padding:12px; background:#E0EEEC; border:none; border-radius:12px; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; color:#1A4A52; cursor:pointer; }
 .auto-plan-btn:disabled { background:#204045; color:#4A7880; cursor:not-allowed; }
-.week-grid { padding:0 16px; margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+.cook-btn { font-family:'Nunito',sans-serif; font-size:12px; font-weight:900; width:28px; height:28px; border-radius:50%; border:2px solid #3A8A95; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease; }
+.cook-L { background:#2D7A92; color:#fff; border-color:#4AA5BE; }
+.cook-M { background:#4A6B1F; color:#fff; border-color:#6E9A2D; }
+.cook-none { background:#1A4A52; color:#4A7880; border-color:#3A8A95; }
+.cook-locked { opacity:0.6; cursor:default; }
 .week-section-header { font-family:'Caveat',cursive; font-size:20px; font-weight:600; padding:8px 4px 2px; margin-top:4px; }
 .week1-header { color:#E0EEEC; border-bottom:2px solid #3A8A95; margin-bottom:2px; }
 .week2-header { color:#8FC0BF; border-bottom:2px dashed #3A8A95; margin-bottom:2px; margin-top:12px; }
@@ -824,7 +828,7 @@ function getOrInitPlan(){
   weekPlan=base.map(b=>{
     const saved=weekPlan.find(p=>p.id===b.id);
     if(!saved)return b;
-    return{...b,mealId:saved.mealId?Number(saved.mealId):null,locked:saved.locked==='TRUE'||saved.locked===true||saved.locked==='true'};
+    return{...b,mealId:saved.mealId?Number(saved.mealId):null,locked:saved.locked==='TRUE'||saved.locked===true||saved.locked==='true',cook:saved.cook||null};
   });
   return weekPlan;
 }
@@ -845,6 +849,11 @@ function autoPlan(week){
   btn.disabled=false;btn.textContent=week===2?'Plan Week 2':'Plan Week 1';renderAll();
   pushData('plan',weekPlan);
   showToast('Week '+week+' planned!');
+}
+function cycleCook(dayId){
+  const p=weekPlan.find(d=>d.id==dayId);if(!p||p.locked)return;
+  p.cook=p.cook==='L'?'M':p.cook==='M'?null:'L';
+  renderAll();pushData('plan',weekPlan);
 }
 function rerollDay(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length)return;const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
 function setDayDiff(dayId,diff){const pool=mealLibrary.filter(m=>m.difficulty===diff);if(!pool.length){showToast('No '+diff+' meals in library!');return;}const p=weekPlan.find(d=>d.id==dayId);if(!p)return;p.mealId=pool[Math.floor(Math.random()*pool.length)].id;renderAll();pushData('plan',weekPlan);}
@@ -1031,13 +1040,15 @@ function renderPantry(){
 }
 function pHTML(item){const cat=CATS[item.cat];return `<div style="background:#12353A;border:2px solid #3A8A95;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;"><div style="flex:1;min-width:0;cursor:pointer;" onclick="openPantryDrawer(${item.id})"><div style="font-size:15px;font-weight:700;color:#E0EEEC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div><div style="font-size:11px;color:#6A9899;">tap to edit</div></div><div style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;flex-shrink:0;background:${cat.bg};color:${cat.color};">${cat.label}</div><div style="display:flex;gap:4px;flex-shrink:0;"><button style="font-size:11px;font-weight:800;padding:4px 8px;border-radius:8px;border:none;cursor:pointer;background:${item.level==='full'?'#2E7D32':'#1A4A52'};color:${item.level==='full'?'#C8E6C9':'#4A7880'};" onclick="setPantryLevel(${item.id},'full')">Full</button><button style="font-size:11px;font-weight:800;padding:4px 8px;border-radius:8px;border:none;cursor:pointer;background:${item.level==='low'?'#E65100':'#1A4A52'};color:${item.level==='low'?'#EFF8F6':'#4A7880'};" onclick="setPantryLevel(${item.id},'low')">Low</button><button style="font-size:11px;font-weight:800;padding:4px 8px;border-radius:8px;border:none;cursor:pointer;background:${item.level==='out'?'#C62828':'#1A4A52'};color:${item.level==='out'?'#fff':'#4A7880'};" onclick="setPantryLevel(${item.id},'out')">Out</button></div><button style="background:#C62828;border:none;border-radius:8px;cursor:pointer;color:#fff;font-size:15px;font-weight:900;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" onclick="removePantry(${item.id})">✕</button></div>`;}
 
-function renderMeals(){
-  if(currentTab==='meals')document.getElementById('count-badge').textContent=mealLibrary.length+' meals';
-  getOrInitPlan();
-  function dayCardHTML(p){
+function dayCardHTML(p){
     const meal=mealLibrary.find(m=>m.id==p.mealId);const d=meal?DIFF[meal.difficulty]:null;
+    const cook=p.cook||null;
+    const canChangeCook=!p.locked;
+    const cookOnclick=canChangeCook?'cycleCook('+p.id+')':'void(0)';
+    const cookTitle=p.locked?'Unlock to change cook':'Who\'s cooking?';
+    const cookBtn='<button class="cook-btn cook-'+(cook||'none')+(p.locked?' cook-locked':'')+'" onclick="'+cookOnclick+'" title="'+cookTitle+'">'+(cook||'?')+'</button>';
     return `<div class="day-card${p.locked?' locked':''}">
-      <div class="day-header"><span class="day-name">${p.day}</span><button class="day-lock" onclick="toggleLock(${p.id})">${p.locked?'🔒 Locked':'Lock'}</button></div>
+      <div class="day-header"><span class="day-name">${p.day}</span><div style="display:flex;align-items:center;gap:6px;">${cookBtn}<button class="day-lock" onclick="toggleLock(${p.id})">${p.locked?'🔒 Locked':'Lock'}</button></div></div>
       <div class="day-meal${!meal?' empty':''}" onclick="openDayPicker(${p.id})">${meal?meal.name:'Tap to pick a meal'}</div>
       ${meal?`<div style="display:inline-block;margin-bottom:8px;" class="diff-pill ${d.cls}">${d.label}</div>`:''}
       <div class="day-actions">
@@ -1047,7 +1058,11 @@ function renderMeals(){
         ${meal?`<button class="reroll-btn" onclick="rerollDay(${p.id},'${meal.difficulty}')">Reroll</button>`:''}
       </div>
     </div>`;
-  }
+}
+
+function renderMeals(){
+  if(currentTab==='meals')document.getElementById('count-badge').textContent=mealLibrary.length+' meals';
+  getOrInitPlan();
   const week1=weekPlan.filter(p=>p.week===1);
   const week2=weekPlan.filter(p=>p.week===2);
   document.getElementById('week-grid').innerHTML=
